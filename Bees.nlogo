@@ -4,6 +4,8 @@ globals
   num-patches-r        ;; number of desired resource patches on the map
   area-t               ;; total area in kilometers of the map. One patch is 6.67m by 6.67m
   density              ;; number of patches per square kilometer. sparse = 1, dense = 32, v-dense = 100
+  resource-prob-t      ;; num-patches-r / num-patches-t. Probability of a resource at each patch
+  resource-prob-num    ;; 1 / resource-prob-t. 1 in resource-prob-num chances each patch is a resource
 ]
 turtles-own 
 [
@@ -38,6 +40,7 @@ to setup
   ]
   setup-turtles
   setup-patches
+  show count patches with [resource?]
   reset-ticks
 end
 
@@ -63,19 +66,21 @@ to setup-patches
   ]
 end
 
-to patch-calculations ;; Calculate...
+to patch-calculations ;; Calculate stuff...
   if resource_density = "sparse" [ set density 1 ] 
   if resource_density = "dense" [ set density 32 ]
   if resource_density = "v-dense" [set density 100]
-  set num-patches-t  world-width * world-height
-  set area-t         num-patches-t * .000044444
-  set num-patches-r  round (area-t * density)
-  
+  set num-patches-t     world-width * world-height
+  set area-t            num-patches-t * .000044444
+  set num-patches-r     area-t * density
+  set resource-prob-t   num-patches-r / num-patches-t
+  set resource-prob-num 1 / resource-prob-t
   
   show density
   show num-patches-t
   show num-patches-r
   show area-t
+  show resource-prob-t
 end
 
 to error-check ;; error checks on user input
@@ -100,27 +105,25 @@ to setup-food  ;; create food patches
   if (distancexy 0 0) >= 1
   [
     set nest? False
-    
-    
-;    ifelse random 100 < resource_percentage ;; TODO: Fix to be based on clustering parameter
-;    [
-;     set pcolor green
-;     set resource? True
-;     let x max_quality + 1 - min_quality
-;     set quality random x + min_quality ;; TODO: Quality distribution
-;     if quality_label?
-;     [ set food food + 1
-;       set plabel quality 
-;     ]
-;     if quantity_label? 
-;     [ set food random 5 + 1
-;       set plabel food 
-;     ]
-;    ]
-;    [ 
-;      set pcolor gray 
-;      set resource? False
-;    ]
+    ifelse random resource-prob-num < 1 ;; TODO: Fix to be based on clustering parameter
+    [
+     set pcolor green
+     set resource? True
+     let x max_quality + 1 - min_quality
+     set quality random x + min_quality ;; TODO: Quality distribution
+     if quality_label?
+     [ set food food + 1
+       set plabel quality 
+     ]
+     if quantity_label? 
+     [ set food random 5 + 1
+       set plabel food 
+     ]
+    ]
+    [ 
+      set pcolor gray 
+      set resource? False
+    ]
   ]   
 end
 
@@ -295,7 +298,7 @@ population
 population
 0.0
 20
-3
+5
 1
 1
 NIL
