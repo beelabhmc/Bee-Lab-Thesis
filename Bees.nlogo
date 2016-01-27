@@ -1,4 +1,12 @@
-turtles-own [
+globals
+[
+  num-patches-t        ;; total number of patches on the map
+  num-patches-r        ;; number of desired resource patches on the map
+  area-t               ;; total area in kilometers of the map. One patch is 6.67m by 6.67m
+  density              ;; number of patches per square kilometer. sparse = 1, dense = 32, v-dense = 100
+]
+turtles-own 
+[
   collected            ;; amount of food collected by each bee
   energy               ;; bee energy level
   state                ;; state bee is in
@@ -6,7 +14,8 @@ turtles-own [
                        ;; states: inactive = Inactive, toResource = Direct to Resource, randSearch = Random Search, 
                        ;;         forage = Forage at Resource, return = Return to Hive, dance = Dancing
 ]
-patches-own [
+patches-own 
+[
   food                 ;; amount of food per patch
   nest?                ;; true on nest patches
   resource?            ;; true on resource patches
@@ -45,12 +54,28 @@ to setup-turtles
 end
 
 to setup-patches
+  patch-calculations
   ask patches
   [ 
     error-check
     setup-nest
     setup-food
   ]
+end
+
+to patch-calculations ;; Calculate...
+  if resource_density = "sparse" [ set density 1 ] 
+  if resource_density = "dense" [ set density 32 ]
+  if resource_density = "v-dense" [set density 100]
+  set num-patches-t  world-width * world-height
+  set area-t         num-patches-t * .000044444
+  set num-patches-r  round (area-t * density)
+  
+  
+  show density
+  show num-patches-t
+  show num-patches-r
+  show area-t
 end
 
 to error-check ;; error checks on user input
@@ -63,7 +88,7 @@ to error-check ;; error checks on user input
 end
 
 to setup-nest ;; create hive patches
-  if (distancexy 0 0) < 3
+  if (distancexy 0 0) < 1
   [ 
     set pcolor brown
     set nest? True
@@ -72,28 +97,30 @@ to setup-nest ;; create hive patches
 end
 
 to setup-food  ;; create food patches
-  if (distancexy 0 0) >= 3
+  if (distancexy 0 0) >= 1
   [
     set nest? False
-    ifelse random 100 < resource_percentage ;; TODO: Fix to be based on clustering parameter
-    [
-     set pcolor green
-     set resource? True
-     let x max_quality + 1 - min_quality
-     set quality random x + min_quality ;; TODO: Quality distribution
-     if quality_label?
-     [ set food food + 1
-       set plabel quality 
-     ]
-     if quantity_label? 
-     [ set food random 5 + 1
-       set plabel food 
-     ]
-    ]
-    [ 
-      set pcolor gray 
-      set resource? False
-    ]
+    
+    
+;    ifelse random 100 < resource_percentage ;; TODO: Fix to be based on clustering parameter
+;    [
+;     set pcolor green
+;     set resource? True
+;     let x max_quality + 1 - min_quality
+;     set quality random x + min_quality ;; TODO: Quality distribution
+;     if quality_label?
+;     [ set food food + 1
+;       set plabel quality 
+;     ]
+;     if quantity_label? 
+;     [ set food random 5 + 1
+;       set plabel food 
+;     ]
+;    ]
+;    [ 
+;      set pcolor gray 
+;      set resource? False
+;    ]
   ]   
 end
 
@@ -199,9 +226,9 @@ to remove-patch
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-257
+336
 10
-974
+1053
 748
 50
 50
@@ -294,37 +321,22 @@ PENS
 "collected" 1.0 0 -2674135 true "" "plotxy ticks sum [collected] of turtles"
 "wasted" 1.0 0 -7500403 true "" "if ephemeral? [plotxy ticks sum [food-wasted] of patches]"
 
-SLIDER
-32
-108
-176
-141
-resource_percentage
-resource_percentage
-0
-100
-5
-1
-1
-NIL
-HORIZONTAL
-
 SWITCH
 32
-228
+276
 159
-261
+309
 bee_label?
 bee_label?
-0
+1
 1
 -1000
 
 SLIDER
 125
-147
+195
 217
-180
+228
 max_quality
 max_quality
 0
@@ -336,10 +348,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-32
+167
+276
+328
 309
-193
-342
 quantity_label?
 quantity_label?
 0
@@ -348,9 +360,9 @@ quantity_label?
 
 SLIDER
 32
-147
+195
 124
-180
+228
 min_quality
 min_quality
 0
@@ -362,10 +374,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-32
+167
+236
+307
 269
-172
-302
 quality_label?
 quality_label?
 1
@@ -374,14 +386,39 @@ quality_label?
 
 SWITCH
 32
-188
+236
 159
-221
+269
 ephemeral?
 ephemeral?
-0
+1
 1
 -1000
+
+SLIDER
+32
+108
+204
+141
+patchiness
+patchiness
+0
+1
+0.65
+0.01
+1
+NIL
+HORIZONTAL
+
+CHOOSER
+32
+145
+170
+190
+resource_density
+resource_density
+"sparse" "dense" "v-dense"
+2
 
 @#$#@#$#@
 ## WHAT IS IT?
