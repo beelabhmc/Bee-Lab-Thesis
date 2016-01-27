@@ -57,7 +57,7 @@ to setup-turtles
 end
 
 to setup-patches
-  patch-calculations
+  resource-patch-calculations
   ask patches
   [ 
     error-check
@@ -66,7 +66,7 @@ to setup-patches
   ]
 end
 
-to patch-calculations ;; Calculate stuff...
+to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
   if resource_density = "sparse" [ set density 1 ] 
   if resource_density = "dense" [ set density 32 ]
   if resource_density = "v-dense" [set density 100]
@@ -75,12 +75,6 @@ to patch-calculations ;; Calculate stuff...
   set num-patches-r     area-t * density
   set resource-prob-t   num-patches-r / num-patches-t
   set resource-prob-num 1 / resource-prob-t
-  
-  show density
-  show num-patches-t
-  show num-patches-r
-  show area-t
-  show resource-prob-t
 end
 
 to error-check ;; error checks on user input
