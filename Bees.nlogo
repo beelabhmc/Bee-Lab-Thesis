@@ -6,7 +6,11 @@ globals
   num-patches-r        ;; number of desired resource patches on the map
   resource-prob
   resource-prob-num    ;; 1 / (Probability of a resource at each patch). 1 in resource-prob-num chances each patch is a resource
-  resource-prob-adj  ;; resource-prob-num adjusted for patchiness. Total probability for each square for each patchiness iteration
+  resource-prob-adj    ;; resource-prob-num adjusted for patchiness. Total probability for each square for each patchiness iteration
+  
+  c   ;; probability of resource with no resource within 2 spaces
+  c1  ;; probability of resource with at least one resource one patch away
+  c2  ;; probability of resource with at least one resource two patches away
 ]
 turtles-own 
 [
@@ -25,6 +29,9 @@ patches-own
   quality              ;; quality of resource
   ephemeral            ;; value to determine if resource disappears
   food-wasted          ;; wasted food of ephemeral resource that disappears
+  
+  c1?  ;; at least one resource one patch away?
+  c2?  ;; !c1 and at least one resource two patches away?
 ]
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -104,22 +111,25 @@ end
 to setup-food  ;; create food patches
   repeat patchiness
   [
-    if ((distancexy 0 0) >= 1) and (resource? = False or resource? = 0) ;0 for initial run through
+    if ((distancexy 0 0) >= 1) and (resource? = 0 or not resource?) ;0 for initial run through
     [
       set nest? False
-      ifelse random resource-prob-num < 1 ;; TODO: Fix to be based on clustering parameter
+      ifelse random resource-prob-num < 1 ;; IP: Fix to be based on clustering parameter
       [
         set pcolor green
         set resource? True
         let x max_quality + 1 - min_quality
         set quality random x + min_quality ;; TODO: Quality distribution
         resource-labels
+        ; do checks for c1? and c2?
+        
       ]
       [ 
         set pcolor gray 
         set resource? False
       ]
     ]
+    
   ]
      
 end
