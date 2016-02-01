@@ -96,16 +96,30 @@ to setup-nest ;; create hive patches
 end
 
 to setup-food  ;; create food patches
-  if (distancexy 0 0) >= 1
+  repeat patchiness
   [
-    set nest? False
-    ifelse random resource-prob-num < 1 ;; TODO: Fix to be based on clustering parameter
+    if (distancexy 0 0) >= 1
     [
-     set pcolor green
-     set resource? True
-     let x max_quality + 1 - min_quality
-     set quality random x + min_quality ;; TODO: Quality distribution
-     if quality_label?
+      set nest? False
+      ifelse random resource-prob-num < 1 ;; TODO: Fix to be based on clustering parameter
+      [
+        set pcolor green
+        set resource? True
+        let x max_quality + 1 - min_quality
+        set quality random x + min_quality ;; TODO: Quality distribution
+        resource-labels
+      ]
+      [ 
+        set pcolor gray 
+        set resource? False
+      ]
+    ]
+  ]
+     
+end
+
+to resource-labels
+  if quality_label?
      [ set food food + 1
        set plabel quality 
      ]
@@ -113,12 +127,6 @@ to setup-food  ;; create food patches
      [ set food random 5 + 1
        set plabel food 
      ]
-    ]
-    [ 
-      set pcolor gray 
-      set resource? False
-    ]
-  ]   
 end
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -399,10 +407,10 @@ SLIDER
 141
 patchiness
 patchiness
-0
 1
-0.65
-0.01
+10
+1
+1
 1
 NIL
 HORIZONTAL
