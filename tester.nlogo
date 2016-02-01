@@ -23,7 +23,18 @@ to patch-test
   [ 
     set pcolor brown
     set thing? False
-    ;ask neighbors [ set pcolor red ]
+    let x pxcor
+    let y pycor
+    let c1-list ([x + 1 y] 
+          [x + 1 y + 1] 
+          [x y + 1] 
+          [x - 1 y + 1] 
+          [x - 1 y] 
+          [x - 1 y - 1]
+          [x y - 1]
+          [x + 1 y - 1]
+          )
+    show c1-list
   ]
 end
 

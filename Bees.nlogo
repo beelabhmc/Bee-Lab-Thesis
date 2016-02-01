@@ -4,7 +4,7 @@ globals
   area-t               ;; total area in kilometers of the map. One patch is 6.67m by 6.67m
   density              ;; number of patches per square kilometer. sparse = 1, dense = 32, v-dense = 100
   num-patches-r        ;; number of desired resource patches on the map
-  resource-prob
+  resource-prob        ;; 
   resource-prob-num    ;; 1 / (Probability of a resource at each patch). 1 in resource-prob-num chances each patch is a resource
   resource-prob-adj    ;; resource-prob-num adjusted for patchiness. Total probability for each square for each patchiness iteration
   
@@ -118,11 +118,19 @@ to setup-food  ;; create food patches
       [
         set pcolor green
         set resource? True
-        let x max_quality + 1 - min_quality
-        set quality random x + min_quality ;; TODO: Quality distribution
+        let q max_quality + 1 - min_quality
+        set quality random q + min_quality ;; TODO: Quality distribution
         resource-labels
         ; do checks for c1? and c2?
-        
+        let c1-list [[pxcor + 1 pycor] 
+          [pxcor + 1 pycor + 1] 
+          [pxcor pycor + 1] 
+          [pxcor - 1 pycor + 1] 
+          [pxcor - 1 pycor] 
+          [pxcor - 1 pycor - 1]
+          [pxcor pycor - 1]
+          [pxcor + 1 pycor - 1]
+          ]
       ]
       [ 
         set pcolor gray 
