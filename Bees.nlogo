@@ -1,11 +1,12 @@
 globals
 [
   num-patches-t        ;; total number of patches on the map
-  num-patches-r        ;; number of desired resource patches on the map
   area-t               ;; total area in kilometers of the map. One patch is 6.67m by 6.67m
   density              ;; number of patches per square kilometer. sparse = 1, dense = 32, v-dense = 100
-  resource-prob-t      ;; num-patches-r / num-patches-t. Probability of a resource at each patch
-  resource-prob-num    ;; 1 / resource-prob-t. 1 in resource-prob-num chances each patch is a resource
+  num-patches-r        ;; number of desired resource patches on the map
+  resource-prob
+  resource-prob-num    ;; 1 / (Probability of a resource at each patch). 1 in resource-prob-num chances each patch is a resource
+  resource-prob-adj  ;; resource-prob-num adjusted for patchiness. Total probability for each square for each patchiness iteration
 ]
 turtles-own 
 [
@@ -67,14 +68,19 @@ to setup-patches
 end
 
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
-  if resource_density = "sparse" [ set density 1 ] 
-  if resource_density = "dense" [ set density 32 ]
-  if resource_density = "v-dense" [set density 100]
-  set num-patches-t     world-width * world-height
-  set area-t            num-patches-t * .000044444
-  set num-patches-r     area-t * density
-  set resource-prob-t   num-patches-r / num-patches-t
-  set resource-prob-num 1 / resource-prob-t
+  set num-patches-t       world-width * world-height
+  set area-t              num-patches-t * .000044444
+  if resource_density =   "sparse" [ set density 1 ] 
+  if resource_density =   "dense" [ set density 32 ]
+  if resource_density =   "v-dense" [set density 100]
+  set num-patches-r       area-t * density
+  set resource-prob       num-patches-r / num-patches-t
+  set resource-prob-adj   resource-prob / patchiness 
+  set resource-prob-num   1 / resource-prob-adj
+
+  ;show resource-prob
+  ;show resource-prob-adj
+  show resource-prob-num
 end
 
 to error-check ;; error checks on user input
@@ -98,7 +104,7 @@ end
 to setup-food  ;; create food patches
   repeat patchiness
   [
-    if (distancexy 0 0) >= 1
+    if ((distancexy 0 0) >= 1) and (resource? = False or resource? = 0) ;0 for initial run through
     [
       set nest? False
       ifelse random resource-prob-num < 1 ;; TODO: Fix to be based on clustering parameter
@@ -409,7 +415,7 @@ patchiness
 patchiness
 1
 10
-1
+2
 1
 1
 NIL
