@@ -5,11 +5,12 @@ patches-own
 
 to setup
   clear-all
-  
   ask patches
-  [ setup-patches 
+  [ 
+    setup-patches 
     patch-test 
-    ]
+  ]
+  show count patches with [thing? = False]
   reset-ticks
 end
 
@@ -23,18 +24,29 @@ to patch-test
   [ 
     set pcolor brown
     set thing? False
-    let x pxcor
-    let y pycor
-    let c1-list ([x + 1 y] 
-          [x + 1 y + 1] 
-          [x y + 1] 
-          [x - 1 y + 1] 
-          [x - 1 y] 
-          [x - 1 y - 1]
-          [x y - 1]
-          [x + 1 y - 1]
-          )
-    show c1-list
+
+    let x0 pxcor
+    let y0 pycor
+    let x1 pxcor + 1
+    let y1 pycor + 1
+    let x2 pxcor - 1
+    let y2 pycor - 1
+    let list-1-1 (list x1 y0)
+    let list-1-2 (list x1 y1)
+    let list-1-3 (list x0 y1)
+    let list-1-4 (list x2 y1)
+    let list-1-5 (list x2 y0)
+    let list-1-6 (list x2 y2)
+    let list-1-7 (list x0 y2)
+    let list-1-8 (list x1 y2)
+    let list-all (list list-1-1 list-1-2 
+      list-1-3 list-1-4 list-1-5 
+      list-1-6 list-1-7 list-1-8)
+    show list-1-1
+    show list-1-2
+    show list-all
+    
+    ask patches at-points list-all [set thing? False]
   ]
 end
 
