@@ -1,7 +1,7 @@
-globals
-[
-  list-all
-]
+;globals
+;[
+;  list-all
+;]
 patches-own
 [
  thing? 
@@ -13,17 +13,12 @@ end
 
 to setup
   clear-all
-  random-seed 47822
-  set list-all []
-  ask patches
-  [ 
-    setup-patches 
-    if random 30 < 1
-    [patch-test]
+  ask patches [ setup-patches ]
+  ask patches 
+  [
+    if random 100 < 1 [ patch-test ]
   ]
-  ask patches at-points list-all [set pcolor red]
-  ;ask patch 0 0
-  ;[ patch-test ]
+  ; ask patches at-points list-all [set pcolor red]
   show count patches with [thing? = False]
   reset-ticks
 end
@@ -36,43 +31,45 @@ end
 to patch-test
   set pcolor brown
   set thing? False
+  ask neighbors [ if pcolor = green [set pcolor blue ] ]
+;  let list-all []
+;  
+;  let x0 pxcor
+;  let y0 pycor
+;  let x1 pxcor + 1
+;  let y1 pycor + 1
+;  let x2 pxcor - 1
+;  let y2 pycor - 1
+;  let list-1-1 (list x1 y0)
+;  set list-all lput list-1-1 list-all
+;  let list-1-2 (list x1 y1)
+;  set list-all lput list-1-2 list-all
+;  let list-1-3 (list x0 y1)
+;  set list-all lput list-1-3 list-all
+;  let list-1-4 (list x2 y1)
+;  set list-all lput list-1-4 list-all
+;  let list-1-5 (list x2 y0)
+;  set list-all lput list-1-5 list-all
+;  let list-1-6 (list x2 y2)
+;  set list-all lput list-1-6 list-all
+;  let list-1-7 (list x0 y2)
+;  set list-all lput list-1-7 list-all
+;  let list-1-8 (list x1 y2)
+;  set list-all lput list-1-8 list-all
   
-  let x0 pxcor
-  let y0 pycor
-  let x1 pxcor + 1
-  let y1 pycor + 1
-  let x2 pxcor - 1
-  let y2 pycor - 1
-  let list-1-1 (list x1 y0)
-  set list-all lput list-1-1 list-all
-  let list-1-2 (list x1 y1)
-  set list-all lput list-1-2 list-all
-  let list-1-3 (list x0 y1)
-  set list-all lput list-1-3 list-all
-  let list-1-4 (list x2 y1)
-  set list-all lput list-1-4 list-all
-  let list-1-5 (list x2 y0)
-  set list-all lput list-1-5 list-all
-  let list-1-6 (list x2 y2)
-  set list-all lput list-1-6 list-all
-  let list-1-7 (list x0 y2)
-  set list-all lput list-1-7 list-all
-  let list-1-8 (list x1 y2)
-  set list-all lput list-1-8 list-all
-  
-  show list-all
+;  show list-all
   
   
-  ;ask patches at-points list-all [set pcolor red]
+;  ask patches at-points list-all [set pcolor red]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-455
-261
-5
-5
+640
+461
+10
+10
 20.0
 1
 10
@@ -80,13 +77,13 @@ GRAPHICS-WINDOW
 1
 1
 0
+0
+0
 1
-1
-1
--5
-5
--5
-5
+-10
+10
+-10
+10
 0
 0
 1
@@ -100,23 +97,6 @@ BUTTON
 87
 NIL
 setup
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-82
-28
-145
-61
-NIL
-reset
 NIL
 1
 T
