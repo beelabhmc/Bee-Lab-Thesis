@@ -40,6 +40,7 @@ patches-own
 
 to setup
   clear-all
+  error-check
   set-default-shape turtles "bee"
   crt population
   [ 
@@ -49,7 +50,20 @@ to setup
   setup-turtles
   setup-patches
   show count patches with [resource?]
+  show count patches with [c1?]
+  show count patches with [pcolor = red]
+  show count patches with [c2?]
+  show count patches with [pcolor = blue]
   reset-ticks
+end
+
+to error-check ;; error checks on user input
+  if min_quality > max_quality
+  [ user-message "You min_q must be at most max_q"
+    stop ]
+  if (quantity_label? and quality_label?)
+  [ user-message "You cannot simultaneously turn on both remaining and quality labels"
+    stop ]
 end
 
 to setup-turtles
@@ -58,7 +72,8 @@ to setup-turtles
     set state "inactive"
     set next-state ""
     if bee_label? 
-    [ set label-color black
+    [ 
+      set label-color black
       set label state
     ]
   ]  
@@ -66,12 +81,8 @@ end
 
 to setup-patches
   resource-patch-calculations
-  ask patches
-  [ 
-    error-check
-    setup-nest
-    setup-food
-  ]
+  ask patches [ setup-basic ]
+  repeat patchiness [ ask patches [ setup-food ] ]
 end
 
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
@@ -90,56 +101,53 @@ to resource-patch-calculations ;; Calculations to determine probability each pat
   show resource-prob-num
 end
 
-to error-check ;; error checks on user input
-  if min_quality > max_quality
-  [ user-message "You min_q must be at most max_q"
-    stop ]
-  if (quantity_label? and quality_label?)
-  [ user-message "You cannot simultaneously turn on both remaining and quality labels"
-    stop ]
-end
-
-to setup-nest ;; create hive patches
-  if (distancexy 0 0) < 1
+to setup-basic ;; create hive patch and initialize all other patches
+  ifelse (distancexy 0 0) < 1
   [ 
     set pcolor brown
     set nest? True
     set resource? False
+    set c1? False
+    set c2? False
+  ]
+  [
+    set pcolor gray 
+    set nest? False
+    set resource? False
+    set c1? False
+    set c2? False
   ]
 end
 
 to setup-food  ;; create food patches
-  repeat patchiness
+  if (not nest? and not resource?)
   [
-    if ((distancexy 0 0) >= 1) and (resource? = 0 or not resource?) ;0 for initial run through
+    if (random resource-prob-num < 1) ;; IP: Fix to be based on clustering parameter
     [
-      set nest? False
-      ifelse random resource-prob-num < 1 ;; IP: Fix to be based on clustering parameter
+      set pcolor green
+      set resource? True
+      set c1? False
+      set c2? False
+      ask neighbors 
       [
-        set pcolor green
-        set resource? True
-        let q max_quality + 1 - min_quality
-        set quality random q + min_quality ;; TODO: Quality distribution
-        resource-labels
-        ; do checks for c1? and c2?
-        let c1-list [[pxcor + 1 pycor] 
-          [pxcor + 1 pycor + 1] 
-          [pxcor pycor + 1] 
-          [pxcor - 1 pycor + 1] 
-          [pxcor - 1 pycor] 
-          [pxcor - 1 pycor - 1]
-          [pxcor pycor - 1]
-          [pxcor + 1 pycor - 1]
-          ]
+        if (not nest? and not resource?)
+        [
+          set c1? True
+          set c2? False
+        ]
+        ask neighbors 
+        [
+          if (not nest? and not resource? and not c1?) 
+          [ set c2? True ]
+        ] 
       ]
-      [ 
-        set pcolor gray 
-        set resource? False
-      ]
+      
+      ; Resource quality and label
+      let q max_quality + 1 - min_quality
+      set quality random q + min_quality ;; TODO: Quality distribution
+      resource-labels
     ]
-    
-  ]
-     
+  ]     
 end
 
 to resource-labels
@@ -257,11 +265,11 @@ end
 GRAPHICS-WINDOW
 336
 10
-1053
-748
+952
+647
 50
 50
-7.0
+6.0
 1
 10
 1
@@ -420,7 +428,7 @@ SWITCH
 269
 ephemeral?
 ephemeral?
-1
+0
 1
 -1000
 
@@ -433,7 +441,7 @@ patchiness
 patchiness
 1
 10
-2
+3
 1
 1
 NIL
@@ -447,7 +455,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense" "v-dense"
-2
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
