@@ -28,6 +28,7 @@ patches-own
   food                 ;; amount of food per patch
   nest?                ;; true on nest patches
   resource?            ;; true on resource patches
+  resource-new?        ;; true on resource patches before setup-resource-surrounding
   quality              ;; quality of resource
   ephemeral            ;; value to determine if resource disappears
   food-wasted          ;; wasted food of ephemeral resource that disappears
@@ -44,6 +45,7 @@ patches-own
 to setup
   clear-all
   error-check
+  show "Start"
   set-default-shape turtles "bee"
   crt population
   [ 
@@ -52,6 +54,7 @@ to setup
   ]
   setup-turtles
   setup-patches
+  show "Resource patch nums"
   show num-patches-r
   show count patches with [resource?]
   ;show count patches with [c1?]
@@ -85,14 +88,14 @@ to setup-patches
   resource-patch-calculations
   ask patches [ setup-initial ]
   repeat patchiness 
-  [ 
-    ;show "patchiness"
-    ;show c0-num
-    ;show c1-num
-    ;show c2-num
-    
+  [     
     c1-c2-calculations
-    ask patches [ choose-resource ] 
+    ;show "------ c0 c1 c2"
+    ;show c0
+    ;show c1
+    ;show c2
+    ask patches with [not nest? and not resource?] [ setup-resource-choose ] 
+    ask patches with [resource-new?]               [ setup-resource-c1c2 ]
   ]
 end
 
@@ -117,6 +120,7 @@ to setup-initial ;; create hive patch and initialize all other patches
     set pcolor brown
     set nest? True
     set resource? False
+    set resource-new? False
     set c0? False
     set c1? False
     set c2? False
@@ -125,59 +129,11 @@ to setup-initial ;; create hive patch and initialize all other patches
     set pcolor gray ; environment
     set nest? False
     set resource? False
+    set resource-new? False
     set c0? True
     set c1? False
     set c2? False
   ]
-end
-
-to choose-resource
-  if (not nest? and not resource?)
-  [
-    if (c1-num != 0 and c1? and random c1-num < 1) [ setup-resource ]
-    if (c2-num != 0 and c2? and random c2-num < 1) [ setup-resource ]
-    if (c0? and random c0-num < 1) [ setup-resource ]
-  ]
-end
-
-to setup-resource  ;; create food patches and set appropriate patche variables
-  set pcolor green
-  set resource? True
-  set c1? False
-  set c2? False
-  ask neighbors 
-  [
-    if (not nest? and not resource?)
-    [
-      set pcolor red
-      set c1? True
-      set c2? False
-    ]
-    ask neighbors 
-    [
-      if (not nest? and not resource? and not c1?) 
-      [ 
-        set pcolor blue
-        set c2? True 
-      ]
-    ] 
-  ]
-  
-  ; Resource quality and label
-  let q max_quality + 1 - min_quality
-  set quality random q + min_quality ;; TODO: Quality distribution
-  resource-labels    
-end
-
-to resource-labels ;; Add labels to patches if necessary
-  if quality_label?
-     [ set food food + 1
-       set plabel quality 
-     ]
-     if quantity_label? 
-     [ set food random 5 + 1
-       set plabel food 
-     ]
 end
 
 to c1-c2-calculations
@@ -196,12 +152,66 @@ to c1-c2-calculations
   ifelse (c2-count = 0) [set c1-num 0] [set c1-num 1 / c1]
   ifelse (c2-count = 0) [set c2-num 0] [set c2-num 1 / c2]
   
-  show c0
-  show c1
-  show c2
-  show "-----"
-  show resource-prob-adj
+  ;show c0
+  ;show c1
+  ;show c2
+  ;show "-----"
+  ;show resource-prob-adj
 end
+
+to setup-resource-choose  ;; assign new food patches. surrounding patch variables assigned in setup-resource-c1c2
+  if ((c1-num != 0 and c1? and random c1-num < 1) or
+     (c2-num != 0 and c2? and random c2-num < 1) or
+     (c0? and random c0-num < 1)) 
+  [ 
+    set pcolor green
+    set resource-new? True
+    set c0? False
+    set c1? False
+    set c2? False
+    
+    ; Resource quality and label
+    let q max_quality + 1 - min_quality
+    set quality random q + min_quality ;; TODO: Quality distribution
+    resource-labels  
+  ]
+end
+
+to setup-resource-c1c2  ;; set appropriate patch variables for patches around new resource
+  set resource-new? False
+  set resource? True
+  ask neighbors 
+  [
+    if (not nest? and not resource? and not resource-new?)
+    [
+      set pcolor red
+      set c0? False
+      set c1? True
+      set c2? False
+    ]
+    ask neighbors 
+    [
+      if (not nest? and not resource? and not resource-new? and not c1?) 
+      [ 
+        set pcolor blue
+        set c0? False
+        set c2? True 
+      ]
+    ] 
+  ]
+end
+
+to resource-labels ;; Add labels to patches if necessary
+  if quality_label?
+     [ set food food + 1
+       set plabel quality 
+     ]
+     if quantity_label? 
+     [ set food random 5 + 1
+       set plabel food 
+     ]
+end
+
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;;; Go procedures ;;;
@@ -381,10 +391,10 @@ NIL
 HORIZONTAL
 
 PLOT
-16
-402
-259
-681
+994
+10
+1237
+289
 Food remaing and collected
 time
 food
@@ -482,8 +492,8 @@ SLIDER
 patchiness
 patchiness
 1
+20
 10
-2
 1
 1
 NIL
@@ -507,9 +517,9 @@ SLIDER
 c1_mult
 c1_mult
 1
-10
-2
-0.5
+1001
+221
+20
 1
 NIL
 HORIZONTAL
@@ -522,45 +532,12 @@ SLIDER
 c2_mult
 c2_mult
 1
-10
-1.5
-0.5
+1001
+181
+20
 1
 NIL
 HORIZONTAL
-
-MONITOR
-82
-749
-278
-794
-NIL
-c0 + c1 + c2
-17
-1
-11
-
-MONITOR
-83
-819
-282
-864
-NIL
-resource-prob-adj
-17
-1
-11
-
-MONITOR
-84
-881
-189
-926
-NIL
-resource-prob
-17
-1
-11
 
 @#$#@#$#@
 ## WHAT IS IT?
