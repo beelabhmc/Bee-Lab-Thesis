@@ -5,12 +5,14 @@ globals
   density              ;; number of patches per square kilometer. sparse = 1, dense = 32, v-dense = 100
   num-patches-r        ;; number of desired resource patches on the map
   resource-prob        ;; 
-  resource-prob-num    ;; 1 / (Probability of a resource at each patch). 1 in resource-prob-num chances each patch is a resource
   resource-prob-adj    ;; resource-prob-num adjusted for patchiness. Total probability for each square for each patchiness iteration
   
-  c   ;; probability of resource with no resource within 2 spaces
-  c1  ;; probability of resource with at least one resource one patch away
-  c2  ;; probability of resource with at least one resource two patches away
+  c0       ;; probability of resource with no resource within 2 spaces
+  c1       ;; probability of resource with at least one resource one patch away
+  c2       ;; probability of resource with at least one resource two patches away
+  c0-num   ;; 1 / (c0). 1 in resource-prob-num chances c0 patch is a resource
+  c1-num   ;; 1 / (c1). 1 in resource-prob-num chances c1 patch is a resource
+  c2-num   ;; 1 / (c2). 1 in resource-prob-num chances c2 patch is a resource
 ]
 turtles-own 
 [
@@ -30,8 +32,9 @@ patches-own
   ephemeral            ;; value to determine if resource disappears
   food-wasted          ;; wasted food of ephemeral resource that disappears
   
-  c1?  ;; at least one resource one patch away?
-  c2?  ;; !c1 and at least one resource two patches away?
+  c0?  ;; no resources within 2 patches
+  c1?  ;; at least one resource one patch away
+  c2?  ;; not c1 and at least one resource two patches away
 ]
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -49,11 +52,10 @@ to setup
   ]
   setup-turtles
   setup-patches
+  show num-patches-r
   show count patches with [resource?]
-  show count patches with [c1?]
-  show count patches with [pcolor = red]
-  show count patches with [c2?]
-  show count patches with [pcolor = blue]
+  ;show count patches with [c1?]
+  ;show count patches with [c2?]
   reset-ticks
 end
 
@@ -81,12 +83,21 @@ end
 
 to setup-patches
   resource-patch-calculations
-  ask patches [ setup-basic ]
-  repeat patchiness [ ask patches [ setup-food ] ]
+  ask patches [ setup-initial ]
+  repeat patchiness 
+  [ 
+    ;show "patchiness"
+    ;show c0-num
+    ;show c1-num
+    ;show c2-num
+    
+    c1-c2-calculations
+    ask patches [ choose-resource ] 
+  ]
 end
 
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
-  set num-patches-t       world-width * world-height
+  set num-patches-t       world-width * world-height - 1 ;for nest patch
   set area-t              num-patches-t * .000044444
   if resource_density =   "sparse" [ set density 1 ] 
   if resource_density =   "dense" [ set density 32 ]
@@ -94,63 +105,71 @@ to resource-patch-calculations ;; Calculations to determine probability each pat
   set num-patches-r       area-t * density
   set resource-prob       num-patches-r / num-patches-t
   set resource-prob-adj   resource-prob / patchiness 
-  set resource-prob-num   1 / resource-prob-adj
 
   ;show resource-prob
-  ;show resource-prob-adj
-  show resource-prob-num
+  show resource-prob-adj
+  ;show c0-num
 end
 
-to setup-basic ;; create hive patch and initialize all other patches
-  ifelse (distancexy 0 0) < 1
+to setup-initial ;; create hive patch and initialize all other patches
+  ifelse (distancexy 0 0) < 1 ; hive
   [ 
     set pcolor brown
     set nest? True
     set resource? False
+    set c0? False
     set c1? False
     set c2? False
   ]
   [
-    set pcolor gray 
+    set pcolor gray ; environment
     set nest? False
     set resource? False
+    set c0? True
     set c1? False
     set c2? False
   ]
 end
 
-to setup-food  ;; create food patches
+to choose-resource
   if (not nest? and not resource?)
   [
-    if (random resource-prob-num < 1) ;; IP: Fix to be based on clustering parameter
-    [
-      set pcolor green
-      set resource? True
-      set c1? False
-      set c2? False
-      ask neighbors 
-      [
-        if (not nest? and not resource?)
-        [
-          set c1? True
-          set c2? False
-        ]
-        ask neighbors 
-        [
-          if (not nest? and not resource? and not c1?) 
-          [ set c2? True ]
-        ] 
-      ]
-      
-      ; Resource quality and label
-      let q max_quality + 1 - min_quality
-      set quality random q + min_quality ;; TODO: Quality distribution
-      resource-labels
-    ]
-  ]     
+    if (c1-num != 0 and c1? and random c1-num < 1) [ setup-resource ]
+    if (c2-num != 0 and c2? and random c2-num < 1) [ setup-resource ]
+    if (c0? and random c0-num < 1) [ setup-resource ]
+  ]
 end
 
-to resource-labels
+to setup-resource  ;; create food patches and set appropriate patche variables
+  set pcolor green
+  set resource? True
+  set c1? False
+  set c2? False
+  ask neighbors 
+  [
+    if (not nest? and not resource?)
+    [
+      set pcolor red
+      set c1? True
+      set c2? False
+    ]
+    ask neighbors 
+    [
+      if (not nest? and not resource? and not c1?) 
+      [ 
+        set pcolor blue
+        set c2? True 
+      ]
+    ] 
+  ]
+  
+  ; Resource quality and label
+  let q max_quality + 1 - min_quality
+  set quality random q + min_quality ;; TODO: Quality distribution
+  resource-labels    
+end
+
+to resource-labels ;; Add labels to patches if necessary
   if quality_label?
      [ set food food + 1
        set plabel quality 
@@ -159,6 +178,27 @@ to resource-labels
      [ set food random 5 + 1
        set plabel food 
      ]
+end
+
+to c1-c2-calculations
+  let c0-count count patches with [c0?] 
+  let c1-count count patches with [c1?]
+  let c2-count count patches with [c2?]
+  let p0 (c0-count) / num-patches-t
+  let p1 (c1-count) / num-patches-t
+  let p2 (c2-count) / num-patches-t
+  
+  set c0 resource-prob-adj / (p0 + c1_mult * p1 + c2_mult * p2)
+  ifelse (c1-count = 0) [set c1 0] [set c1 c1_mult * c0]
+  ifelse (c2-count = 0) [set c2 0] [set c2 c2_mult * c0]
+  
+  set c0-num 1 / c0
+  ifelse (c2-count = 0) [set c1-num 0] [set c1-num 1 / c1]
+  ifelse (c2-count = 0) [set c2-num 0] [set c2-num 1 / c2]
+  
+  show c0
+  show c1
+  show c2
 end
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -339,10 +379,10 @@ NIL
 HORIZONTAL
 
 PLOT
-4
-363
-247
-642
+16
+402
+259
+681
 Food remaing and collected
 time
 food
@@ -441,7 +481,7 @@ patchiness
 patchiness
 1
 10
-3
+1
 1
 1
 NIL
@@ -456,6 +496,69 @@ resource_density
 resource_density
 "sparse" "dense" "v-dense"
 1
+
+SLIDER
+32
+318
+159
+351
+c1_mult
+c1_mult
+1
+10
+2
+0.5
+1
+NIL
+HORIZONTAL
+
+SLIDER
+167
+318
+294
+351
+c2_mult
+c2_mult
+1
+10
+1.5
+0.5
+1
+NIL
+HORIZONTAL
+
+MONITOR
+82
+749
+278
+794
+NIL
+c0 + c1 + c2
+17
+1
+11
+
+MONITOR
+83
+819
+282
+864
+NIL
+resource-prob-adj
+17
+1
+11
+
+MONITOR
+84
+881
+189
+926
+NIL
+resource-prob
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
