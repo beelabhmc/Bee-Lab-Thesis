@@ -199,6 +199,8 @@ to c1-c2-calculations
   show c0
   show c1
   show c2
+  show "-----"
+  show resource-prob-adj
 end
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -481,7 +483,7 @@ patchiness
 patchiness
 1
 10
-1
+2
 1
 1
 NIL
