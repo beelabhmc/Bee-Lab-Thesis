@@ -1,0 +1,13 @@
+"BehaviorSpace results (NetLogo 5.2.0)"
+"Bees.nlogo"
+"setup-time"
+"02/10/2016 11:49:33:547 -0800"
+"min-pxcor","max-pxcor","min-pycor","max-pycor"
+"-500","500","-500","500"
+"[run number]","1","2","3","4"
+"patchiness","1","1","2","2"
+"calc_R","true","false","true","false"
+"[steps]","1","1","1","1"
+
+"[initial & final values]","timer","timer","timer","timer"
+,"57.867","3.543","59.405","4.534"
