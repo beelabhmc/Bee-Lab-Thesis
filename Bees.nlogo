@@ -48,6 +48,7 @@ patches-own
 
 to setup
   clear-all
+  reset-timer
   error-check
   show "Start"
   set-default-shape turtles "bee"
@@ -60,6 +61,7 @@ to setup
   setup-patches
   
   reset-ticks
+  show timer
 end
 
 to error-check ;; error checks on user input
@@ -104,7 +106,9 @@ to setup-patches
   ;show count patches with [c1?]
   ;show count patches with [c2?]
   
+  show "calculating R"
   if calc_R [ R-calc ]
+  show "done calculating R"
 end
 
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
@@ -340,11 +344,11 @@ end
 GRAPHICS-WINDOW
 336
 10
-952
-647
-50
-50
-6.0
+3347
+3042
+1500
+1500
+1.0
 1
 10
 1
@@ -354,10 +358,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--50
-50
--50
-50
+-1500
+1500
+-1500
+1500
 1
 1
 1
@@ -414,10 +418,10 @@ NIL
 HORIZONTAL
 
 PLOT
-994
-10
-1237
-289
+31
+365
+274
+644
 Food remaing and collected
 time
 food
@@ -985,6 +989,24 @@ reset-timer</setup>
       <value value="1001"/>
       <value value="2001"/>
       <value value="3001"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="setup-time" repetitions="1" runMetricsEveryStep="true">
+    <setup>set-patch-size 1
+resize-world -1500 1500 -1500 1500
+reset-timer
+setup</setup>
+    <go>go</go>
+    <timeLimit steps="1"/>
+    <exitCondition>ticks = 1</exitCondition>
+    <metric>timer</metric>
+    <enumeratedValueSet variable="patchiness">
+      <value value="1"/>
+      <value value="2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="calc_R">
+      <value value="true"/>
+      <value value="false"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
