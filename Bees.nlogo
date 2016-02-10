@@ -14,6 +14,8 @@ globals
   c1-num   ;; 1 / (c1). 1 in resource-prob-num chances c1 patch is a resource
   c2-num   ;; 1 / (c2). 1 in resource-prob-num chances c2 patch is a resource
   
+  Ra
+  Re
   R
 ]
 turtles-own 
@@ -102,7 +104,7 @@ to setup-patches
   ;show count patches with [c1?]
   ;show count patches with [c2?]
   
-  R-calc
+  if calc_R [ R-calc ]
 end
 
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
@@ -219,11 +221,18 @@ to resource-labels ;; Add labels to patches if necessary
 end
 
 to R-calc ;; Calculate R spatial value
-  set list-all []
-  ask patches 
+  let list-dist []
+  ask patches with [resource?]
   [
+    let dist distance min-one-of other patches with [resource?] [distance myself]
+    set dist dist * .0066667
+    set list-dist lput dist list-dist
     
   ]
+  ;show sort list-dist
+  set Ra mean list-dist
+  set Re 1 / (2 * sqrt density)
+  set R Ra / Re
 end
 
 
@@ -507,7 +516,7 @@ patchiness
 patchiness
 1
 20
-10
+1
 1
 1
 NIL
@@ -554,15 +563,26 @@ NIL
 HORIZONTAL
 
 MONITOR
-34
-388
-91
-433
+215
+145
+283
+190
 NIL
 R
-17
+5
 1
 11
+
+SWITCH
+215
+108
+318
+141
+calc_R
+calc_R
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
