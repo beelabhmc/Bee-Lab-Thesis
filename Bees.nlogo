@@ -13,6 +13,8 @@ globals
   c0-num   ;; 1 / (c0). 1 in resource-prob-num chances c0 patch is a resource
   c1-num   ;; 1 / (c1). 1 in resource-prob-num chances c1 patch is a resource
   c2-num   ;; 1 / (c2). 1 in resource-prob-num chances c2 patch is a resource
+  
+  R
 ]
 turtles-own 
 [
@@ -54,11 +56,7 @@ to setup
   ]
   setup-turtles
   setup-patches
-  show "Resource patch nums"
-  show num-patches-r
-  show count patches with [resource?]
-  ;show count patches with [c1?]
-  ;show count patches with [c2?]
+  
   reset-ticks
 end
 
@@ -86,7 +84,7 @@ end
 
 to setup-patches
   resource-patch-calculations
-  ask patches [ setup-initial ]
+  ask patches [ setup-patch-initial ]
   repeat patchiness 
   [     
     c1-c2-calculations
@@ -97,6 +95,14 @@ to setup-patches
     ask patches with [not nest? and not resource?] [ setup-resource-choose ] 
     ask patches with [resource-new?]               [ setup-resource-c1c2 ]
   ]
+  
+  show "Resource patch nums"
+  show num-patches-r
+  show count patches with [resource?]
+  ;show count patches with [c1?]
+  ;show count patches with [c2?]
+  
+  R-calc
 end
 
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
@@ -114,7 +120,7 @@ to resource-patch-calculations ;; Calculations to determine probability each pat
   ;show c0-num
 end
 
-to setup-initial ;; create hive patch and initialize all other patches
+to setup-patch-initial ;; create hive patch and initialize all other patches
   ifelse (distancexy 0 0) < 1 ; hive
   [ 
     set pcolor brown
@@ -210,6 +216,14 @@ to resource-labels ;; Add labels to patches if necessary
      [ set food random 5 + 1
        set plabel food 
      ]
+end
+
+to R-calc ;; Calculate R spatial value
+  set list-all []
+  ask patches 
+  [
+    
+  ]
 end
 
 
@@ -538,6 +552,17 @@ c2_mult
 1
 NIL
 HORIZONTAL
+
+MONITOR
+34
+388
+91
+433
+NIL
+R
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
