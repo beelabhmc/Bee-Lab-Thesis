@@ -4,30 +4,30 @@ globals
   area-t               ;; total area in kilometers of the map. One patch is 6.67m by 6.67m
   density              ;; number of patches per square kilometer. sparse = 1, dense = 32, v-dense = 100
   num-patches-r        ;; number of desired resource patches on the map
-  resource-prob        ;; 
+  resource-prob        ;;
   resource-prob-adj    ;; resource-prob-num adjusted for patchiness. Total probability for each square for each patchiness iteration
-  
+
   c0       ;; probability of resource with no resource within 2 spaces
   c1       ;; probability of resource with at least one resource one patch away
   c2       ;; probability of resource with at least one resource two patches away
   c0-num   ;; 1 / (c0). 1 in resource-prob-num chances c0 patch is a resource
   c1-num   ;; 1 / (c1). 1 in resource-prob-num chances c1 patch is a resource
   c2-num   ;; 1 / (c2). 1 in resource-prob-num chances c2 patch is a resource
-  
+
   Ra
   Re
   R
 ]
-turtles-own 
+turtles-own
 [
   collected            ;; amount of food collected by each bee
   energy               ;; bee energy level
   state                ;; state bee is in
   next-state           ;; State to transition to at the end of the time step.
-                       ;; states: inactive = Inactive, toResource = Direct to Resource, randSearch = Random Search, 
+                       ;; states: inactive = Inactive, toResource = Direct to Resource, randSearch = Random Search,
                        ;;         forage = Forage at Resource, return = Return to Hive, dance = Dancing
 ]
-patches-own 
+patches-own
 [
   food                 ;; amount of food per patch
   nest?                ;; true on nest patches
@@ -36,7 +36,7 @@ patches-own
   quality              ;; quality of resource
   ephemeral            ;; value to determine if resource disappears
   food-wasted          ;; wasted food of ephemeral resource that disappears
-  
+
   c0?  ;; no resources within 2 patches
   c1?  ;; at least one resource one patch away
   c2?  ;; not c1 and at least one resource two patches away
@@ -53,13 +53,13 @@ to setup
   show "Start"
   set-default-shape turtles "bee"
   crt population
-  [ 
+  [
     set size 2
-    set color yellow  
+    set color yellow
   ]
   setup-turtles
   setup-patches
-  
+
   reset-ticks
   show timer
 end
@@ -78,34 +78,34 @@ to setup-turtles
   [
     set state "inactive"
     set next-state ""
-    if bee_label? 
-    [ 
+    if bee_label?
+    [
       set label-color black
       set label state
     ]
-  ]  
+  ]
 end
 
 to setup-patches
   resource-patch-calculations
   ask patches [ setup-patch-initial ]
-  repeat patchiness 
-  [     
+  repeat patchiness
+  [
     c1-c2-calculations
     ;show "------ c0 c1 c2"
     ;show c0
     ;show c1
     ;show c2
-    ask patches with [not nest? and not resource?] [ setup-resource-choose ] 
+    ask patches with [not nest? and not resource?] [ setup-resource-choose ]
     ask patches with [resource-new?]               [ setup-resource-c1c2 ]
   ]
-  
+
   show "Resource patch nums"
   show num-patches-r
   show count patches with [resource?]
   ;show count patches with [c1?]
   ;show count patches with [c2?]
-  
+
   show "calculating R"
   if calc_R [ R-calc ]
   show "done calculating R"
@@ -114,12 +114,12 @@ end
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
   set num-patches-t       world-width * world-height - 1 ;for nest patch
   set area-t              num-patches-t * .000044444
-  if resource_density =   "sparse" [ set density 1 ] 
+  if resource_density =   "sparse" [ set density 1 ]
   if resource_density =   "dense" [ set density 32 ]
   if resource_density =   "v-dense" [set density 100]
   set num-patches-r       area-t * density
   set resource-prob       num-patches-r / num-patches-t
-  set resource-prob-adj   resource-prob / patchiness 
+  set resource-prob-adj   resource-prob / patchiness
 
   ;show resource-prob
   show resource-prob-adj
@@ -128,7 +128,7 @@ end
 
 to setup-patch-initial ;; create hive patch and initialize all other patches
   ifelse (distancexy 0 0) < 1 ; hive
-  [ 
+  [
     set pcolor brown
     set nest? True
     set resource? False
@@ -149,21 +149,21 @@ to setup-patch-initial ;; create hive patch and initialize all other patches
 end
 
 to c1-c2-calculations
-  let c0-count count patches with [c0?] 
+  let c0-count count patches with [c0?]
   let c1-count count patches with [c1?]
   let c2-count count patches with [c2?]
   let p0 (c0-count) / num-patches-t
   let p1 (c1-count) / num-patches-t
   let p2 (c2-count) / num-patches-t
-  
+
   set c0 resource-prob-adj / (p0 + c1_mult * p1 + c2_mult * p2)
   ifelse (c1-count = 0) [set c1 0] [set c1 c1_mult * c0]
   ifelse (c2-count = 0) [set c2 0] [set c2 c2_mult * c0]
-  
+
   set c0-num 1 / c0
   ifelse (c2-count = 0) [set c1-num 0] [set c1-num 1 / c1]
   ifelse (c2-count = 0) [set c2-num 0] [set c2-num 1 / c2]
-  
+
   ;show c0
   ;show c1
   ;show c2
@@ -174,25 +174,25 @@ end
 to setup-resource-choose  ;; assign new food patches. surrounding patch variables assigned in setup-resource-c1c2
   if ((c1-num != 0 and c1? and random c1-num < 1) or
      (c2-num != 0 and c2? and random c2-num < 1) or
-     (c0? and random c0-num < 1)) 
-  [ 
+     (c0? and random c0-num < 1))
+  [
     set pcolor green
     set resource-new? True
     set c0? False
     set c1? False
     set c2? False
-    
+
     ; Resource quality and label
     let q max_quality + 1 - min_quality
     set quality random q + min_quality ;; TODO: Quality distribution
-    resource-labels  
+    resource-labels
   ]
 end
 
 to setup-resource-c1c2  ;; set appropriate patch variables for patches around new resource
   set resource-new? False
   set resource? True
-  ask neighbors 
+  ask neighbors
   [
     if (not nest? and not resource? and not resource-new?)
     [
@@ -201,26 +201,26 @@ to setup-resource-c1c2  ;; set appropriate patch variables for patches around ne
       set c1? True
       set c2? False
     ]
-    ask neighbors 
+    ask neighbors
     [
-      if (not nest? and not resource? and not resource-new? and not c1?) 
-      [ 
+      if (not nest? and not resource? and not resource-new? and not c1?)
+      [
         set pcolor blue
         set c0? False
-        set c2? True 
+        set c2? True
       ]
-    ] 
+    ]
   ]
 end
 
 to resource-labels ;; Add labels to patches if necessary
   if quality_label?
      [ set food food + 1
-       set plabel quality 
+       set plabel quality
      ]
-     if quantity_label? 
+     if quantity_label?
      [ set food random 5 + 1
-       set plabel food 
+       set plabel food
      ]
 end
 
@@ -231,7 +231,7 @@ to R-calc ;; Calculate R spatial value
     let dist distance min-one-of other patches with [resource?] [distance myself]
     set dist dist * .0066667
     set list-dist lput dist list-dist
-    
+
   ]
   ;show sort list-dist
   set Ra mean list-dist
@@ -260,7 +260,7 @@ to go  ;; forever button
     [ return-to-hive ]
     if state = "dance"
     [  ]
-    
+
     ; Update states
     transition
   ]
@@ -277,7 +277,7 @@ end
 
 to transition
   if next-state != ""
-  [ set state next-state 
+  [ set state next-state
     set next-state "" ]
 end
 
@@ -309,7 +309,7 @@ to forage-nectar ;; TODO: Foraging time?
   set color red
   set collected collected + quality
   set next-state "return"
-  
+
   ;; Update patch
   set food food - 1
   if quantity_label?
@@ -330,7 +330,7 @@ to return-to-hive
 end
 
 to dance
-  
+
 end
 
 to remove-patch
@@ -534,7 +534,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense" "v-dense"
-1
+2
 
 SLIDER
 32
@@ -545,7 +545,7 @@ c1_mult
 c1_mult
 1
 1001
-221
+1
 20
 1
 NIL
@@ -560,7 +560,7 @@ c2_mult
 c2_mult
 1
 1001
-181
+1
 20
 1
 NIL
@@ -962,7 +962,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.2.0
+NetLogo 5.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -1007,6 +1007,26 @@ setup</setup>
     <enumeratedValueSet variable="calc_R">
       <value value="true"/>
       <value value="false"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="R testing" repetitions="1" runMetricsEveryStep="false">
+    <setup>set-patch-size 1
+resize-world -500 500 -500 500
+reset-timer
+setup</setup>
+    <go>go</go>
+    <exitCondition>ticks = 1</exitCondition>
+    <metric>R</metric>
+    <metric>timer</metric>
+    <steppedValueSet variable="c1_mult" first="1" step="40" last="201"/>
+    <steppedValueSet variable="c2_mult" first="1" step="40" last="201"/>
+    <steppedValueSet variable="patchiness" first="1" step="4" last="21"/>
+    <enumeratedValueSet variable="resource_density">
+      <value value="&quot;sparse&quot;"/>
+      <value value="&quot;dense&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="calc_R">
+      <value value="true"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
