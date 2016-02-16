@@ -99,8 +99,8 @@ SLIDER
 meanvalue
 meanvalue
 0
-12
-1
+30
+25
 .5
 1
 NIL
@@ -207,7 +207,7 @@ NIL
 10.0
 true
 false
-"set-plot-x-range 0 20\nset-plot-y-range 0 10\nset-histogram-num-bars 11" ""
+"set-plot-x-range 0 50\nset-plot-y-range 0 10\nset-histogram-num-bars 15" ""
 PENS
 "default" 1.0 1 -16777216 true "" "if ticks > 0 [histogram poisson]"
 
@@ -551,7 +551,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.3
+NetLogo 5.2.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
