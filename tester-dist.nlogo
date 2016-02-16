@@ -1,23 +1,43 @@
+globals
+[
+  alpha
+  lambda
+  uniform
+  exponential
+  gamma
+  normal
+  poisson
+]
 
 to setup
-  clear-all
-  ;random-seed 47822
-
+  ca
   reset-ticks
+  set uniform []
+  set exponential []
+  set gamma []
+  set normal []
+  set poisson []
+  set alpha meanvalue * meanvalue / (stdev * stdev)
+  set lambda  1 / ((stdev * stdev) / meanvalue)
 end
 
 to go
-
+  set uniform lput (random-float 2) uniform
+  set exponential lput (random-exponential meanvalue) exponential
+  set gamma lput (random-gamma alpha lambda) gamma
+  set normal lput (random-normal meanvalue stdev) normal
+  set poisson lput (random-poisson meanvalue) poisson
+  tick
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+144
 10
-455
-261
-5
-5
-20.0
+389
+206
+1
+1
+55.0
 1
 10
 1
@@ -27,10 +47,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--5
-5
--5
-5
+-1
+1
+-1
+1
 0
 0
 1
@@ -38,10 +58,10 @@ ticks
 30.0
 
 BUTTON
-25
-29
-91
-62
+2
+10
+69
+43
 NIL
 setup
 NIL
@@ -55,10 +75,10 @@ NIL
 1
 
 BUTTON
-106
-29
-169
-62
+74
+10
+137
+43
 NIL
 go
 T
@@ -71,23 +91,136 @@ NIL
 NIL
 1
 
+SLIDER
+0
+45
+159
+78
+meanvalue
+meanvalue
+0
+12
+1
+.5
+1
+NIL
+HORIZONTAL
+
 PLOT
-56
-234
-256
-384
-plot 1
+284
+405
+563
+592
+Uniform
 NIL
 NIL
 0.0
-10.0
+2.0
 0.0
 10.0
 true
 false
-"" ""
+"set-plot-x-range 0 2\nset-plot-y-range 0 10\nset-histogram-num-bars 101" ""
 PENS
-"default" 1.0 0 -16777216 true "" "plot count turtles"
+"default" 1.0 1 -16777216 true "" "if ticks > 0 [histogram uniform]"
+
+SLIDER
+-2
+81
+160
+114
+stdev
+stdev
+0
+1
+0.1
+0.01
+1
+NIL
+HORIZONTAL
+
+PLOT
+4
+204
+254
+392
+Normal
+NIL
+NIL
+0.0
+2.0
+0.0
+10.0
+true
+false
+"set-plot-x-range 0 2\nset-plot-y-range 0 10\nset-histogram-num-bars 101" ""
+PENS
+"default" 1.0 1 -16777216 true "" "if ticks > 0 [histogram normal]"
+
+PLOT
+257
+205
+512
+392
+Exponential
+NIL
+NIL
+0.0
+4.0
+0.0
+10.0
+true
+false
+"set-plot-x-range 0 4\nset-plot-y-range 0 10\nset-histogram-num-bars 101" ""
+PENS
+"default" 1.0 1 -16777216 true "" "if ticks > 0 [histogram exponential]"
+
+PLOT
+518
+204
+794
+388
+gamma
+NIL
+NIL
+0.0
+2.0
+0.0
+10.0
+true
+false
+"set-plot-x-range 0 2\nset-plot-y-range 0 10\nset-histogram-num-bars 101" ""
+PENS
+"default" 1.0 1 -16777216 true "" "if ticks > 0 [histogram gamma]"
+
+PLOT
+2
+405
+269
+590
+Poisson
+NIL
+NIL
+0.0
+2.0
+0.0
+10.0
+true
+false
+"set-plot-x-range 0 20\nset-plot-y-range 0 10\nset-histogram-num-bars 11" ""
+PENS
+"default" 1.0 1 -16777216 true "" "if ticks > 0 [histogram poisson]"
+
+MONITOR
+40
+138
+97
+183
+NIL
+ticks
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -320,19 +453,12 @@ Polygon -7500403 true true 135 90 120 45 150 15 180 45 165 90
 
 sheep
 false
-15
-Circle -1 true true 203 65 88
-Circle -1 true true 70 65 162
-Circle -1 true true 150 105 120
-Polygon -7500403 true false 218 120 240 165 255 165 278 120
-Circle -7500403 true false 214 72 67
-Rectangle -1 true true 164 223 179 298
-Polygon -1 true true 45 285 30 285 30 240 15 195 45 210
-Circle -1 true true 3 83 150
-Rectangle -1 true true 65 221 80 296
-Polygon -1 true true 195 285 210 285 210 240 240 210 195 210
-Polygon -7500403 true false 276 85 285 105 302 99 294 83
-Polygon -7500403 true false 219 85 210 105 193 99 201 83
+0
+Rectangle -7500403 true true 151 225 180 285
+Rectangle -7500403 true true 47 225 75 285
+Rectangle -7500403 true true 15 75 210 225
+Circle -7500403 true true 135 75 150
+Circle -16777216 true false 165 76 116
 
 square
 false
@@ -418,13 +544,6 @@ Line -7500403 true 40 84 269 221
 Line -7500403 true 40 216 269 79
 Line -7500403 true 84 40 221 269
 
-wolf
-false
-0
-Polygon -16777216 true false 253 133 245 131 245 133
-Polygon -7500403 true true 2 194 13 197 30 191 38 193 38 205 20 226 20 257 27 265 38 266 40 260 31 253 31 230 60 206 68 198 75 209 66 228 65 243 82 261 84 268 100 267 103 261 77 239 79 231 100 207 98 196 119 201 143 202 160 195 166 210 172 213 173 238 167 251 160 248 154 265 169 264 178 247 186 240 198 260 200 271 217 271 219 262 207 258 195 230 192 198 210 184 227 164 242 144 259 145 284 151 277 141 293 140 299 134 297 127 273 119 270 105
-Polygon -7500403 true true -1 195 14 180 36 166 40 153 53 140 82 131 134 133 159 126 188 115 227 108 236 102 238 98 268 86 269 92 281 87 269 103 269 113
-
 x
 false
 0
@@ -436,6 +555,24 @@ NetLogo 5.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="experiment" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="10000"/>
+    <metric>mean poisson</metric>
+    <metric>mean uniform</metric>
+    <metric>mean normal</metric>
+    <metric>mean exponential</metric>
+    <metric>mean gamma</metric>
+    <enumeratedValueSet variable="stdev">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="meanvalue">
+      <value value="1"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
