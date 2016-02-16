@@ -29,10 +29,10 @@ turtles-own
 ]
 patches-own
 [
-  food                 ;; amount of food per patch
   nest?                ;; true on nest patches
   resource?            ;; true on resource patches
   resource-new?        ;; true on resource patches before setup-resource-surrounding
+  quantity             ;; amount of food per patch
   quality              ;; quality of resource
   ephemeral            ;; value to determine if resource disappears
   food-wasted          ;; wasted food of ephemeral resource that disappears
@@ -65,9 +65,9 @@ to setup
 end
 
 to error-check ;; error checks on user input
-  if min_quality > max_quality
-  [ user-message "You min_q must be at most max_q"
-    stop ]
+;  if min_quality > max_quality
+;  [ user-message "You min_q must be at most max_q"
+;    stop ]
   if (quantity_label? and quality_label?)
   [ user-message "You cannot simultaneously turn on both remaining and quality labels"
     stop ]
@@ -171,7 +171,7 @@ to c1-c2-calculations
   ;show resource-prob-adj
 end
 
-to setup-resource-choose  ;; assign new food patches. surrounding patch variables assigned in setup-resource-c1c2
+to setup-resource-choose  ;; assign new food patches, including quantity and quality.
   if ((c1-num != 0 and c1? and random c1-num < 1) or
      (c2-num != 0 and c2? and random c2-num < 1) or
      (c0? and random c0-num < 1))
@@ -182,10 +182,18 @@ to setup-resource-choose  ;; assign new food patches. surrounding patch variable
     set c1? False
     set c2? False
 
-    ; Resource quality and label
-    let q max_quality + 1 - min_quality
-    set quality random q + min_quality ;; TODO: Quality distribution
-    resource-labels
+    ; Resource quality
+    ifelse quality_distrib
+    [ set quality random-poisson quality_mean ]
+    [ set quality quality_mean ]
+    ; resource quantity
+    ifelse quantity_distrib
+    [ set quantity random-normal quantity_mean quantity_stdev ]
+    [ set quantity quantity_mean ]
+
+    ; Resource labels, if necessary
+    if quality_label? [ set plabel quality ]
+    if quantity_label? [ set plabel quantity ]
   ]
 end
 
@@ -211,17 +219,6 @@ to setup-resource-c1c2  ;; set appropriate patch variables for patches around ne
       ]
     ]
   ]
-end
-
-to resource-labels ;; Add labels to patches if necessary
-  if quality_label?
-     [ set food food + 1
-       set plabel quality
-     ]
-     if quantity_label?
-     [ set food random 5 + 1
-       set plabel food
-     ]
 end
 
 to R-calc ;; Calculate R spatial value
@@ -292,7 +289,7 @@ to inactive
 end
 
 to random-search
-  ifelse food > 0 ;; TODO: Correct range at which bee can detect food
+  ifelse quantity > 0 ;; TODO: Correct range at which bee can detect food
   [ set next-state "forage"
     stop ]
   [ wiggle
@@ -311,10 +308,10 @@ to forage-nectar ;; TODO: Foraging time?
   set next-state "return"
 
   ;; Update patch
-  set food food - 1
+  set quantity quantity - 1
   if quantity_label?
-  [ set plabel food
-    if food = 0
+  [ set plabel quantity
+    if quantity = 0
     [ set pcolor white
       set plabel "" ]
   ]
@@ -334,8 +331,8 @@ to dance
 end
 
 to remove-patch
-  set food-wasted food * quality
-  set food 0
+  set food-wasted quantity * quality
+  set quantity 0
   set pcolor pink
   set plabel ""
   set resource? False
@@ -344,10 +341,10 @@ end
 GRAPHICS-WINDOW
 336
 10
-1347
-1042
-500
-500
+581
+242
+100
+100
 1.0
 1
 10
@@ -358,10 +355,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--500
-500
--500
-500
+-100
+100
+-100
+100
 1
 1
 1
@@ -418,10 +415,10 @@ NIL
 HORIZONTAL
 
 PLOT
-31
-365
-274
-644
+30
+440
+273
+719
 Food remaing and collected
 time
 food
@@ -433,41 +430,26 @@ true
 false
 "" ""
 PENS
-"remaining" 1.0 0 -13840069 true "" "plotxy ticks sum [food] of patches"
+"remaining" 1.0 0 -13840069 true "" "plotxy ticks sum [quantity] of patches"
 "collected" 1.0 0 -2674135 true "" "plotxy ticks sum [collected] of turtles"
 "wasted" 1.0 0 -7500403 true "" "if ephemeral? [plotxy ticks sum [food-wasted] of patches]"
 
 SWITCH
-32
-276
-159
-309
+31
+399
+158
+432
 bee_label?
 bee_label?
 1
 1
 -1000
 
-SLIDER
-125
-195
-217
-228
-max_quality
-max_quality
-0
-20
-5
-1
-1
-NIL
-HORIZONTAL
-
 SWITCH
-167
-276
-328
-309
+166
+399
+327
+432
 quantity_label?
 quantity_label?
 0
@@ -476,24 +458,24 @@ quantity_label?
 
 SLIDER
 32
-195
-124
-228
-min_quality
-min_quality
+243
+159
+276
+quality_mean
+quality_mean
 0
-20
-2
+40
+25
 1
 1
 NIL
 HORIZONTAL
 
 SWITCH
-167
-236
-307
-269
+166
+359
+306
+392
 quality_label?
 quality_label?
 1
@@ -501,10 +483,10 @@ quality_label?
 -1000
 
 SWITCH
-32
-236
-159
-269
+31
+359
+158
+392
 ephemeral?
 ephemeral?
 0
@@ -538,9 +520,9 @@ resource_density
 
 SLIDER
 32
-318
+202
 159
-351
+235
 c1_mult
 c1_mult
 1
@@ -552,10 +534,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-167
-318
-294
-351
+173
+202
+300
+235
 c2_mult
 c2_mult
 1
@@ -585,6 +567,58 @@ SWITCH
 calc_R
 calc_R
 0
+1
+-1000
+
+SWITCH
+173
+243
+319
+276
+quality_distrib
+quality_distrib
+1
+1
+-1000
+
+SLIDER
+32
+283
+159
+316
+quantity_mean
+quantity_mean
+0
+20
+5
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+173
+283
+319
+316
+quantity_stdev
+quantity_stdev
+0
+1
+0.1
+0.01
+1
+NIL
+HORIZONTAL
+
+SWITCH
+32
+321
+187
+354
+quantity_distrib
+quantity_distrib
+1
 1
 -1000
 
