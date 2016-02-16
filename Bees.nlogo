@@ -122,7 +122,7 @@ to resource-patch-calculations ;; Calculations to determine probability each pat
   set resource-prob-adj   resource-prob / patchiness
 
   ;show resource-prob
-  show resource-prob-adj
+  ;show resource-prob-adj
   ;show c0-num
 end
 
@@ -520,7 +520,7 @@ patchiness
 patchiness
 1
 20
-1
+21
 1
 1
 NIL
@@ -534,7 +534,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense" "v-dense"
-2
+1
 
 SLIDER
 32
@@ -545,7 +545,7 @@ c1_mult
 c1_mult
 1
 1001
-1
+161
 20
 1
 NIL
@@ -560,7 +560,7 @@ c2_mult
 c2_mult
 1
 1001
-1
+41
 20
 1
 NIL
