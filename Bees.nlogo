@@ -341,10 +341,10 @@ end
 GRAPHICS-WINDOW
 336
 10
-581
-242
-100
-100
+1347
+1042
+500
+500
 1.0
 1
 10
@@ -355,10 +355,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--100
-100
--100
-100
+-500
+500
+-500
+500
 1
 1
 1
@@ -435,9 +435,9 @@ PENS
 "wasted" 1.0 0 -7500403 true "" "if ephemeral? [plotxy ticks sum [food-wasted] of patches]"
 
 SWITCH
-31
+32
 399
-158
+159
 432
 bee_label?
 bee_label?
@@ -446,9 +446,9 @@ bee_label?
 -1000
 
 SWITCH
-166
+167
 399
-327
+328
 432
 quantity_label?
 quantity_label?
@@ -472,9 +472,9 @@ NIL
 HORIZONTAL
 
 SWITCH
-166
+167
 359
-306
+307
 392
 quality_label?
 quality_label?
@@ -483,9 +483,9 @@ quality_label?
 -1000
 
 SWITCH
-31
+32
 359
-158
+159
 392
 ephemeral?
 ephemeral?
@@ -501,8 +501,8 @@ SLIDER
 patchiness
 patchiness
 1
-20
 21
+1
 1
 1
 NIL
@@ -597,10 +597,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-173
-283
-319
-316
+32
+321
+178
+354
 quantity_stdev
 quantity_stdev
 0
@@ -612,10 +612,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-32
-321
-187
-354
+173
+283
+328
+316
 quantity_distrib
 quantity_distrib
 1
