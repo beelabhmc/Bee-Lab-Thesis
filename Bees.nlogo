@@ -297,8 +297,8 @@ to random-search
 end
 
 to wiggle
-  rt random 40
-  lt random 40
+  rt random 90
+  lt random 90
   if not can-move? 1 [ rt 180 ]
 end
 
