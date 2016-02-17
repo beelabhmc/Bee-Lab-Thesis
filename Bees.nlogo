@@ -291,10 +291,18 @@ end
 to random-search
   ifelse quantity > 0 ;; TODO: Correct range at which bee can detect food
   [ set next-state "forage"
-    stop ]
-  ;if quantity of patches with [distance myself < 25 / 6.67] > 0
-  [ wiggle
-    fd 1 ] ;; fd 15 on big map: 25 km/h = 6.9 m/s = 15 patches/tick
+    stop
+  ]
+  [
+    ifelse ([distance myself] of patches with [resource?] < (25 / 6.67))
+    [
+
+    ]
+    [
+      wiggle
+      fd 1
+    ] ;; fd 15 on big map: 25 km/h = 6.9 m/s = 15 patches/tick
+  ]
 end
 
 to wiggle
@@ -342,11 +350,11 @@ end
 GRAPHICS-WINDOW
 336
 10
-1053
-748
+851
+546
 50
 50
-7.0
+5.0
 1
 10
 1
@@ -517,7 +525,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense" "v-dense"
-1
+0
 
 SLIDER
 32
@@ -1064,7 +1072,7 @@ setup</setup>
       <value value="true"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="resource_nums" repetitions="20" runMetricsEveryStep="false">
+  <experiment name="resource_nums" repetitions="10" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
     <exitCondition>ticks = 1</exitCondition>
