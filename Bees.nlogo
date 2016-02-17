@@ -292,6 +292,7 @@ to random-search
   ifelse quantity > 0 ;; TODO: Correct range at which bee can detect food
   [ set next-state "forage"
     stop ]
+  ;if quantity of patches with [distance myself < 25 / 6.67] > 0
   [ wiggle
     fd 1 ] ;; fd 15 on big map: 25 km/h = 6.9 m/s = 15 patches/tick
 end
@@ -341,11 +342,11 @@ end
 GRAPHICS-WINDOW
 336
 10
-1347
-1042
-500
-500
-1.0
+1053
+748
+50
+50
+7.0
 1
 10
 1
@@ -355,10 +356,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--500
-500
--500
-500
+-50
+50
+-50
+50
 1
 1
 1
@@ -489,7 +490,7 @@ SWITCH
 392
 ephemeral?
 ephemeral?
-0
+1
 1
 -1000
 
@@ -502,7 +503,7 @@ patchiness
 patchiness
 1
 21
-21
+1
 1
 1
 NIL
@@ -527,7 +528,7 @@ c1_mult
 c1_mult
 1
 1001
-201
+1
 20
 1
 NIL
@@ -542,7 +543,7 @@ c2_mult
 c2_mult
 1
 1001
-201
+1
 20
 1
 NIL

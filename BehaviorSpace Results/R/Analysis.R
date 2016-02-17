@@ -9,10 +9,10 @@ resource.num <- read.csv("Bees resource_nums-table.csv", header = TRUE, skip = 6
 
 perform.t.test <- function(idx) {
   to.test <- idx:(idx+9)
-  results <- t.test(resource.num$num.patches.r[to.test], 
-                    resource.num$count.patches.with..resource..[to.test])
+  results <- t.test(resource.num$count.patches.with..resource..[to.test] - resource.num$num.patches.r[to.test])
   results$p.value
 }
+
 nums.unique <- which(!duplicated(resource.num[-c(1,9)]))
 p.vals <- sapply(nums.unique, function(x)  perform.t.test(x))
 sum(p.vals <= 0.05)
