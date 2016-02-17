@@ -502,7 +502,7 @@ patchiness
 patchiness
 1
 21
-1
+21
 1
 1
 NIL
@@ -566,7 +566,7 @@ SWITCH
 141
 calc_R
 calc_R
-0
+1
 1
 -1000
 
@@ -1061,6 +1061,23 @@ setup</setup>
     </enumeratedValueSet>
     <enumeratedValueSet variable="calc_R">
       <value value="true"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="resource_nums" repetitions="10" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <exitCondition>ticks = 1</exitCondition>
+    <metric>num-patches-r</metric>
+    <metric>count patches with [resource?]</metric>
+    <enumeratedValueSet variable="resource_density">
+      <value value="&quot;sparse&quot;"/>
+      <value value="&quot;dense&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="patchiness" first="1" step="4" last="21"/>
+    <steppedValueSet variable="c1_mult" first="1" step="40" last="201"/>
+    <steppedValueSet variable="c2_mult" first="1" step="40" last="201"/>
+    <enumeratedValueSet variable="calc_R">
+      <value value="false"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
