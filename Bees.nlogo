@@ -1063,7 +1063,7 @@ setup</setup>
       <value value="true"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="resource_nums" repetitions="10" runMetricsEveryStep="false">
+  <experiment name="resource_nums" repetitions="20" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
     <exitCondition>ticks = 1</exitCondition>
