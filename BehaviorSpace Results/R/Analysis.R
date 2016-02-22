@@ -19,6 +19,7 @@ sum(p.vals <= 0.05)
 10 * which(p.vals <= 0.05)
 resource.num$resource_density[10 * which(p.vals <= 0.05)]
 # 9 sparse and 19 dense
+### Check these
 
 
 ## R spatial statistics
