@@ -2,7 +2,7 @@
 # Analysis of spacial statistic R
 
 library(dplyr)
-setwd("~/Google Drive/Semester 8/Thesis/NetLogo GitHub/BehaviorSpace Results/R")
+setwd("~/Google Drive/Semester 8/Thesis/NetLogo GitHub/Analysis/BehaviorSpace Data")
 
 ## Is number of resources significantly different from expected?
 resource.num <- read.csv("Bees resource_nums_10-table.csv", header = TRUE, skip = 6)
@@ -20,9 +20,8 @@ sum(p.vals <= 0.05)
 idx.sig <- 10 * which(p.vals <= 0.05)
 idx.sig
 
-# Analysis of significantly different 
+## Analysis of significantly different 
 resource.num.sig <- resource.num[idx.sig,]
 table(resource.num.sig$resource_density)
-# 9 sparse and 19 dense
 
 

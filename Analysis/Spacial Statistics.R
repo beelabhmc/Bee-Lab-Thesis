@@ -1,5 +1,6 @@
 ## R spatial statistics
-r.data <- read.csv("Bees R testing-table.csv", header = TRUE, skip = 6)[,c(2,3,4,5,8)]
+setwd("~/Google Drive/Semester 8/Thesis/NetLogo GitHub/Analysis/BehaviorSpace Data")
+r.data <- read.csv("Bees R values-table.csv", header = TRUE, skip = 6)[,c(2,3,4,5,8)]
 
 r.data <- r.data %>% filter(c1_mult >= c2_mult)
 r.data.dense <- filter(r.data, r.data$resource_density == "\"dense\"")
