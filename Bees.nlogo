@@ -350,11 +350,11 @@ end
 GRAPHICS-WINDOW
 336
 10
-581
-206
-50
-50
-1.634
+1346
+1041
+500
+500
+1.0
 1
 10
 1
@@ -364,10 +364,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--50
-50
--50
-50
+-500
+500
+-500
+500
 1
 1
 1
@@ -511,7 +511,7 @@ patchiness
 patchiness
 1
 21
-1
+16
 1
 1
 NIL
@@ -536,7 +536,7 @@ c1_mult
 c1_mult
 1
 1001
-201
+1001
 20
 1
 NIL
@@ -551,7 +551,7 @@ c2_mult
 c2_mult
 1
 1001
-201
+601
 20
 1
 NIL
@@ -575,7 +575,7 @@ SWITCH
 141
 calc_R
 calc_R
-1
+0
 1
 -1000
 
@@ -1130,6 +1130,25 @@ setup</setup>
     <enumeratedValueSet variable="patchiness">
       <value value="10"/>
     </enumeratedValueSet>
+    <enumeratedValueSet variable="resource_density">
+      <value value="&quot;sparse&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="calc_R">
+      <value value="true"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="R sparse testing" repetitions="5" runMetricsEveryStep="false">
+    <setup>set-patch-size 1
+resize-world -500 500 -500 500
+reset-timer
+setup</setup>
+    <go>go</go>
+    <exitCondition>ticks = 1</exitCondition>
+    <metric>R</metric>
+    <metric>timer</metric>
+    <steppedValueSet variable="c1_mult" first="201" step="400" last="1001"/>
+    <steppedValueSet variable="c2_mult" first="201" step="400" last="801"/>
+    <steppedValueSet variable="patchiness" first="1" step="5" last="11"/>
     <enumeratedValueSet variable="resource_density">
       <value value="&quot;sparse&quot;"/>
     </enumeratedValueSet>
