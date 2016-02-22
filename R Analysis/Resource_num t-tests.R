@@ -2,10 +2,11 @@
 # Testing for significant differences between expected resources and observed resources
 
 library(dplyr)
-setwd("~/Google Drive/Semester 8/Thesis/NetLogo GitHub/Analysis/BehaviorSpace Data")
+setwd("~/Google Drive/Semester 8/Thesis/NetLogo GitHub/BehaviorSpace Data/Resource_num/")
 
 ## Is number of resources significantly different from expected?
 resource.num <- read.csv("Bees resource_nums_10-table.csv", header = TRUE, skip = 6)
+resource.num <- read.csv("Bees resource_nums_20+R-table.csv", header = TRUE, skip = 6)
 resource.num <- resource.num %>% filter(c1_mult >= c2_mult)
 
 perform.t.test <- function(idx) {
