@@ -7,6 +7,8 @@ globals
   resource-prob        ;;
   resource-prob-adj    ;; resource-prob-num adjusted for patchiness. Total probability for each square for each patchiness iteration
 
+  patches-with-resource?  ;; agentset of patches with resource? = True
+
   c0       ;; probability of resource with no resource within 2 spaces
   c1       ;; probability of resource with at least one resource one patch away
   c2       ;; probability of resource with at least one resource two patches away
@@ -65,12 +67,7 @@ to setup
 end
 
 to error-check ;; error checks on user input
-;  if min_quality > max_quality
-;  [ user-message "You min_q must be at most max_q"
-;    stop ]
-  if (quantity_label? and quality_label?)
-  [ user-message "You cannot simultaneously turn on both remaining and quality labels"
-    stop ]
+
 end
 
 to setup-turtles
@@ -102,13 +99,20 @@ to setup-patches
 
   show "Resource patch nums"
   show num-patches-r
-  show count patches with [resource?]
+  set patches-with-resource? patches with [resource?]
+  show count patches-with-resource?
   ;show count patches with [c1?]
   ;show count patches with [c2?]
 
-  show "calculating R"
-  if calc_R [ R-calc ]
-  show "done calculating R"
+
+  ifelse calc_R
+  [
+    show "calculating R"
+    R-calc
+    show "done calculating R"
+  ]
+  [ show "not calculating R" ]
+
 end
 
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
@@ -222,10 +226,14 @@ to setup-resource-c1c2  ;; set appropriate patch variables for patches around ne
 end
 
 to R-calc ;; Calculate R spatial value
+  if (count patches with [resource?] = 1)
+  [ user-message "Must have more than one resource to calculate R"
+    stop ]
+
   let list-dist []
-  ask patches with [resource?]
+  ask patches-with-resource?
   [
-    let dist distance min-one-of other patches with [resource?] [distance myself]
+    let dist distance min-one-of other patches-with-resource? [distance myself]
     set dist dist * .0066667
     set list-dist lput dist list-dist
 
@@ -294,9 +302,10 @@ to random-search
     stop
   ]
   [
+    let resource_patches patches with [resource?]
     ifelse ([distance myself] of patches with [resource?] < (25 / 6.67))
     [
-
+      let x 2
     ]
     [
       wiggle
@@ -454,17 +463,6 @@ bee_label?
 1
 -1000
 
-SWITCH
-167
-399
-328
-432
-quantity_label?
-quantity_label?
-0
-1
--1000
-
 SLIDER
 32
 243
@@ -487,7 +485,7 @@ SWITCH
 392
 quality_label?
 quality_label?
-1
+0
 1
 -1000
 
@@ -511,7 +509,7 @@ patchiness
 patchiness
 1
 21
-5
+17
 1
 1
 NIL
@@ -525,7 +523,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense" "v-dense"
-1
+0
 
 SLIDER
 32
@@ -536,7 +534,7 @@ c1_mult
 c1_mult
 1
 2001
-1801
+1
 20
 1
 NIL
@@ -551,7 +549,7 @@ c2_mult
 c2_mult
 1
 1001
-601
+1
 20
 1
 NIL
@@ -627,6 +625,17 @@ SWITCH
 316
 quantity_distrib
 quantity_distrib
+0
+1
+-1000
+
+SWITCH
+167
+399
+316
+432
+quantity_label?
+quantity_label?
 1
 1
 -1000
