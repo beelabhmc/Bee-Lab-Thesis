@@ -1,5 +1,5 @@
 # Sam Woodman
-# Analysis of spacial statistic R
+# Testing for significant differences between expected resources and observed resources
 
 library(dplyr)
 setwd("~/Google Drive/Semester 8/Thesis/NetLogo GitHub/Analysis/BehaviorSpace Data")

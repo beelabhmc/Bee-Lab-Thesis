@@ -351,10 +351,10 @@ GRAPHICS-WINDOW
 336
 10
 581
-142
+206
 50
 50
-1.0
+1.634
 1
 10
 1
@@ -1110,6 +1110,31 @@ setup</setup>
     <steppedValueSet variable="c1_mult" first="1" step="40" last="201"/>
     <enumeratedValueSet variable="calc_R">
       <value value="false"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="R value testing" repetitions="10" runMetricsEveryStep="false">
+    <setup>set-patch-size 1
+resize-world -500 500 -500 500
+reset-timer
+setup</setup>
+    <go>go</go>
+    <exitCondition>ticks = 1</exitCondition>
+    <metric>R</metric>
+    <metric>timer</metric>
+    <enumeratedValueSet variable="c1_mult">
+      <value value="250"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="c2_mult">
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="patchiness">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="resource_density">
+      <value value="&quot;sparse&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="calc_R">
+      <value value="true"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
