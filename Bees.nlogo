@@ -703,7 +703,6 @@ communication?
 
 
 ## NETLOGO FEATURES
-
 @#$#@#$#@
 default
 true
@@ -1096,7 +1095,7 @@ setup</setup>
     <steppedValueSet variable="c1_mult" first="1" step="40" last="201"/>
     <steppedValueSet variable="c2_mult" first="1" step="40" last="201"/>
     <enumeratedValueSet variable="calc_R">
-      <value value="false"/>
+      <value value="true"/>
     </enumeratedValueSet>
   </experiment>
   <experiment name="resource_nums_test" repetitions="1" runMetricsEveryStep="false">
