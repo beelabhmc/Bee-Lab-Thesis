@@ -350,8 +350,8 @@ end
 GRAPHICS-WINDOW
 336
 10
-1346
-1041
+1347
+1042
 500
 500
 1.0
@@ -511,7 +511,7 @@ patchiness
 patchiness
 1
 21
-16
+5
 1
 1
 NIL
@@ -525,7 +525,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense" "v-dense"
-0
+1
 
 SLIDER
 32
@@ -535,8 +535,8 @@ SLIDER
 c1_mult
 c1_mult
 1
-1001
-1001
+2001
+1801
 20
 1
 NIL
