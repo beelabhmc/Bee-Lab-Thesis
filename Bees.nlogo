@@ -350,11 +350,11 @@ end
 GRAPHICS-WINDOW
 336
 10
-851
-546
-50
-50
-5.0
+1347
+1042
+500
+500
+1.0
 1
 10
 1
@@ -364,10 +364,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--50
-50
--50
-50
+-500
+500
+-500
+500
 1
 1
 1
@@ -551,7 +551,7 @@ c2_mult
 c2_mult
 1
 1001
-1
+41
 20
 1
 NIL
@@ -1072,8 +1072,10 @@ setup</setup>
       <value value="true"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="resource_nums" repetitions="10" runMetricsEveryStep="false">
-    <setup>setup</setup>
+  <experiment name="resource_nums" repetitions="20" runMetricsEveryStep="false">
+    <setup>set-patch-size 1
+resize-world -500 500 -500 500
+setup</setup>
     <go>go</go>
     <exitCondition>ticks = 1</exitCondition>
     <metric>num-patches-r</metric>
