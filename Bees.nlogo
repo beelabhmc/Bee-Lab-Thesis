@@ -350,10 +350,10 @@ end
 GRAPHICS-WINDOW
 336
 10
-1347
-1042
-500
-500
+581
+142
+50
+50
 1.0
 1
 10
@@ -364,10 +364,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--500
-500
--500
-500
+-50
+50
+-50
+50
 1
 1
 1
@@ -536,7 +536,7 @@ c1_mult
 c1_mult
 1
 1001
-1
+201
 20
 1
 NIL
@@ -551,7 +551,7 @@ c2_mult
 c2_mult
 1
 1001
-41
+201
 20
 1
 NIL
@@ -1087,6 +1087,27 @@ setup</setup>
     <steppedValueSet variable="patchiness" first="1" step="4" last="21"/>
     <steppedValueSet variable="c1_mult" first="1" step="40" last="201"/>
     <steppedValueSet variable="c2_mult" first="1" step="40" last="201"/>
+    <enumeratedValueSet variable="calc_R">
+      <value value="false"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="resource_nums_test" repetitions="1" runMetricsEveryStep="false">
+    <setup>set-patch-size 1
+resize-world -50 50 -50 50
+setup</setup>
+    <go>go</go>
+    <timeLimit steps="1"/>
+    <exitCondition>("c2_mult" &gt; "c1_mult") or (ticks = 1)</exitCondition>
+    <metric>num-patches-r</metric>
+    <metric>count patches with [resource?]</metric>
+    <enumeratedValueSet variable="resource_density">
+      <value value="&quot;sparse&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="patchiness">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="c2_mult" first="1" step="40" last="201"/>
+    <steppedValueSet variable="c1_mult" first="1" step="40" last="201"/>
     <enumeratedValueSet variable="calc_R">
       <value value="false"/>
     </enumeratedValueSet>
