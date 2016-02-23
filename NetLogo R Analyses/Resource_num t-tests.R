@@ -18,6 +18,7 @@ perform.t.test <- function(idx) {
 idx.unique <- which(!duplicated(resource.num[-c(1,9)]))
 p.vals <- sapply(idx.unique, function(x)  perform.t.test(x))
 sum(p.vals <= 0.05)
+sum(p.vals <= 0.05)/length(idx.unique)
 idx.sig <- 10 * which(p.vals <= 0.05)
 idx.sig
 
