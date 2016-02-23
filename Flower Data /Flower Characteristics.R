@@ -2,7 +2,7 @@
 # Sam Woodman
 
 library(dplyr)
-setwd("~/Google Drive/Semester 8/Thesis/Flower Data")
+setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/Flower Data ")
 
 file.names <- c("Plant.ID", "Species.Name", "Date", "Flow.Diam.mm", "Cor.Len.mm", 
                 "Florets", "Total.Vol.Nec.micro.L", "Vol.Flor.micro.L", "BRIX", 
