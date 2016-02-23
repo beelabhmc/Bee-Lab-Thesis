@@ -25,5 +25,9 @@ species.names.all <- sort(unique(as.character(bfs.data$Species.Name)))
 
 bfs.data <- filter(bfs.data, bfs.data$Species.Name %in% species.names.bfs)
 
-avg.vol <- sapply(species.names.bfs, function(i) mean(bfs.data[bfs.data$Species.Name == i,]$X.Flowers, na.rm = TRUE))
-# The averages
+# Nectar amount calculations
+avg.nectar <- sapply(species.names.bfs, function(i) mean(bfs.data[bfs.data$Species.Name == i,]$X.Flowers, na.rm = TRUE))
+# The averages in avg.volume are for a 2m x 1m plot
+# Thus, multiply by (6.67 x 6.67)/2 to get μL found in one NetLogo patch
+avg.nectar.per.patch <- avg.nectar * ((6.67^2)/2)
+avg.vol.patch
