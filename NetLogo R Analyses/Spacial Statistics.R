@@ -2,7 +2,7 @@
 # Analysis of spacial statistic R
 
 library(dplyr)
-setwd("~/Google Drive/Semester 8/Thesis/NetLogo GitHub/BehaviorSpace Data/R Value/")
+setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/BehaviorSpace Data/R Value/")
 r.data <- read.csv("Bees R values-table.csv", header = TRUE, skip = 6)[,c(2,3,4,5,8)]
 
 ## Filter data by dense and sparse

@@ -17,18 +17,19 @@ bfs.data <- bfs.data %>%
 # Correct pre-identified species names
 flower.char$Species.Name <- gsub("Sambuccua nigra", "Sambucus nigra", flower.char$Species.Name)
 flower.char$Species.Name <- gsub("Sambuccus nigra", "Sambucus nigra", flower.char$Species.Name)
+flower.char$Vol.Flwr.micro.L[which(is.na(flower.char$Vol.Flwr.micro.L))] <- 0
 species.names.bfs <- sort(unique(as.character(flower.char$Species.Name)))
 
 bfs.data$Species.Name <- gsub("Ericamaria pinifolia", "Ericameria pinifolia", bfs.data$Species.Name)
 bfs.data$Species.Name <- gsub("Sambuccus nigra", "Sambucus nigra", bfs.data$Species.Name)
+bfs.data$X.Flowers[which(is.na(bfs.data$X.Flowers))] <- 0
 species.names.all <- sort(unique(as.character(bfs.data$Species.Name)))
 
 bfs.data <- filter(bfs.data, bfs.data$Species.Name %in% species.names.bfs)
 
 # Flower counts 
 avg.flwr <- sapply(species.names.bfs, 
-                   function(i) mean(bfs.data[bfs.data$Species.Name == i,]$X.Flowers, 
-                                    na.rm = TRUE))
+                   function(i) mean(bfs.data[bfs.data$Species.Name == i,]$X.Flowers))
 # The averages in avg.flwr are for a 2m x 1m plot
 # Thus, multiply by (6.67 x 6.67)/2 to get flowers found in one NetLogo patch
 avg.flwr.per.patch <- avg.flwr * ((6.67^2)/2)
@@ -36,8 +37,7 @@ avg.flwr.per.patch
 
 # Avg amount of nectar per flower for each species
 avg.nectar.per.flwr <- sapply(species.names.bfs, 
-                              function(j) mean(flower.char[flower.char$Species.Name == j,]$Vol.Flwr.micro.L, 
-                                               na.rm = TRUE))
+                              function(j) mean(flower.char[flower.char$Species.Name == j,]$Vol.Flwr.micro.L))
 
 avg.nectar.per.patch <- avg.flwr.per.patch * avg.nectar.per.flwr
 avg.nectar.per.patch

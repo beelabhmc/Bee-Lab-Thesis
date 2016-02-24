@@ -233,7 +233,7 @@ to setup-resource-c1c2  ;; set appropriate patch variables for patches around ne
 end
 
 to R-calc ;; Calculate R spatial value
-  if (count patches with [resource?] = 1)
+  if ((count patches-with-resource? = 0) or (count patches-with-resource? = 1))
   [ user-message "Must have more than one resource to calculate R"
     stop ]
 
@@ -466,10 +466,10 @@ NIL
 HORIZONTAL
 
 PLOT
-30
-440
-273
-719
+8
+548
+251
+827
 Food remaing and collected
 time
 food
@@ -487,9 +487,9 @@ PENS
 
 SWITCH
 32
-399
+365
 159
-432
+398
 bee_label?
 bee_label?
 1
@@ -498,9 +498,9 @@ bee_label?
 
 SLIDER
 32
-243
+209
 159
-276
+242
 quality_mean
 quality_mean
 0
@@ -513,9 +513,9 @@ HORIZONTAL
 
 SWITCH
 167
-359
+325
 307
-392
+358
 quality_label?
 quality_label?
 0
@@ -524,9 +524,9 @@ quality_label?
 
 SWITCH
 32
-359
+325
 159
-392
+358
 ephemeral?
 ephemeral?
 1
@@ -535,14 +535,14 @@ ephemeral?
 
 SLIDER
 32
-108
+402
 204
-141
+435
 patchiness
 patchiness
 1
 21
-17
+18
 1
 1
 NIL
@@ -550,19 +550,19 @@ HORIZONTAL
 
 CHOOSER
 32
-145
+111
 170
-190
+156
 resource_density
 resource_density
 "sparse" "dense" "v-dense"
-0
+1
 
 SLIDER
 32
-202
+439
 159
-235
+472
 c1_mult
 c1_mult
 1
@@ -574,15 +574,15 @@ NIL
 HORIZONTAL
 
 SLIDER
-173
-202
-300
-235
+172
+438
+299
+471
 c2_mult
 c2_mult
 1
 1001
-1
+21
 20
 1
 NIL
@@ -606,15 +606,15 @@ SWITCH
 141
 calc_R
 calc_R
-0
+1
 1
 -1000
 
 SWITCH
 173
-243
+209
 319
-276
+242
 quality_distrib
 quality_distrib
 1
@@ -623,9 +623,9 @@ quality_distrib
 
 SLIDER
 32
-283
+249
 159
-316
+282
 quantity_mean
 quantity_mean
 0
@@ -638,9 +638,9 @@ HORIZONTAL
 
 SLIDER
 32
-321
+287
 178
-354
+320
 quantity_stdev
 quantity_stdev
 0
@@ -653,9 +653,9 @@ HORIZONTAL
 
 SWITCH
 173
-283
+249
 328
-316
+282
 quantity_distrib
 quantity_distrib
 0
@@ -664,9 +664,9 @@ quantity_distrib
 
 SWITCH
 167
-399
+365
 316
-432
+398
 quantity_label?
 quantity_label?
 1
@@ -683,6 +683,16 @@ communication?
 0
 1
 -1000
+
+CHOOSER
+32
+157
+170
+202
+R_value
+R_value
+"0.4" "0.6" "0.8" "1.0"
+0
 
 @#$#@#$#@
 ## WHAT IS IT?
