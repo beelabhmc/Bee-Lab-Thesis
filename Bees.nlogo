@@ -1154,7 +1154,7 @@ setup</setup>
       <value value="true"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="R sparse testing" repetitions="5" runMetricsEveryStep="false">
+  <experiment name="R sparse testing" repetitions="10" runMetricsEveryStep="false">
     <setup>set-patch-size 1
 resize-world -500 500 -500 500
 reset-timer
@@ -1163,9 +1163,9 @@ setup</setup>
     <exitCondition>ticks = 1</exitCondition>
     <metric>R</metric>
     <metric>timer</metric>
-    <steppedValueSet variable="c1_mult" first="201" step="400" last="1001"/>
-    <steppedValueSet variable="c2_mult" first="201" step="400" last="801"/>
-    <steppedValueSet variable="patchiness" first="1" step="5" last="11"/>
+    <steppedValueSet variable="c1_mult" first="1" step="150" last="1501"/>
+    <steppedValueSet variable="c2_mult" first="1" step="150" last="1501"/>
+    <steppedValueSet variable="patchiness" first="1" step="5" last="21"/>
     <enumeratedValueSet variable="resource_density">
       <value value="&quot;sparse&quot;"/>
     </enumeratedValueSet>
