@@ -21,7 +21,8 @@ globals
   c1-mult    ;; patch probability multiplier for c1 patches
   c2-mult    ;; patch probability multiplier for c2 patches
   patchiness ;; number of iterations when assigning patches
-  R-exp
+  R-exp      ;; expected value of R
+  loop-num
 
   Ra
   Re
@@ -98,8 +99,10 @@ end
 to setup-patches
   R-parameters
   resource-patch-calculations
+  set loop-num 0
   while [abs(R-exp - R) > 0.01]
   [
+    set loop-num loop-num + 1
     show "new loop"
     ask patches [ setup-patch-initial ]
     repeat patchiness
@@ -644,7 +647,7 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
-2
+0
 
 SWITCH
 182
@@ -1161,6 +1164,29 @@ setup</setup>
     <steppedValueSet variable="patchiness" first="1" step="4" last="21"/>
     <enumeratedValueSet variable="resource_density">
       <value value="&quot;dense&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="calc_R">
+      <value value="true"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="R dense trials" repetitions="10" runMetricsEveryStep="false">
+    <setup>set-patch-size 1
+resize-world -500 500 -500 500
+reset-timer
+setup</setup>
+    <go>go</go>
+    <exitCondition>ticks = 1</exitCondition>
+    <metric>R</metric>
+    <metric>loop-num</metric>
+    <metric>timer</metric>
+    <enumeratedValueSet variable="resource_density">
+      <value value="&quot;dense&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="R_value">
+      <value value="&quot;0.4&quot;"/>
+      <value value="&quot;0.6&quot;"/>
+      <value value="&quot;0.8&quot;"/>
+      <value value="&quot;1.0&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="calc_R">
       <value value="true"/>
