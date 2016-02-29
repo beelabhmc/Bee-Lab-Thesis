@@ -2,10 +2,10 @@ globals
 [
   num-patches-t        ;; total number of patches on the map
   area-t               ;; total area in kilometers of the map. One patch is 6.67m by 6.67m
-  density              ;; number of patches per square kilometer. sparse = 1, dense = 32, v-dense = 100
+  density              ;; number of patches per square kilometer. sparse = 1, dense = 32
   num-patches-r        ;; number of desired resource patches on the map
   resource-prob        ;;
-  resource-prob-adj    ;; resource-prob-num adjusted for patchiness. Total probability for each square for each patchiness iteration
+  resource-prob-adj    ;; resource-prob adjusted for patchiness. Total probability for each square for each patchiness iteration
 
   patches-with-resource?  ;; agentset of patches with resource? = True
   fd-amt                  ;; number of patches that bees move each tick
@@ -17,6 +17,11 @@ globals
   c0-num   ;; 1 / (c0). 1 in resource-prob-num chances c0 patch is a resource
   c1-num   ;; 1 / (c1). 1 in resource-prob-num chances c1 patch is a resource
   c2-num   ;; 1 / (c2). 1 in resource-prob-num chances c2 patch is a resource
+
+  c1-mult    ;; patch probability multiplier for c1 patches
+  c2-mult    ;; patch probability multiplier for c2 patches
+  patchiness ;; number of iterations when assigning patches
+  R-exp
 
   Ra
   Re
@@ -70,11 +75,11 @@ to setup
   set fd-amt 1   ;; fd 15 on big map: 25 km/h = 6.9 m/s = 15 patches/tick
 
   reset-ticks
-  show timer
 end
 
 to error-check ;; error checks on user input
-
+  if (resource_density = "sparse") [ user-message "'sparse' parameters not yet implemented-all parameters set to 1"]
+  if (check_R and not calc_R) [ user-message "Cannot check R without calculating R" stop ]
 end
 
 to setup-turtles
@@ -91,35 +96,26 @@ to setup-turtles
 end
 
 to setup-patches
+  R-parameters
   resource-patch-calculations
-  ask patches [ setup-patch-initial ]
-  repeat patchiness
+  while [abs(R-exp - R) > 0.01]
   [
-    c1-c2-calculations
-    ;show "------ c0 c1 c2"
-    ;show c0
-    ;show c1
-    ;show c2
-    ask patches with [not nest? and not resource?] [ setup-resource-choose ]
-    ask patches with [resource-new?]               [ setup-resource-c1c2 ]
-  ]
+    show "new loop"
+    ask patches [ setup-patch-initial ]
+    repeat patchiness
+    [
+      c1-c2-calculations
+      ask patches with [not nest? and not resource?] [ setup-resource-choose ]
+      ask patches with [resource-new?]               [ setup-resource-c1c2 ]
+    ]
 
-  show "Resource patch nums"
+    set patches-with-resource? patches with [resource?]
+
+    if calc_R [ R-calc ]
+    show R
+  ]
   show num-patches-r
-  set patches-with-resource? patches with [resource?]
   show count patches-with-resource?
-  ;show count patches with [c1?]
-  ;show count patches with [c2?]
-
-
-  ifelse calc_R
-  [
-    show "calculating R"
-    R-calc
-    show "done calculating R"
-  ]
-  [ show "not calculating R" ]
-
 end
 
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
@@ -127,36 +123,43 @@ to resource-patch-calculations ;; Calculations to determine probability each pat
   set area-t              num-patches-t * .000044444
   if resource_density =   "sparse" [ set density 1 ]
   if resource_density =   "dense" [ set density 32 ]
-  if resource_density =   "v-dense" [set density 100]
   set num-patches-r       area-t * density
   set resource-prob       num-patches-r / num-patches-t
   set resource-prob-adj   resource-prob / patchiness
+end
 
-  ;show resource-prob
-  ;show resource-prob-adj
-  ;show c0-num
+to R-parameters ;; Set c1-mult, c2-mult, and patchiness based on desired R value
+  set R 0
+
+  if (resource_density = "dense" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 201  set c2-mult 81  set patchiness 21 ]
+  if (resource_density = "dense" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 81   set c2-mult 61  set patchiness 5  ]
+  if (resource_density = "dense" and R_value = "0.8") [ set R-exp 0.8 set c1-mult 41   set c2-mult 1   set patchiness 21 ]
+  if (resource_density = "dense" and R_value = "1.0") [ set R-exp 1.0 set c1-mult 1    set c2-mult 1   set patchiness 1 ]
+
+  if (resource_density = "sparse" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 1  set c2-mult 1  set patchiness 1 ]
+  if (resource_density = "sparse" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 1  set c2-mult 1  set patchiness 1 ]
+  if (resource_density = "sparse" and R_value = "0.8") [ set R-exp 0.8 set c1-mult 1  set c2-mult 1  set patchiness 1 ]
+  if (resource_density = "sparse" and R_value = "1.0") [ set R-exp 1.0 set c1-mult 1  set c2-mult 1  set patchiness 1 ]
 end
 
 to setup-patch-initial ;; create hive patch and initialize all other patches
-  ifelse (distancexy 0 0) < 1 ; hive
-  [
+  ifelse (distancexy 0 0) < 1
+  [ ; hive
     set pcolor brown
     set nest? True
-    set resource? False
-    set resource-new? False
     set c0? False
-    set c1? False
-    set c2? False
   ]
-  [
-    set pcolor gray ; environment
+  [ ; non-hive
+    set pcolor gray ; non-hive
     set nest? False
-    set resource? False
-    set resource-new? False
     set c0? True
-    set c1? False
-    set c2? False
   ]
+  ; all
+  set plabel ""
+  set resource? False
+  set resource-new? False
+  set c1? False
+  set c2? False
 end
 
 to c1-c2-calculations
@@ -167,19 +170,13 @@ to c1-c2-calculations
   let p1 (c1-count) / num-patches-t
   let p2 (c2-count) / num-patches-t
 
-  set c0 resource-prob-adj / (p0 + c1_mult * p1 + c2_mult * p2)
-  ifelse (c1-count = 0) [set c1 0] [set c1 c1_mult * c0]
-  ifelse (c2-count = 0) [set c2 0] [set c2 c2_mult * c0]
+  set c0 resource-prob-adj / (p0 + c1-mult * p1 + c2-mult * p2)
+  ifelse (c1-count = 0) [set c1 0] [set c1 c1-mult * c0]
+  ifelse (c2-count = 0) [set c2 0] [set c2 c2-mult * c0]
 
   set c0-num 1 / c0
   ifelse (c2-count = 0) [set c1-num 0] [set c1-num 1 / c1]
   ifelse (c2-count = 0) [set c2-num 0] [set c2-num 1 / c2]
-
-  ;show c0
-  ;show c1
-  ;show c2
-  ;show "-----"
-  ;show resource-prob-adj
 end
 
 to setup-resource-choose  ;; assign new food patches, including quantity and quality.
@@ -234,8 +231,7 @@ end
 
 to R-calc ;; Calculate R spatial value
   if ((count patches-with-resource? = 0) or (count patches-with-resource? = 1))
-  [ user-message "Must have more than one resource to calculate R"
-    stop ]
+  [ user-message "Must have more than one resource to calculate R" stop ]
 
   let list-dist []
   ask patches-with-resource?
@@ -295,7 +291,7 @@ end
 
 to inactive
   ;; transition to randSearch
-  if random 1000 <= 33 ; actual map: 100000 -> 0.00033/tick ;; TODO: Actual values
+  if random 1000 <= 33 ; actual map: 100000 -> 0.00033/tick ;; TODO: Adjust to actual values
   [ set next-state "randSearch" ]
   ;; TODO: transition to toResource
   ;; action-at end because stop ends all
@@ -304,7 +300,8 @@ end
 
 to random-search
   ifelse (resource? = True)
-  [ set next-state "forage"
+  [
+    set next-state "forage"
     stop
   ]
   [
@@ -330,19 +327,22 @@ end
 to forage-nectar
   set color pink
   set time-foraging time-foraging + 1
-  if (time-foraging = 240) ; 15 sec/tick -> 60 minutes is 240 ticks
+  if (time-foraging = 48) ; 15 sec/tick -> 12 minutes is 48 ticks
   [
     set collected collected + quality
     set mem-resource-patch patch-here
     set next-state "return"
 
     ;; Update patch
-    set quantity quantity - 1
+    if quantity_count [set quantity quantity - 1]
     if quantity_label?
-    [ set plabel quantity
+    [
+      set plabel quantity
       if quantity = 0
-      [ set pcolor white
-        set plabel "" ]
+      [
+        set pcolor white
+        set plabel ""
+      ]
     ]
   ]
 end
@@ -362,10 +362,7 @@ to return-to-hive
       [ set next-state "dance" ]
       [ set next-state "inactive" ]
     ]
-    [
-      set next-state "inactive"
-      ; rt 180 Need this??
-    ]
+    [ set next-state "inactive" ]
   ]
   [
     facexy 0 0
@@ -486,10 +483,10 @@ PENS
 "wasted" 1.0 0 -7500403 true "" "if ephemeral? [plotxy ticks sum [food-wasted] of patches]"
 
 SWITCH
-32
-365
-159
-398
+31
+410
+158
+443
 bee_label?
 bee_label?
 1
@@ -497,10 +494,10 @@ bee_label?
 -1000
 
 SLIDER
-32
-209
-159
-242
+31
+254
+158
+287
 quality_mean
 quality_mean
 0
@@ -512,10 +509,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-167
-325
-307
-358
+166
+370
+306
+403
 quality_label?
 quality_label?
 0
@@ -523,30 +520,15 @@ quality_label?
 -1000
 
 SWITCH
-32
-325
-159
-358
+31
+370
+158
+403
 ephemeral?
 ephemeral?
 1
 1
 -1000
-
-SLIDER
-32
-402
-204
-435
-patchiness
-patchiness
-1
-21
-5
-1
-1
-NIL
-HORIZONTAL
 
 CHOOSER
 32
@@ -555,44 +537,14 @@ CHOOSER
 156
 resource_density
 resource_density
-"sparse" "dense" "v-dense"
+"sparse" "dense"
 1
-
-SLIDER
-32
-439
-159
-472
-c1_mult
-c1_mult
-1
-2001
-1
-20
-1
-NIL
-HORIZONTAL
-
-SLIDER
-172
-438
-299
-471
-c2_mult
-c2_mult
-1
-1001
-1
-20
-1
-NIL
-HORIZONTAL
 
 MONITOR
 215
-145
+184
 283
-190
+229
 NIL
 R
 5
@@ -611,10 +563,10 @@ calc_R
 -1000
 
 SWITCH
-173
-209
-319
-242
+172
+254
+318
+287
 quality_distrib
 quality_distrib
 1
@@ -622,10 +574,10 @@ quality_distrib
 -1000
 
 SLIDER
-32
-249
-159
-282
+31
+294
+158
+327
 quantity_mean
 quantity_mean
 0
@@ -637,10 +589,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-32
-287
-178
-320
+31
+332
+177
+365
 quantity_stdev
 quantity_stdev
 0
@@ -652,10 +604,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-173
-249
-328
-282
+172
+294
+327
+327
 quantity_distrib
 quantity_distrib
 0
@@ -663,10 +615,10 @@ quantity_distrib
 -1000
 
 SWITCH
-167
-365
-316
-398
+166
+410
+315
+443
 quantity_label?
 quantity_label?
 1
@@ -692,7 +644,29 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
+2
+
+SWITCH
+182
+332
+332
+365
+quantity_count
+quantity_count
+1
+1
+-1000
+
+SWITCH
+215
+145
+323
+178
+check_R
+check_R
 0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
