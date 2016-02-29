@@ -18,6 +18,10 @@ globals
   c1-num   ;; 1 / (c1). 1 in resource-prob-num chances c1 patch is a resource
   c2-num   ;; 1 / (c2). 1 in resource-prob-num chances c2 patch is a resource
 
+  c0-select
+  c1-select
+  c2-select
+
   c1-mult    ;; patch probability multiplier for c1 patches
   c2-mult    ;; patch probability multiplier for c2 patches
   patchiness ;; number of iterations when assigning patches
@@ -99,7 +103,8 @@ to setup-patches
   R-parameters
   resource-patch-calculations
   set loop-num 0
-  while [abs(R-exp - R) > 0.01]
+
+  while [abs(R-exp - R) > 0.03]
   [
     set loop-num loop-num + 1
     show "new loop"
@@ -182,9 +187,18 @@ to c1-c2-calculations
 end
 
 to setup-resource-choose  ;; assign new food patches, including quantity and quality.
-  if ((c1-num != 0 and c1? and random c1-num < 1) or
-     (c2-num != 0 and c2? and random c2-num < 1) or
-     (c0? and random c0-num < 1))
+  ; Reset vars
+  set c0-select FALSE  set c1-select FALSE  set c2-select FALSE
+
+  ifelse (c1-num != 0 and c1? != False and random c1-num < 1)
+  [ set c1-select TRUE ]
+  [
+    ifelse (c2-num != 0 and c2? != False and random c2-num < 1)
+    [ set c2-select TRUE ]
+    [ if (c0? and random c0-num < 1) [ set c0-select TRUE ]
+    ]
+  ]
+  if (c1-select or c2-select or c0-select)
   [
     set pcolor green
     set resource-new? True
@@ -194,14 +208,14 @@ to setup-resource-choose  ;; assign new food patches, including quantity and qua
 
     ; Resource quality
     ifelse quality_distrib
-    [ set quality random-poisson quality_mean ]
+    [
+      if c1-select [ set quality [quality] of c1? ]
+      if c2-select [ set quality [quality] of c2? ]
+      set quality random-poisson quality_mean
+    ]
     [ set quality quality_mean ]
     ; Resource quantity
-    let quantity-list (list 1 1 1 1 1 1 1 1 10 10 10 10 10 100 100 100 100 1000 1000 10000)
-    set quantity one-of quantity-list
-    ;ifelse quantity_distrib
-    ;[ set quantity random-normal quantity_mean quantity_stdev ]
-    ;[ set quantity quantity_mean ]
+    set quantity 100 ;100 trips to this flower
 
     ; Resource label, if necessary
     if quality_label? [ set plabel quality ]
@@ -216,18 +230,16 @@ to setup-resource-c1c2  ;; set appropriate patch variables for patches around ne
   [
     if (not nest? and not resource? and not resource-new?)
     [
-      set pcolor red
       set c0? False
-      set c1? True
+      set c1? myself
       set c2? False
     ]
     ask neighbors
     [
       if (not nest? and not resource? and not resource-new? and not c1?)
       [
-        set pcolor blue
         set c0? False
-        set c2? True
+        set c2? [c1?] of myself
       ]
     ]
   ]
@@ -338,7 +350,7 @@ to forage-nectar
     set next-state "return"
 
     ;; Update patch
-    if quantity_count [set quantity quantity - 1]
+    set quantity quantity - 1
     if quantity_label?
     [
       set plabel quantity
@@ -573,17 +585,6 @@ SWITCH
 287
 quality_distrib
 quality_distrib
-1
-1
--1000
-
-SWITCH
-172
-294
-327
-327
-quantity_distrib
-quantity_distrib
 0
 1
 -1000
@@ -595,7 +596,7 @@ SWITCH
 443
 quantity_label?
 quantity_label?
-0
+1
 1
 -1000
 
@@ -618,18 +619,7 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
-3
-
-SWITCH
-172
-333
-322
-366
-quantity_count
-quantity_count
 1
-1
--1000
 
 SWITCH
 215
