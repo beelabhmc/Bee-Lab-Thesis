@@ -24,34 +24,35 @@ end
 
 to setup-patches
   set thing? False
-  set c1? False
-  set c2? False
+  set c1? 0
+  set c2? 0
   set pcolor green
 end
 
 to patch-test
-  set c1? False
-  set c2? False
+  set c1? 0
+  set c2? 0
   set pcolor brown
-  set thing? True
+  set thing? random 5
   ask neighbors 
   [
     if thing? = False
     [
-      set c1? True
-      set c2? False
+      set c1? myself
+      set c2? 0
       set pcolor red
     ]
     ask neighbors 
     [
-      if (thing? = False and c1? = False) 
+      if (thing? = False and c1? = 0) 
       [
-        set c2? True 
+        set c2? [c1?] of myself 
         set pcolor blue
       ]
     ] 
   ]
   ;ask neighbors [ set pcolor red ]
+  ;ask patches with [thing? != False] [ask neighbors [set plabel [thing?] of myself  ask neighbors [set plabel [plabel] of myself] ]]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
