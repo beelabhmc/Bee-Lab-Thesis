@@ -27,40 +27,46 @@ g.data.sparse.8 <- g.data.sparse %>% filter(abs(R - 0.8) <= 0.03)
 
 
 ### Dense Testing
-d.data <- read.csv("Bees R dense testing-table.csv", header = TRUE, skip = 6)[-c(6,7,9)]
+d.data.all <- read.csv("Bees R dense testing-table.csv", header = TRUE, skip = 6)[-c(6,7,9)]
+d.data.all$grp <- (floor((d.data.all$X.run.number.-1) / 20)) + 1
+d.data <- d.data.all %>% filter(c1_mult >= c2_mult)
 
-## Divide data into groups .01 away from: R = 0.4, 0.6, 0.8
-d.data.4 <- d.data %>% filter(abs(R - 0.4) <= 0.01)
-temp.4 <- which.max(table(floor(d.data.4$X.run.number./20))) # Best sequence is d.data[2740:2759,]
-d.idx.4 <- 20 * as.numeric(names(temp.4))
-d.data[2740,]
+## Divide data into groups d.num away from: R = 0.4, 0.6, 0.8
+d.num <- 0.01
+d.data.4 <- d.data %>% filter(abs(R - 0.4) <= d.num)
+temp.4 <- which.max(table(d.data.4$grp)) 
+d.idx.4 <- (20 * as.numeric(names(temp.4))) # Best sequence is d.data.all[3941:3960,]
+d.data.all[d.idx.4,]
 
-d.data.6 <- d.data %>% filter(abs(R - 0.6) <= 0.01)
-temp.6 <- which.max(table(floor(d.data.6$X.run.number./20))) # Best sequence is d.data[280:299,] alt: d.data[300:319,]
+d.data.6 <- d.data %>% filter(abs(R - 0.6) <= d.num)
+temp.6 <- which.max(table(d.data.6$grp)) # Best sequence is d.data.all[1581:1600,]
 d.idx.6 <- 20 * as.numeric(names(temp.6))
-d.data[280,]
+d.data.all[d.idx.6,]
 
-d.data.8 <- d.data %>% filter(abs(R - 0.8) <= 0.01)
-temp.8 <- which.max(table(floor(d.data.8$X.run.number./20))) # Best sequence is d.data[780:799,] alt: d.data[820:839,]
+d.data.8 <- d.data %>% filter(abs(R - 0.8) <= d.num)
+temp.8 <- which.max(table(d.data.8$grp)) # Best sequence is d.data.all[821:840,]
 d.idx.8 <- 20 * as.numeric(names(temp.8))
-d.data[780,]
+d.data.all[d.idx.8,]
 
 
 ### Sparse Testing
-#s.data <- read.csv("Bees R sparse testing-table.csv", header = TRUE, skip = 6)[-c(6,7,9)]
+#s.data.all <- read.csv("Bees R sparse testing-table.csv", header = TRUE, skip = 6)[-c(6,7,9)]
+s.data.all$grp <- (floor((s.data.all$X.run.number.-1) / 20)) + 1
+s.data <- s.data.all %>% filter(c1_mult >= c2_mult)
 
-## Divide data into groups .01 away from: R = 0.4, 0.6, 0.8 and get parameters
-s.data.4 <- s.data %>% filter(abs(R - 0.4) <= 0.01)
-temp.4 <- which.max(table(floor(s.data.4$X.run.number./10))) # Best sequence is d.data[,]
-s.idx.4 <- 10 * as.numeric(names(temp.4))
-d.data[,]
+## Divide data into groups s.num away from: R = 0.4, 0.6, 0.8
+s.num <- 0.03
+s.data.4 <- s.data %>% filter(abs(R - 0.4) <= s.num)
+temp.4 <- which.max(table(s.data.4$grp)) 
+s.idx.4 <- (20 * as.numeric(names(temp.4))) # Best sequence is s.data.all[,]
+s.data.all[s.idx.4,]
 
-s.data.6 <- d.data %>% filter(abs(R - 0.6) <= 0.01)
-temp.6 <- which.max(table(floor(s.data.6$X.run.number./10))) # Best sequence is d.data[,]
-s.idx.6 <- 10 * as.numeric(names(temp.6))
-d.data[,]
+s.data.6 <- s.data %>% filter(abs(R - 0.6) <= s.num)
+temp.6 <- which.max(table(s.data.6$grp)) # Best sequence is s.data.all[,]
+s.idx.6 <- 20 * as.numeric(names(temp.6))
+s.data.all[s.idx.6,]
 
-s.data.8 <- d.data %>% filter(abs(R - 0.8) <= 0.01)
-temp.8 <- which.max(table(floor(s.data.8$X.run.number./10))) # Best sequence is d.data[,]
-s.idx.8 <- 10 * as.numeric(names(temp.8))
-d.data[,]
+s.data.8 <- s.data %>% filter(abs(R - 0.8) <= s.num)
+temp.8 <- which.max(table(s.data.8$grp)) # Best sequence is s.data.all[,]
+s.idx.8 <- 20 * as.numeric(names(temp.8))
+s.data.all[s.idx.8,]
