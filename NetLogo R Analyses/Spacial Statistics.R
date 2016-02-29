@@ -50,23 +50,23 @@ d.data.all[d.idx.8,]
 
 
 ### Sparse Testing
-#s.data.all <- read.csv("Bees R sparse testing-table.csv", header = TRUE, skip = 6)[-c(6,7,9)]
-s.data.all$grp <- (floor((s.data.all$X.run.number.-1) / 20)) + 1
+s.data.all <- read.csv("Bees R sparse testing_10rep-table.csv", header = TRUE, skip = 6)[-c(6,7,9)]
+s.data.all$grp <- (floor((s.data.all$X.run.number.-1) / 10)) + 1
 s.data <- s.data.all %>% filter(c1_mult >= c2_mult)
 
 ## Divide data into groups s.num away from: R = 0.4, 0.6, 0.8
-s.num <- 0.03
+s.num <- 0.05
 s.data.4 <- s.data %>% filter(abs(R - 0.4) <= s.num)
 temp.4 <- which.max(table(s.data.4$grp)) 
-s.idx.4 <- (20 * as.numeric(names(temp.4))) # Best sequence is s.data.all[,]
+s.idx.4 <- (10 * as.numeric(names(temp.4))) # Best sequence is s.data.all[4831:4840,]
 s.data.all[s.idx.4,]
 
 s.data.6 <- s.data %>% filter(abs(R - 0.6) <= s.num)
-temp.6 <- which.max(table(s.data.6$grp)) # Best sequence is s.data.all[,]
-s.idx.6 <- 20 * as.numeric(names(temp.6))
+temp.6 <- which.max(table(s.data.6$grp)) # Best sequence is s.data.all[5741:5750,]
+s.idx.6 <- 10 * as.numeric(names(temp.6))
 s.data.all[s.idx.6,]
 
 s.data.8 <- s.data %>% filter(abs(R - 0.8) <= s.num)
-temp.8 <- which.max(table(s.data.8$grp)) # Best sequence is s.data.all[,]
-s.idx.8 <- 20 * as.numeric(names(temp.8))
+temp.8 <- which.max(table(s.data.8$grp)) # Best sequence is s.data.all[3381:3390,]
+s.idx.8 <- 10 * as.numeric(names(temp.8))
 s.data.all[s.idx.8,]
