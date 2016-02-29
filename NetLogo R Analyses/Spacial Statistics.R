@@ -51,16 +51,16 @@ d.data[780,]
 
 ## Divide data into groups .01 away from: R = 0.4, 0.6, 0.8 and get parameters
 s.data.4 <- s.data %>% filter(abs(R - 0.4) <= 0.01)
-temp.4 <- which.max(table(floor(s.data.4$X.run.number./20))) # Best sequence is d.data[,]
-s.idx.4 <- 20 * as.numeric(names(temp.4))
-d.data[2740,]
+temp.4 <- which.max(table(floor(s.data.4$X.run.number./10))) # Best sequence is d.data[,]
+s.idx.4 <- 10 * as.numeric(names(temp.4))
+d.data[,]
 
 s.data.6 <- d.data %>% filter(abs(R - 0.6) <= 0.01)
-temp.6 <- which.max(table(floor(s.data.6$X.run.number./20))) # Best sequence is d.data[,]
-s.idx.6 <- 20 * as.numeric(names(temp.6))
-d.data[280,]
+temp.6 <- which.max(table(floor(s.data.6$X.run.number./10))) # Best sequence is d.data[,]
+s.idx.6 <- 10 * as.numeric(names(temp.6))
+d.data[,]
 
 s.data.8 <- d.data %>% filter(abs(R - 0.8) <= 0.01)
-temp.8 <- which.max(table(floor(s.data.8$X.run.number./20))) # Best sequence is d.data[,]
-s.idx.8 <- 20 * as.numeric(names(temp.8))
-d.data[780,]
+temp.8 <- which.max(table(floor(s.data.8$X.run.number./10))) # Best sequence is d.data[,]
+s.idx.8 <- 10 * as.numeric(names(temp.8))
+d.data[,]
