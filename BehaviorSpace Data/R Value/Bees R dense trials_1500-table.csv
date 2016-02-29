@@ -1,0 +1,8 @@
+"BehaviorSpace results (NetLogo 5.3)"
+"Bees.nlogo"
+"R dense trials"
+"02/29/2016 09:44:47:238 -0800"
+"min-pxcor","max-pxcor","min-pycor","max-pycor"
+"-500","500","-500","500"
+"[run number]","resource_density","R_value","calc_R","[step]","R","loop-num","timer"
+"1","""dense""","""0.4""","true","1","0.39329415823489516","1","156.948"
