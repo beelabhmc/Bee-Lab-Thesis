@@ -32,14 +32,35 @@ d.data <- read.csv("Bees R dense testing-table.csv", header = TRUE, skip = 6)[-c
 ## Divide data into groups .01 away from: R = 0.4, 0.6, 0.8
 d.data.4 <- d.data %>% filter(abs(R - 0.4) <= 0.01)
 temp.4 <- which.max(table(floor(d.data.4$X.run.number./20))) # Best sequence is d.data[2740:2759,]
-idx.4 <- 20 * as.numeric(names(temp.4))
-# 
+d.idx.4 <- 20 * as.numeric(names(temp.4))
+d.data[2740,]
 
 d.data.6 <- d.data %>% filter(abs(R - 0.6) <= 0.01)
-temp.6 <- which.max(table(floor(d.data.6$X.run.number./20))) # Best sequence is d.data[280:299,] d.data[300:319,]
-idx.6 <- 20 * as.numeric(names(temp.6))
+temp.6 <- which.max(table(floor(d.data.6$X.run.number./20))) # Best sequence is d.data[280:299,] alt: d.data[300:319,]
+d.idx.6 <- 20 * as.numeric(names(temp.6))
+d.data[280,]
 
 d.data.8 <- d.data %>% filter(abs(R - 0.8) <= 0.01)
-temp.8 <- which.max(table(floor(d.data.8$X.run.number./20))) # Best sequence is d.data[820:839,]
-idx.8 <- 20 * as.numeric(names(temp.8))
+temp.8 <- which.max(table(floor(d.data.8$X.run.number./20))) # Best sequence is d.data[780:799,] alt: d.data[820:839,]
+d.idx.8 <- 20 * as.numeric(names(temp.8))
+d.data[780,]
 
+
+### Sparse Testing
+#s.data <- read.csv("Bees R sparse testing-table.csv", header = TRUE, skip = 6)[-c(6,7,9)]
+
+## Divide data into groups .01 away from: R = 0.4, 0.6, 0.8
+s.data.4 <- s.data %>% filter(abs(R - 0.4) <= 0.01)
+temp.4 <- which.max(table(floor(s.data.4$X.run.number./20))) # Best sequence is d.data[,]
+s.idx.4 <- 20 * as.numeric(names(temp.4))
+d.data[2740,]
+
+s.data.6 <- d.data %>% filter(abs(R - 0.6) <= 0.01)
+temp.6 <- which.max(table(floor(s.data.6$X.run.number./20))) # Best sequence is d.data[,]
+s.idx.6 <- 20 * as.numeric(names(temp.6))
+d.data[280,]
+
+s.data.8 <- d.data %>% filter(abs(R - 0.8) <= 0.01)
+temp.8 <- which.max(table(floor(s.data.8$X.run.number./20))) # Best sequence is d.data[,]
+s.idx.8 <- 20 * as.numeric(names(temp.8))
+d.data[780,]
