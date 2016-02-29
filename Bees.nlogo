@@ -79,7 +79,6 @@ to setup
 end
 
 to error-check ;; error checks on user input
-  if (resource_density = "sparse") [ user-message "'sparse' parameters not yet implemented-all parameters set to 1"]
   if (check_R and not calc_R) [ user-message "Cannot check R without calculating R" stop ]
 end
 
@@ -135,14 +134,14 @@ to R-parameters ;; Set c1-mult, c2-mult, and patchiness based on desired R value
   set R 0
 
   if (resource_density = "dense" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 201  set c2-mult 81  set patchiness 21 ]
-  if (resource_density = "dense" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 81   set c2-mult 61  set patchiness 5  ]
+  if (resource_density = "dense" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 81   set c2-mult 61  set patchiness  5 ]
   if (resource_density = "dense" and R_value = "0.8") [ set R-exp 0.8 set c1-mult 41   set c2-mult 1   set patchiness 21 ]
-  if (resource_density = "dense" and R_value = "1.0") [ set R-exp 1.0 set c1-mult 1    set c2-mult 1   set patchiness 1 ]
+  if (resource_density = "dense" and R_value = "1.0") [ set R-exp 1.0 set c1-mult 1    set c2-mult 1   set patchiness  1 ]
 
-  if (resource_density = "sparse" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 1  set c2-mult 1  set patchiness 1 ]
-  if (resource_density = "sparse" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 1  set c2-mult 1  set patchiness 1 ]
-  if (resource_density = "sparse" and R_value = "0.8") [ set R-exp 0.8 set c1-mult 1  set c2-mult 1  set patchiness 1 ]
-  if (resource_density = "sparse" and R_value = "1.0") [ set R-exp 1.0 set c1-mult 1  set c2-mult 1  set patchiness 1 ]
+  if (resource_density = "sparse" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 1351  set c2-mult 1201  set patchiness 16 ]
+  if (resource_density = "sparse" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 1501  set c2-mult  601  set patchiness 21 ]
+  if (resource_density = "sparse" and R_value = "0.8") [ set R-exp 0.8 set c1-mult  901  set c2-mult  151  set patchiness 16 ]
+  if (resource_density = "sparse" and R_value = "1.0") [ set R-exp 1.0 set c1-mult    1  set c2-mult    1  set patchiness  1 ]
 end
 
 to setup-patch-initial ;; create hive patch and initialize all other patches
@@ -198,9 +197,11 @@ to setup-resource-choose  ;; assign new food patches, including quantity and qua
     [ set quality random-poisson quality_mean ]
     [ set quality quality_mean ]
     ; Resource quantity
-    ifelse quantity_distrib
-    [ set quantity random-normal quantity_mean quantity_stdev ]
-    [ set quantity quantity_mean ]
+    let quantity-list (list 1 1 1 1 1 1 1 1 10 10 10 10 10 100 100 100 100 1000 1000 10000)
+    set quantity one-of quantity-list
+    ;ifelse quantity_distrib
+    ;[ set quantity random-normal quantity_mean quantity_stdev ]
+    ;[ set quantity quantity_mean ]
 
     ; Resource label, if necessary
     if quality_label? [ set plabel quality ]
@@ -392,11 +393,11 @@ end
 GRAPHICS-WINDOW
 336
 10
-3347
-3042
-1500
-1500
-1.0
+1351
+1046
+100
+100
+5.0
 1
 10
 1
@@ -406,10 +407,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--1500
-1500
--1500
-1500
+-100
+100
+-100
+100
 1
 1
 1
@@ -576,36 +577,6 @@ quality_distrib
 1
 -1000
 
-SLIDER
-31
-294
-158
-327
-quantity_mean
-quantity_mean
-0
-20
-5
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-31
-332
-177
-365
-quantity_stdev
-quantity_stdev
-0
-1
-0.1
-0.01
-1
-NIL
-HORIZONTAL
-
 SWITCH
 172
 294
@@ -624,7 +595,7 @@ SWITCH
 443
 quantity_label?
 quantity_label?
-1
+0
 1
 -1000
 
@@ -647,13 +618,13 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
-0
+3
 
 SWITCH
-182
-332
-332
-365
+172
+333
+322
+366
 quantity_count
 quantity_count
 1
