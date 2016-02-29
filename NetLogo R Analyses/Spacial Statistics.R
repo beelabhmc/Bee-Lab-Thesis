@@ -29,7 +29,7 @@ g.data.sparse.8 <- g.data.sparse %>% filter(abs(R - 0.8) <= 0.03)
 ### Dense Testing
 d.data.all <- read.csv("Bees R dense testing-table.csv", header = TRUE, skip = 6)[-c(6,7,9)]
 d.data.all$grp <- (floor((d.data.all$X.run.number.-1) / 20)) + 1
-d.data <- d.data.all %>% filter(c1_mult >= c2_mult)
+d.data <- d.data.all %>% filter(c1_mult > c2_mult)
 
 ## Divide data into groups d.num away from: R = 0.4, 0.6, 0.8
 d.num <- 0.01
@@ -52,7 +52,7 @@ d.data.all[d.idx.8,]
 ### Sparse Testing
 s.data.all <- read.csv("Bees R sparse testing_10rep-table.csv", header = TRUE, skip = 6)[-c(6,7,9)]
 s.data.all$grp <- (floor((s.data.all$X.run.number.-1) / 10)) + 1
-s.data <- s.data.all %>% filter(c1_mult >= c2_mult)
+s.data <- s.data.all %>% filter(c1_mult > c2_mult)
 
 ## Divide data into groups s.num away from: R = 0.4, 0.6, 0.8
 s.num <- 0.05
