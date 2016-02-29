@@ -49,7 +49,7 @@ d.data[780,]
 ### Sparse Testing
 #s.data <- read.csv("Bees R sparse testing-table.csv", header = TRUE, skip = 6)[-c(6,7,9)]
 
-## Divide data into groups .01 away from: R = 0.4, 0.6, 0.8
+## Divide data into groups .01 away from: R = 0.4, 0.6, 0.8 and get parameters
 s.data.4 <- s.data %>% filter(abs(R - 0.4) <= 0.01)
 temp.4 <- which.max(table(floor(s.data.4$X.run.number./20))) # Best sequence is d.data[,]
 s.idx.4 <- 20 * as.numeric(names(temp.4))
