@@ -139,13 +139,13 @@ to R-parameters ;; Set c1-mult, c2-mult, and patchiness based on desired R value
   set R 0
 
   if (resource_density = "dense" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 201  set c2-mult 81  set patchiness 21 ]
-  if (resource_density = "dense" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 81   set c2-mult 61  set patchiness  5 ]
+  if (resource_density = "dense" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 121  set c2-mult 1   set patchiness  13 ]
   if (resource_density = "dense" and R_value = "0.8") [ set R-exp 0.8 set c1-mult 41   set c2-mult 1   set patchiness 21 ]
   if (resource_density = "dense" and R_value = "1.0") [ set R-exp 1.0 set c1-mult 1    set c2-mult 1   set patchiness  1 ]
 
-  if (resource_density = "sparse" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 1351  set c2-mult 1201  set patchiness 16 ]
+  if (resource_density = "sparse" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 1201  set c2-mult  901  set patchiness 11 ]
   if (resource_density = "sparse" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 1501  set c2-mult  601  set patchiness 21 ]
-  if (resource_density = "sparse" and R_value = "0.8") [ set R-exp 0.8 set c1-mult  901  set c2-mult  151  set patchiness 16 ]
+  if (resource_density = "sparse" and R_value = "0.8") [ set R-exp 0.8 set c1-mult 1051  set c2-mult  451  set patchiness 16 ]
   if (resource_density = "sparse" and R_value = "1.0") [ set R-exp 1.0 set c1-mult    1  set c2-mult    1  set patchiness  1 ]
 end
 

@@ -32,21 +32,24 @@ d.data.all$grp <- (floor((d.data.all$X.run.number.-1) / 20)) + 1
 d.data <- d.data.all %>% filter(c1_mult > c2_mult)
 
 ## Divide data into groups d.num away from: R = 0.4, 0.6, 0.8
-d.num <- 0.01
+d.num <- 0.03
 d.data.4 <- d.data %>% filter(abs(R - 0.4) <= d.num)
 temp.4 <- which.max(table(d.data.4$grp)) 
-d.idx.4 <- (20 * as.numeric(names(temp.4))) # Best sequence is d.data.all[3941:3960,]
-d.data.all[d.idx.4,]
+table(d.data.4$grp)
+d.idx.4 <- (20 * as.numeric(names(temp.4))) 
+d.data.all[d.idx.4,] # Best sequence is d.data.all[3941:3960,]
 
 d.data.6 <- d.data %>% filter(abs(R - 0.6) <= d.num)
-temp.6 <- which.max(table(d.data.6$grp)) # Best sequence is d.data.all[1581:1600,]
+temp.6 <- which.max(table(d.data.6$grp)) 
+table(d.data.6$grp)
 d.idx.6 <- 20 * as.numeric(names(temp.6))
-d.data.all[d.idx.6,]
+d.data.all[d.idx.6,] # Best sequence is d.data.all[2221:2240,]
 
 d.data.8 <- d.data %>% filter(abs(R - 0.8) <= d.num)
-temp.8 <- which.max(table(d.data.8$grp)) # Best sequence is d.data.all[821:840,]
+temp.8 <- which.max(table(d.data.8$grp)) 
+table(d.data.8$grp)
 d.idx.8 <- 20 * as.numeric(names(temp.8))
-d.data.all[d.idx.8,]
+d.data.all[d.idx.8,] # Best sequence is d.data.all[821:840,]
 
 
 ### Sparse Testing
@@ -57,16 +60,19 @@ s.data <- s.data.all %>% filter(c1_mult > c2_mult)
 ## Divide data into groups s.num away from: R = 0.4, 0.6, 0.8
 s.num <- 0.05
 s.data.4 <- s.data %>% filter(abs(R - 0.4) <= s.num)
-temp.4 <- which.max(table(s.data.4$grp)) 
-s.idx.4 <- (10 * as.numeric(names(temp.4))) # Best sequence is s.data.all[4831:4840,]
-s.data.all[s.idx.4,]
+temp.4 <- which.max(table(s.data.4$grp))
+table(s.data.4$grp)
+s.idx.4 <- (10 * as.numeric(names(temp.4))) 
+s.data.all[s.idx.4,] # Best sequence is s.data.all[4831:4840,]
 
 s.data.6 <- s.data %>% filter(abs(R - 0.6) <= s.num)
-temp.6 <- which.max(table(s.data.6$grp)) # Best sequence is s.data.all[5741:5750,]
+temp.6 <- which.max(table(s.data.6$grp)) 
+table(s.data.6$grp)
 s.idx.6 <- 10 * as.numeric(names(temp.6))
-s.data.all[s.idx.6,]
+s.data.all[s.idx.6,] # Best sequence is s.data.all[5741:5750,]
 
 s.data.8 <- s.data %>% filter(abs(R - 0.8) <= s.num)
-temp.8 <- which.max(table(s.data.8$grp)) # Best sequence is s.data.all[3381:3390,]
+temp.8 <- which.max(table(s.data.8$grp)) 
+table(s.data.8$grp)
 s.idx.8 <- 10 * as.numeric(names(temp.8))
-s.data.all[s.idx.8,]
+s.data.all[s.idx.8,] # Best sequence is s.data.all[3381:3390,]
