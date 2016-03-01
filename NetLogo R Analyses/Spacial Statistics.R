@@ -58,7 +58,7 @@ s.data.all$grp <- (floor((s.data.all$X.run.number.-1) / 10)) + 1
 s.data <- s.data.all %>% filter(c1_mult > c2_mult)
 
 ## Divide data into groups s.num away from: R = 0.4, 0.6, 0.8
-s.num <- 0.05
+s.num <- 0.03
 s.data.4 <- s.data %>% filter(abs(R - 0.4) <= s.num)
 temp.4 <- which.max(table(s.data.4$grp))
 table(s.data.4$grp)
