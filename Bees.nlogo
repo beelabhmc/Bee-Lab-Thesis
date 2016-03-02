@@ -1124,9 +1124,9 @@ setup</setup>
       <value value="true"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="R dense trials" repetitions="10" runMetricsEveryStep="false">
+  <experiment name="R trials" repetitions="10" runMetricsEveryStep="false">
     <setup>set-patch-size 1
-resize-world -500 500 -500 500
+resize-world -1500 1500 -1500 1500
 reset-timer
 setup</setup>
     <go>go</go>
@@ -1135,6 +1135,7 @@ setup</setup>
     <metric>loop-num</metric>
     <metric>timer</metric>
     <enumeratedValueSet variable="resource_density">
+      <value value="&quot;sparse&quot;"/>
       <value value="&quot;dense&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="R_value">
@@ -1142,9 +1143,6 @@ setup</setup>
       <value value="&quot;0.6&quot;"/>
       <value value="&quot;0.8&quot;"/>
       <value value="&quot;1.0&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="calc_R">
-      <value value="true"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
