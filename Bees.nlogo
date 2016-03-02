@@ -1110,7 +1110,7 @@ resize-world -500 500 -500 500
 reset-timer
 setup</setup>
     <go>go</go>
-    <exitCondition>out_loop = 1</exitCondition>
+    <exitCondition>out_loop = 1 or ticks = 1</exitCondition>
     <metric>R</metric>
     <metric>loop-num</metric>
     <metric>timer</metric>
