@@ -27,6 +27,7 @@ globals
   Ra
   Re
   R
+  out_loop
 ]
 turtles-own
 [
@@ -79,7 +80,7 @@ to setup
 end
 
 to error-check ;; error checks on user input
-  if (check_R and not calc_R) [ user-message "Cannot check R without calculating R" stop ]
+
 end
 
 to setup-turtles
@@ -100,10 +101,10 @@ to setup-patches
   resource-patch-calculations
   set loop-num 0
 
-  while [abs(R-exp - R) > 0.03]
+  while [(abs(R-exp - R) > 0.03) and (loop-num <= 15)]
   [
     set loop-num loop-num + 1
-    show "new loop"
+    show (word "new loop: " loop-num)
     ask patches [ setup-patch-initial ]
     repeat patchiness
     [
@@ -114,11 +115,12 @@ to setup-patches
 
     set patches-with-resource? patches with [resource?]
 
-    if calc_R [ R-calc ]
+    R-calc
     show R
+    if (loop-num > 10) [stop]
   ]
-  show num-patches-r
-  show count patches-with-resource?
+
+  set out_loop 1
 end
 
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
@@ -551,26 +553,15 @@ resource_density
 0
 
 MONITOR
-215
-184
-283
-229
+217
+128
+285
+173
 NIL
 R
 5
 1
 11
-
-SWITCH
-215
-108
-318
-141
-calc_R
-calc_R
-0
-1
--1000
 
 SWITCH
 172
@@ -614,17 +605,6 @@ R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
 0
-
-SWITCH
-215
-145
-323
-178
-check_R
-check_R
-0
-1
--1000
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1130,7 +1110,7 @@ resize-world -500 500 -500 500
 reset-timer
 setup</setup>
     <go>go</go>
-    <exitCondition>ticks = 1 or loop-num = 10</exitCondition>
+    <exitCondition>out_loop = 1</exitCondition>
     <metric>R</metric>
     <metric>loop-num</metric>
     <metric>timer</metric>
