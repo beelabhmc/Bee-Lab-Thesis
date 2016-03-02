@@ -63,7 +63,7 @@ s.data.4 <- s.data %>% filter(abs(R - 0.4) <= s.num)
 temp.4 <- which.max(table(s.data.4$grp))
 table(s.data.4$grp)
 s.idx.4 <- (10 * as.numeric(names(temp.4))) 
-s.data.all[s.idx.4,] # Best sequence is s.data.all[4831:4840,]
+s.data.all[s.idx.4,] # Best sequence is s.data.all[4721:4730,]
 
 s.data.6 <- s.data %>% filter(abs(R - 0.6) <= s.num)
 temp.6 <- which.max(table(s.data.6$grp)) 
