@@ -399,11 +399,11 @@ end
 GRAPHICS-WINDOW
 336
 10
-1351
-1046
-100
-100
-5.0
+1347
+1042
+500
+500
+1.0
 1
 10
 1
@@ -413,10 +413,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--100
-100
--100
-100
+-500
+500
+-500
+500
 1
 1
 1
@@ -548,7 +548,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-1
+0
 
 MONITOR
 215
@@ -613,7 +613,7 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
-1
+0
 
 SWITCH
 215
@@ -1130,11 +1130,12 @@ resize-world -500 500 -500 500
 reset-timer
 setup</setup>
     <go>go</go>
-    <exitCondition>ticks = 1</exitCondition>
+    <exitCondition>ticks = 1 or loop-num = 10</exitCondition>
     <metric>R</metric>
     <metric>loop-num</metric>
     <metric>timer</metric>
     <enumeratedValueSet variable="resource_density">
+      <value value="&quot;sparse&quot;"/>
       <value value="&quot;dense&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="R_value">
@@ -1142,9 +1143,6 @@ setup</setup>
       <value value="&quot;0.6&quot;"/>
       <value value="&quot;0.8&quot;"/>
       <value value="&quot;1.0&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="calc_R">
-      <value value="true"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
