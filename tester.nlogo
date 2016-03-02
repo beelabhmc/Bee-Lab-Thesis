@@ -18,6 +18,9 @@ to setup
   show count patches with [c1? = True]
   show count patches with [c2? = True]
   reset-ticks
+
+  ;export-world (word "/Users/swoodman/Desktop/tester-world-" date-and-time ".csv")
+  ;import-world "/Users/swoodman/Desktop/tester-world.csv"
 end
 
 to setup-patches
