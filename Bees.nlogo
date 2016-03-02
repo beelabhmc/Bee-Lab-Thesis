@@ -215,7 +215,7 @@ to setup-resource-choose  ;; assign new food patches, including quantity and qua
     ]
     [ set quality quality_mean ]
     ; Resource quantity
-    set quantity 100 ;100 trips to this flower
+    set quantity 100 ; 100 trips to this flower
 
     ; Resource label, if necessary
     if quality_label? [ set plabel quality ]
