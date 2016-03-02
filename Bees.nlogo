@@ -399,11 +399,11 @@ end
 GRAPHICS-WINDOW
 336
 10
-1351
-1046
-100
-100
-5.0
+12350
+12045
+1500
+1500
+4.0
 1
 10
 1
@@ -413,10 +413,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--100
-100
--100
-100
+-1500
+1500
+-1500
+1500
 1
 1
 1
@@ -548,7 +548,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-1
+0
 
 MONITOR
 215
@@ -613,7 +613,7 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
-1
+0
 
 SWITCH
 215
