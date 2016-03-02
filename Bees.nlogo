@@ -27,7 +27,7 @@ globals
   Ra
   Re
   R
-  out_loop
+  end-setup
 ]
 turtles-own
 [
@@ -76,6 +76,7 @@ to setup
   ]
   setup-turtles
   setup-patches
+  set end-setup 1
   set fd-amt 1   ;; fd 15 on big map: 25 km/h = 6.9 m/s = 15 patches/tick
 end
 
@@ -101,7 +102,7 @@ to setup-patches
   resource-patch-calculations
   set loop-num 0
 
-  while [(abs(R-exp - R) > 0.03) and (loop-num <= 15)]
+  while [(abs(R-exp - R) > 0.03) and (loop-num <= 10)]
   [
     set loop-num loop-num + 1
     show (word "new loop: " loop-num)
@@ -117,10 +118,7 @@ to setup-patches
 
     R-calc
     show R
-    if (loop-num > 10) [stop]
   ]
-
-  set out_loop 1
 end
 
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
@@ -1104,13 +1102,14 @@ setup</setup>
       <value value="true"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="R dense trials" repetitions="10" runMetricsEveryStep="false">
+  <experiment name="R trials" repetitions="10" runMetricsEveryStep="false">
     <setup>set-patch-size 1
-resize-world -500 500 -500 500
+resize-world -1500 1500 -1500 1500
 reset-timer
 setup</setup>
     <go>go</go>
-    <exitCondition>out_loop = 1 or ticks = 1</exitCondition>
+    <timeLimit steps="1"/>
+    <exitCondition>end-setup = 1</exitCondition>
     <metric>R</metric>
     <metric>loop-num</metric>
     <metric>timer</metric>
