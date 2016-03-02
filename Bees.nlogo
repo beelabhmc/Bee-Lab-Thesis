@@ -18,10 +18,6 @@ globals
   c1-num   ;; 1 / (c1). 1 in resource-prob-num chances c1 patch is a resource
   c2-num   ;; 1 / (c2). 1 in resource-prob-num chances c2 patch is a resource
 
-  c0-select
-  c1-select
-  c2-select
-
   c1-mult    ;; patch probability multiplier for c1 patches
   c2-mult    ;; patch probability multiplier for c2 patches
   patchiness ;; number of iterations when assigning patches
@@ -58,7 +54,7 @@ patches-own
   c0?  ;; no resources within 2 patches
   c1?  ;; at least one resource one patch away
   c2?  ;; not c1 and at least one resource two patches away
-  c1-c2-parent ;; 'parent' (resource) patch for c1 and c2 patches
+  c-parent ;; 'parent' (resource) patch for c1 and c2 patches
 ]
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -167,7 +163,7 @@ to setup-patch-initial ;; create hive patch and initialize all other patches
   set resource-new? False
   set c1? False
   set c2? False
-  set c1-c2-parent 0
+  set c-parent 0
 end
 
 to c1-c2-calculations
@@ -188,18 +184,13 @@ to c1-c2-calculations
 end
 
 to setup-resource-choose  ;; assign new food patches, including quantity and quality.
-                          ; Reset vars
-  set c0-select FALSE  set c1-select FALSE  set c2-select FALSE
+  let c1-2-select FALSE
+  let c0-select FALSE
 
-  ifelse (c1-num != 0 and c1? != False and random c1-num < 1)
-  [ set c1-select TRUE ]
-  [
-    ifelse (c2-num != 0 and c2? != False and random c2-num < 1)
-    [ set c2-select TRUE ]
-    [ if (c0? and random c0-num < 1) [ set c0-select TRUE ]
-    ]
-  ]
-  if (c1-select or c2-select or c0-select)
+  ifelse ((c1-num != 0 and c1? and random c1-num < 1) or (c2-num != 0 and c2? and random c2-num < 1))
+  [ set c1-2-select TRUE ]
+  [ if (c0? and random c0-num < 1) [ set c0-select TRUE ] ]
+  if (c1-2-select or c0-select)
   [
     set pcolor green
     set resource-new? True
@@ -210,15 +201,16 @@ to setup-resource-choose  ;; assign new food patches, including quantity and qua
     ; Resource quality
     ifelse quality_distrib
     [
-      if (c1-select or c2-select) [ set quality [quality] of c1-c2-parent ]
-      set quality random-poisson quality_mean
+      ifelse (c1-2-select)
+      [ set quality [quality] of c-parent ]
+      [ set quality random-poisson quality_mean ]
     ]
     [ set quality quality_mean ]
     ; Resource quantity
     set quantity 100 ; 100 trips to this flower
 
                      ; Resource label, if necessary
-    if quality_label? [ set plabel quality ]
+    if quality_label?  [ set plabel quality ]
     if quantity_label? [ set plabel quantity ]
   ]
 end
@@ -233,15 +225,15 @@ to setup-resource-c1c2  ;; set appropriate patch variables for patches around ne
       set c0? False
       set c1? True
       set c2? False
-      set c1-c2-parent myself
+      set c-parent myself
     ]
     ask neighbors
     [
-      if (not nest? and not resource? and not resource-new? and not c1?)
+      if (not nest? and not resource? and not resource-new? and not c1? and not c2?)
       [
         set c0? False
         set c2? True
-        set c1-c2-parent [c1-c2-parent] of myself
+        set c-parent [c-parent] of myself
       ]
     ]
   ]
@@ -407,11 +399,11 @@ end
 GRAPHICS-WINDOW
 336
 10
-1347
-1042
-500
-500
-1.0
+1351
+1046
+100
+100
+5.0
 1
 10
 1
@@ -421,10 +413,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--500
-500
--500
-500
+-100
+100
+-100
+100
 1
 1
 1
@@ -556,7 +548,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-0
+1
 
 MONITOR
 215
