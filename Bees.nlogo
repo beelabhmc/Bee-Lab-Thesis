@@ -26,7 +26,7 @@ globals
   c2-mult    ;; patch probability multiplier for c2 patches
   patchiness ;; number of iterations when assigning patches
   R-exp      ;; expected value of R
-  loop-num
+  loop-num   ;; number of times environment have to be generated to get environment R-R_exp <= 0.3
 
   Ra
   Re
@@ -40,7 +40,7 @@ turtles-own
   next-state           ;; State to transition to at the end of the time step.
                        ;; states: inactive = Inactive, toResource = Direct to Resource, randSearch = Random Search,
                        ;;         forage = Forage at Resource, return = Return to Hive, dance = Dancing
-  ; variables specific to some states
+                       ; variables specific to some states
   time-foraging        ;; if bee is foraging, time bee has spent foraging on current foraging trip (else 0)
   mem-resource-patch   ;; patch remembered by returning bee
   patch-to-go-to       ;; patch that bee was recruited to go to (if any)
@@ -58,6 +58,7 @@ patches-own
   c0?  ;; no resources within 2 patches
   c1?  ;; at least one resource one patch away
   c2?  ;; not c1 and at least one resource two patches away
+  c1-c2-parent ;; 'parent' (resource) patch for c1 and c2 patches
 ]
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -166,6 +167,7 @@ to setup-patch-initial ;; create hive patch and initialize all other patches
   set resource-new? False
   set c1? False
   set c2? False
+  set c1-c2-parent 0
 end
 
 to c1-c2-calculations
@@ -186,7 +188,7 @@ to c1-c2-calculations
 end
 
 to setup-resource-choose  ;; assign new food patches, including quantity and quality.
-  ; Reset vars
+                          ; Reset vars
   set c0-select FALSE  set c1-select FALSE  set c2-select FALSE
 
   ifelse (c1-num != 0 and c1? != False and random c1-num < 1)
@@ -208,15 +210,14 @@ to setup-resource-choose  ;; assign new food patches, including quantity and qua
     ; Resource quality
     ifelse quality_distrib
     [
-      if c1-select [ set quality [quality] of c1? ]
-      if c2-select [ set quality [quality] of c2? ]
+      if (c1-select or c2-select) [ set quality [quality] of c1-c2-parent ]
       set quality random-poisson quality_mean
     ]
     [ set quality quality_mean ]
     ; Resource quantity
     set quantity 100 ; 100 trips to this flower
 
-    ; Resource label, if necessary
+                     ; Resource label, if necessary
     if quality_label? [ set plabel quality ]
     if quantity_label? [ set plabel quantity ]
   ]
@@ -230,15 +231,17 @@ to setup-resource-c1c2  ;; set appropriate patch variables for patches around ne
     if (not nest? and not resource? and not resource-new?)
     [
       set c0? False
-      set c1? myself
+      set c1? True
       set c2? False
+      set c1-c2-parent myself
     ]
     ask neighbors
     [
       if (not nest? and not resource? and not resource-new? and not c1?)
       [
         set c0? False
-        set c2? [c1?] of myself
+        set c2? True
+        set c1-c2-parent [c1-c2-parent] of myself
       ]
     ]
   ]
@@ -553,7 +556,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-1
+0
 
 MONITOR
 215

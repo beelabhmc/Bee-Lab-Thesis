@@ -1,8 +1,9 @@
 patches-own
 [
- thing?
- c1?
- c2? 
+  value
+  c1?
+  c2?
+  c-parent
 ]
 
 to reset
@@ -12,47 +13,57 @@ end
 to setup
   clear-all
   ask patches [ setup-patches ]
-  ask patches 
-  [
-    if random 100 < 1 [ patch-test ]
-  ]
-  show count patches with [thing? = False]
-  show count patches with [c1? = True and thing? = False]
-  show count patches with [c2? = True and thing? = False and c1? = False]
+  ask patches with [value = 0] [ patch-test ]
+  show count patches with [value = 0]
+  show count patches with [c1? = True]
+  show count patches with [c2? = True]
   reset-ticks
 end
 
 to setup-patches
-  set thing? False
-  set c1? 0
-  set c2? 0
-  set pcolor green
+  set value 0
+  set c1? False
+  set c2? False
+  set c-parent 0
+  set pcolor gray
 end
 
 to patch-test
-  set c1? 0
-  set c2? 0
-  set pcolor brown
-  set thing? random 5
-  ask neighbors 
+  let c1-c2-id false
+  let c0-id false
+  ifelse ((c1? and random 50 < 1) or (c2? and not c1? and random 100 < 1))
+  [ set c1-c2-id True ]
+  [ if (not c1? and not c2? and random 200 < 1) [ set c0-id true ] ]
+  if (c1-c2-id or c0-id)
   [
-    if thing? = False
-    [
-      set c1? myself
-      set c2? 0
-      set pcolor red
-    ]
-    ask neighbors 
-    [
-      if (thing? = False and c1? = 0) 
+    set c1? False
+    set c2? False
+    set pcolor brown
+    ifelse (c1-c2-id)
+      [ set value [value] of c-parent ]
+      [ set value random 20 + 1 ]
+    set plabel value
+    set plabel-color white
+    ask neighbors
       [
-        set c2? [c1?] of myself 
-        set pcolor blue
+        if value = 0
+        [
+          set c1? True
+          set c2? False
+          set pcolor red
+          set c-parent myself
+        ]
+        ask neighbors
+        [
+          if (value = 0 and not c1?)
+          [
+            set c2? True
+            set pcolor blue
+            set c-parent [c-parent] of myself
+          ]
+        ]
       ]
-    ] 
   ]
-  ;ask neighbors [ set pcolor red ]
-  ;ask patches with [thing? != False] [ask neighbors [set plabel [thing?] of myself  ask neighbors [set plabel [plabel] of myself] ]]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -442,7 +453,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.2.0
+NetLogo 5.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
