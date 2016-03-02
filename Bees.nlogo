@@ -67,6 +67,7 @@ patches-own
 to setup
   clear-all
   reset-timer
+  reset-ticks
   error-check
   show "Start"
   set-default-shape turtles "bee"
@@ -78,8 +79,6 @@ to setup
   setup-turtles
   setup-patches
   set fd-amt 1   ;; fd 15 on big map: 25 km/h = 6.9 m/s = 15 patches/tick
-
-  reset-ticks
 end
 
 to error-check ;; error checks on user input
@@ -139,9 +138,9 @@ to R-parameters ;; Set c1-mult, c2-mult, and patchiness based on desired R value
   set R 0
 
   if (resource_density = "dense" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 201  set c2-mult 81  set patchiness 21 ]
-  if (resource_density = "dense" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 121  set c2-mult 1   set patchiness  13 ]
-  if (resource_density = "dense" and R_value = "0.8") [ set R-exp 0.8 set c1-mult 41   set c2-mult 1   set patchiness 21 ]
-  if (resource_density = "dense" and R_value = "1.0") [ set R-exp 1.0 set c1-mult 1    set c2-mult 1   set patchiness  1 ]
+  if (resource_density = "dense" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 121  set c2-mult  1  set patchiness 13 ]
+  if (resource_density = "dense" and R_value = "0.8") [ set R-exp 0.8 set c1-mult  41  set c2-mult  1  set patchiness 21 ]
+  if (resource_density = "dense" and R_value = "1.0") [ set R-exp 1.0 set c1-mult   1  set c2-mult  1  set patchiness  1 ]
 
   if (resource_density = "sparse" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 1201  set c2-mult  901  set patchiness 11 ]
   if (resource_density = "sparse" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 1501  set c2-mult  601  set patchiness 21 ]
@@ -405,11 +404,11 @@ end
 GRAPHICS-WINDOW
 336
 10
-1351
-1046
-100
-100
-5.0
+1347
+1042
+500
+500
+1.0
 1
 10
 1
@@ -419,10 +418,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--100
-100
--100
-100
+-500
+500
+-500
+500
 1
 1
 1
@@ -1132,7 +1131,7 @@ setup</setup>
   </experiment>
   <experiment name="R dense trials" repetitions="10" runMetricsEveryStep="false">
     <setup>set-patch-size 1
-resize-world -1500 1500 -1500 1500
+resize-world -500 500 -500 500
 reset-timer
 setup</setup>
     <go>go</go>
