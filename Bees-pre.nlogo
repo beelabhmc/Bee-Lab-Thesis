@@ -20,7 +20,7 @@ globals
 
   c1-mult    ;; patch probability multiplier for c1 patches
   c2-mult    ;; patch probability multiplier for c2 patches
-  patchiness ;; number of iterations when assigning patches
+             ;patchiness ;; number of iterations when assigning patches
   R-exp      ;; expected value of R
   loop-num   ;; number of times environment have to be generated to get environment R-R_exp <= 0.3
 
@@ -98,27 +98,29 @@ to setup-turtles
 end
 
 to setup-patches
-  R-parameters
+  ;R-parameters
+  set c1-mult c1_mult
+  set c2-mult c2_mult
   resource-patch-calculations
   set loop-num 0
 
-  while [(abs(R-exp - R) > 0.03) and (loop-num <= 10)]
-  [
-    set loop-num loop-num + 1
-    show (word "new loop: " loop-num)
-    ask patches [ setup-patch-initial ]
-    repeat patchiness
+  ;while [(abs(R-exp - R) > 0.03) and (loop-num <= 10)]
+  ;[
+  ;set loop-num loop-num + 1
+  ;show (word "new loop: " loop-num)
+  ask patches [ setup-patch-initial ]
+  repeat patchiness
     [
       c1-c2-calculations
       ask patches with [not nest? and not resource?] [ setup-resource-choose ]
       ask patches with [resource-new?]               [ setup-resource-c1c2 ]
     ]
 
-    set patches-with-resource? patches with [resource?]
+  set patches-with-resource? patches with [resource?]
 
-    R-calc
-    show R
-  ]
+  R-calc
+  show R
+  ;]
 end
 
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
@@ -603,6 +605,51 @@ R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
 0
+
+SLIDER
+49
+307
+221
+340
+c1_mult
+c1_mult
+1
+1501
+901
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+123
+335
+295
+368
+c2_mult
+c2_mult
+1
+1501
+901
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+52
+214
+224
+247
+patchiness
+patchiness
+1
+21
+1
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
