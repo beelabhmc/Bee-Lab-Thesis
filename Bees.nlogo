@@ -7,10 +7,6 @@ globals
   resource-prob        ;;
   resource-prob-adj    ;; resource-prob adjusted for patchiness. Total probability for each square for each patchiness iteration
 
-  patches-with-resource?  ;; agentset of patches with resource? = True
-  fd-amt                  ;; number of patches that bees move each tick
-  nectar-influx-colony    ;; total energy collected/simulation duration/colony size
-
   c0       ;; probability of resource with no resource within 2 spaces
   c1       ;; probability of resource with at least one resource one patch away
   c2       ;; probability of resource with at least one resource two patches away
@@ -24,13 +20,18 @@ globals
   R-exp      ;; expected value of R
   loop-num   ;; number of times environment have to be generated to get environment R-R_exp <= 0.3
 
-  flight-cost  ;; energy expended per unit moved on map
-  J-per-microL ;; conversion form microliters to Joules
-
   Ra
   Re
   R          ;; R spatial statistic of map
   end-setup  ;; logical signifying map has been made. used to end environment testing runs
+
+  patches-with-resource?  ;; agentset of patches with resource? = True
+  patch-with-hive         ;; agentset of hive patch
+  fd-amt                  ;; number of patches that bees move each tick
+  flight-cost   ;; energy expended per unit moved on map
+  J-per-microL  ;; conversion form microliters to Joules
+  nectar-influx ;; total energy collected / simulation duration (in time steps) / bee
+  RI            ;; recruitment intensity, 0 when comunication is off, .016 when it is on
 ]
 turtles-own
 [
@@ -38,16 +39,19 @@ turtles-own
   energy-expended      ;; energy bee spent to get to resource
   state                ;; state bee is in
   next-state           ;; State to transition to at the end of the time step.
-                       ;; states: inactive = Inactive, toResource = Direct to Resource, randSearch = Random Search,
+                       ;; states: inactive-unemp = Inactive (unemployed), inactive-emp = Inactive (knows resource),
+                       ;;         toResource = Direct to Resource, randSearch = Random Search,
                        ;;         forage = Forage at Resource, return = Return to Hive, dance = Dancing
-                       ; variables specific to some states
+  ; variables specific to some states
   time-foraging        ;; if bee is foraging, time bee has spent foraging on current foraging trip (else 0)
-  mem-resource-patch   ;; patch remembered by returning bee
-  patch-to-go-to       ;; patch that bee was recruited to go to (if any)
+  resource-in-mem      ;; patch remembered by returning bee or patch recruited bee is going to (learned from dancer)
+  mem-goto             ;; "mem" if bee has returning from resource, "goto" if bee learned patch from dancer, "" otherwise
+  prob-forage          ;; probability that bee that has found resource will go back to resource. is a var because depends on e-res
 ]
 patches-own
 [
-  nest?                ;; true on nest patches
+  hive?                ;; true on hive patches
+  hive-collected       ;; Joules (of nectar) returned to hive
   resource?            ;; true on resource patches
   resource-new?        ;; true on resource patches before setup-resource-surrounding
   quantity             ;; amount of food per patch
@@ -81,9 +85,15 @@ to setup
   setup-patches
 
   set end-setup 1
+  set-global-variables
+end
+
+to set-global-variables ; set a variety of global variables
   set fd-amt 1   ;; fd 15 on big map: 25 km/h = 6.9 m/s = 15 patches/tick
   set flight-cost 0.0009745127436
   set J-per-microL 5.819
+  set nectar-influx 0
+  ifelse communication? [set RI 0.016] [set RI 0]
 end
 
 to error-check ;; error checks on user input
@@ -93,8 +103,12 @@ end
 to setup-turtles
   ask turtles
   [
-    set state "inactive"
+    set state "inactive-unemp"
+    set collected 0
+    set energy-expended 0
     set next-state ""
+    set resource-in-mem ""
+    set mem-goto ""
     if bee_label?
     [
       set label-color black
@@ -116,11 +130,12 @@ to setup-patches
     repeat patchiness
     [
       c1-c2-calculations
-      ask patches with [not nest? and not resource?] [ setup-resource-choose ]
+      ask patches with [not hive? and not resource?] [ setup-resource-choose ]
       ask patches with [resource-new?]               [ setup-resource-c1c2 ]
     ]
 
     set patches-with-resource? patches with [resource?]
+    set patch-with-hive patches with [hive?]
 
     R-calc
     show R
@@ -128,7 +143,7 @@ to setup-patches
 end
 
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
-  set num-patches-t       world-width * world-height - 1 ;for nest patch
+  set num-patches-t       world-width * world-height - 1 ;for hive patch
   set area-t              num-patches-t * .000044444
   if resource_density =   "sparse" [ set density 1 ]
   if resource_density =   "dense" [ set density 32 ]
@@ -155,12 +170,13 @@ to setup-patch-initial ;; create hive patch and initialize all other patches
   ifelse (distancexy 0 0) < 1
   [ ; hive
     set pcolor brown
-    set nest? True
+    set hive? True
+    set hive-collected 0
     set c0? False
   ]
   [ ; non-hive
     set pcolor gray ; non-hive
-    set nest? False
+    set hive? False
     set c0? True
   ]
   ; all
@@ -227,7 +243,7 @@ to setup-resource-c1c2  ;; set appropriate patch variables for patches around ne
   set resource? True
   ask neighbors
   [
-    if (not nest? and not resource? and not resource-new?)
+    if (not hive? and not resource? and not resource-new?)
     [
       set c0? False
       set c1? True
@@ -236,7 +252,7 @@ to setup-resource-c1c2  ;; set appropriate patch variables for patches around ne
     ]
     ask neighbors
     [
-      if (not nest? and not resource? and not resource-new? and not c1? and not c2?)
+      if (not hive? and not resource? and not resource-new? and not c1? and not c2?)
       [
         set c0? False
         set c2? True
@@ -269,14 +285,19 @@ end
 ;;; Go procedures ;;;
 ;;;;;;;;;;;;;;;;;;;;;
 
-to go  ;; forever button
+to go
+  ; turtle stuff
   ask turtles
   [ ;if who >= ticks [ stop ] ;; delay initial departure
     ;; Actions based on states
-    if state = "inactive"
-    [ inactive ]
+    if state = "inactive-unemp"
+    [ inactive-unemp ]
+    if state = "inactive-emp"
+    [ inactive-emp ]
+    if state = "inactive-return"
+    [ inactive-return ]
     if state = "toResource"
-    [ go-to-resource ]
+    [ goto-resource ]
     if state = "randSearch"
     [ random-search ]
     if state = "forage"
@@ -284,35 +305,52 @@ to go  ;; forever button
     if state = "return"
     [ return-to-hive ]
     if state = "dance"
-    [  ]
+    [ dance ]
 
-    ; Update states
-    transition
-  ]
-  if ephemeral? = True
-    [ ask patches
-      [ if resource?
-        [ if random 10000 < 10 ;; TODO: ephemeral resources
-          [ remove-patch ]
-        ]
-      ]
+    ; Update states-transition
+    if next-state != ""
+    [
+      set state next-state
+      set next-state ""
     ]
+  ]
+
+  ; patch stuff
+  if ephemeral? = True
+  [ ask patches
+    [
+      if resource? [if (random 10000 < 10) [ remove-patch ]]
+    ]
+  ]
+
   tick
 end
 
-to transition
-  if next-state != ""
-  [ set state next-state
-    set next-state "" ]
+to inactive-unemp
+  ; unemployed bee
+  if (mem-goto != "" or resource-in-mem != "mem") [user-message "unemployed bee remebers resource"]
+  if (random 10000 <= 165) ; actual map: 1000000 -> 0.000165/tick ;; ADJUST to actual values
+  [ set next-state "randSearch" ]
 end
 
-to inactive
-  ;; transition to randSearch
-  if random 1000 <= 33 ; actual map: 100000 -> 0.00033/tick ;; TODO: Adjust to actual values
-  [ set next-state "randSearch" ]
-  ;; TODO: transition to toResource
-  ;; action-at end because stop ends all
-  stop
+to inactive-emp
+  ; bee that has returned from a patch
+  if (mem-goto = "mem")
+  [ if (random (1 / prob-forage) < 1) [set next-state "toResource"] ]
+
+  ; bee that has learned of a patch
+  if (mem-goto = "goto")
+  [ if (random (1 / 0.00125) < 1) [set next-state "toResource"] ]
+end
+
+to inactive-return
+  ifelse (distancexy 0 0 < fd-amt)
+  [
+    move-to patch 0 0
+    set next-state "inactive-unemp"
+    set energy-expended 0
+  ]
+  [ fd fd-amt ]
 end
 
 to wiggle
@@ -338,14 +376,23 @@ to random-search
     ]
     [
       wiggle
-      fd fd-amt * 0.2
-      set energy-expended (energy-expended - (flight-cost * 0.2))
+      fd (fd-amt * 0.2)
+      set energy-expended (energy-expended + (flight-cost * fd-amt * 0.2))
     ]
   ]
 end
 
-to go-to-resource
-
+to goto-resource
+  ifelse (distance resource-in-mem < fd-amt)
+  [
+    move-to resource-in-mem
+    set energy-expended (energy-expended + (flight-cost * (distance resource-in-mem)))
+    set next-state "forage"
+  ]
+  [
+    fd fd-amt
+    set energy-expended (energy-expended + (flight-cost * fd-amt))
+  ]
 end
 
 to forage-nectar
@@ -354,8 +401,10 @@ to forage-nectar
   if (time-foraging = 48) ; 15 sec/tick -> 12 minutes is 48 ticks
   [
     set collected collected + quality
-    set mem-resource-patch patch-here
+    set resource-in-mem patch-here
+    set mem-goto "mem"
     set next-state "return"
+    set time-foraging 0
 
     ;; Update patch
     set quantity quantity - 1
@@ -372,34 +421,52 @@ to forage-nectar
 end
 
 to return-to-hive
-  ifelse nest?
+  ifelse (hive?)
   [
     set color yellow
-    ; add nectar-influx-colony?
-    ifelse communication?  ;; TODO: dancing vs inactive
-    [
-      ; e-res = net energy gained/energy expended
-      let e-res collected ;; TODO: fix
-      let p-recruit .016 * e-res / nectar-influx-colony
-      let p-recruit-num (1 / p-recruit)
-      ifelse (random p-recruit-num < 1)
-      [ set next-state "dance" ]
-      [ set next-state "inactive" ]
-    ]
-    [ set next-state "inactive" ]
+    set hive-collected hive-collected + collected
+    set next-state "dance"
   ]
   [
-    facexy 0 0
-    fd fd-amt
+    ifelse (distancexy 0 0 < fd-amt)
+    [ move-to patch 0 0 ]
+    [
+      facexy 0 0
+      fd fd-amt
+      ;; TODO: energy-expended?
+    ]
   ]
 end
 
 to dance
-  ;ask one-of turtles with [state = "inactive"]
-  ;[
-  ;  set patch-to-go-to mem-resource-patch
-  ;  set next-state "toResource"
-  ;]
+  ; recruit another bee to resource?
+  let e-res (collected / energy-expended)
+  let p-recruit (RI * e-res / nectar-influx)
+  let p-recruit-num (1 / p-recruit)
+  if (random p-recruit-num < 1)
+  [
+    let bee-recruit one-of turtles with [state = "inactive-unemp"]
+    let resource-patch resource-in-mem
+    ask bee-recruit
+    [
+      set next-state "inactive-emp"
+      set resource-in-mem resource-patch
+      set mem-goto "goto"
+      set energy-expended 325
+    ]
+  ]
+  ; abandon resource?
+  let p-abandon (0.25 / e-res)
+  let p-abandon-num (1 / p-abandon)
+  if (p-abandon-num < 1)
+  [
+    set resource-in-mem ""
+    set mem-goto ""
+  ]
+  ; calculate prob-forage
+  set prob-forage 0.0035 * e-res
+
+  set next-state "inactive-emp"
 end
 
 to remove-patch
