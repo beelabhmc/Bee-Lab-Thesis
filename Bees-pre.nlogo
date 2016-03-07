@@ -401,10 +401,10 @@ end
 GRAPHICS-WINDOW
 336
 10
-1347
-1042
-500
-500
+3347
+3042
+1500
+1500
 1.0
 1
 10
@@ -415,10 +415,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--500
-500
--500
-500
+-1500
+1500
+-1500
+1500
 1
 1
 1
@@ -1008,22 +1008,24 @@ reset-timer</setup>
       <value value="3001"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="setup-time" repetitions="1" runMetricsEveryStep="true">
-    <setup>set-patch-size 1
-resize-world -1500 1500 -1500 1500
-reset-timer
+  <experiment name="setup-time" repetitions="2" runMetricsEveryStep="true">
+    <setup>reset-timer
 setup</setup>
     <go>go</go>
     <timeLimit steps="1"/>
     <exitCondition>ticks = 1</exitCondition>
     <metric>timer</metric>
-    <enumeratedValueSet variable="patchiness">
-      <value value="1"/>
-      <value value="2"/>
+    <enumeratedValueSet variable="min-pxcor">
+      <value value="-1500"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="calc_R">
-      <value value="true"/>
-      <value value="false"/>
+    <enumeratedValueSet variable="max-pxcor">
+      <value value="1500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="min-pycor">
+      <value value="-1500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-pycor">
+      <value value="1500"/>
     </enumeratedValueSet>
   </experiment>
   <experiment name="R testing" repetitions="1" runMetricsEveryStep="false">
@@ -1111,23 +1113,33 @@ setup</setup>
       <value value="true"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="R sparse testing" repetitions="10" runMetricsEveryStep="false">
-    <setup>set-patch-size 1
-resize-world -500 500 -500 500
-reset-timer
+  <experiment name="R sparse testing" repetitions="7" runMetricsEveryStep="false">
+    <setup>reset-timer
 setup</setup>
     <go>go</go>
-    <exitCondition>ticks = 1</exitCondition>
+    <exitCondition>end-setup = 1</exitCondition>
     <metric>R</metric>
     <metric>timer</metric>
-    <steppedValueSet variable="c1_mult" first="901" step="50" last="1501"/>
-    <steppedValueSet variable="c2_mult" first="901" step="50" last="1501"/>
-    <steppedValueSet variable="patchiness" first="1" step="3" last="21"/>
+    <steppedValueSet variable="c1_mult" first="1" step="200" last="1401"/>
+    <steppedValueSet variable="c2_mult" first="1" step="200" last="1401"/>
+    <steppedValueSet variable="patchiness" first="1" step="4" last="21"/>
     <enumeratedValueSet variable="resource_density">
       <value value="&quot;sparse&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="calc_R">
       <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="min-pxcor">
+      <value value="-1500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-pxcor">
+      <value value="1500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="min-pycor">
+      <value value="-1500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-pycor">
+      <value value="1500"/>
     </enumeratedValueSet>
   </experiment>
   <experiment name="R dense testing" repetitions="20" runMetricsEveryStep="false">
