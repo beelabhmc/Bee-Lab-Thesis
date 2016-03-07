@@ -122,7 +122,7 @@ to setup-patches
   resource-patch-calculations
   set loop-num 0
 
-  while [(abs(R-exp - R) > 0.03) and (loop-num <= 10)]
+  while [(abs(R-exp - R) > 0.03) and (loop-num <= 15)]
   [
     set loop-num loop-num + 1
     show (word "new loop: " loop-num)
@@ -140,6 +140,7 @@ to setup-patches
     R-calc
     show R
   ]
+
 end
 
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
@@ -338,7 +339,7 @@ to inactive-emp
   if (mem-goto = "mem")
   [ if (random (1 / prob-forage) < 1) [set next-state "toResource"] ]
 
-  ; bee that has learned of a patch
+  ; bee that has learned of a patch;;;;;;;
   if (mem-goto = "goto")
   [ if (random (1 / 0.00125) < 1) [set next-state "toResource"] ]
 end
@@ -350,7 +351,10 @@ to inactive-return
     set next-state "inactive-unemp"
     set energy-expended 0
   ]
-  [ fd fd-amt ]
+  [
+    face patch 0 0
+    fd fd-amt
+  ]
 end
 
 to wiggle
@@ -360,12 +364,9 @@ end
 
 to random-search
   ifelse (resource? = True)
+  [ set next-state "forage"   stop ]
   [
-    set next-state "forage"
-    stop
-  ]
-  [
-    let closest min-one-of patches-with-resource? [distance turtle 0]
+    let closest min-one-of patches-with-resource? [distance myself]   ;;;check this
     let dist distance closest
     ifelse (dist < (25 / 6.67))
     [
@@ -390,6 +391,7 @@ to goto-resource
     set next-state "forage"
   ]
   [
+    face ...
     fd fd-amt
     set energy-expended (energy-expended + (flight-cost * fd-amt))
   ]
@@ -400,21 +402,25 @@ to forage-nectar
   set time-foraging time-foraging + 1
   if (time-foraging = 48) ; 15 sec/tick -> 12 minutes is 48 ticks
   [
-    set collected collected + quality
-    set resource-in-mem patch-here
-    set mem-goto "mem"
-    set next-state "return"
-    set time-foraging 0
-
-    ;; Update patch
-    set quantity quantity - 1
-    if quantity_label?
+    ifelse (quantity = 0)
+    [ set nex]
     [
-      set plabel quantity
-      if quantity = 0
+      set collected collected + quality
+      set resource-in-mem patch-here
+      set mem-goto "mem"
+      set next-state "return"
+      set time-foraging 0
+
+      ;; Update patch
+      set quantity quantity - 1
+      if quantity_label?
       [
-        set pcolor white
-        set plabel ""
+        set plabel quantity
+        if quantity = 0
+        [
+          set pcolor white
+          set plabel ""
+        ]
       ]
     ]
   ]
@@ -458,15 +464,16 @@ to dance
   ; abandon resource?
   let p-abandon (0.25 / e-res)
   let p-abandon-num (1 / p-abandon)
-  if (p-abandon-num < 1)
+  ifelse (p-abandon-num < 1)
   [
     set resource-in-mem ""
     set mem-goto ""
+    set next-state "inactive-unemp"
   ]
-  ; calculate prob-forage
-  set prob-forage 0.0035 * e-res
-
-  set next-state "inactive-emp"
+  [
+    set prob-forage 0.0035 * e-res
+    set next-state "inactive-emp"
+  ]
 end
 
 to remove-patch
