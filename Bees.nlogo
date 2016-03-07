@@ -24,15 +24,18 @@ globals
   R-exp      ;; expected value of R
   loop-num   ;; number of times environment have to be generated to get environment R-R_exp <= 0.3
 
+  flight-cost  ;; energy expended per unit moved on map
+  J-per-microL ;; conversion form microliters to Joules
+
   Ra
   Re
-  R
-  end-setup
+  R          ;; R spatial statistic of map
+  end-setup  ;; logical signifying map has been made. used to end environment testing runs
 ]
 turtles-own
 [
   collected            ;; amount of food collected by each bee
-  energy               ;; bee energy level
+  energy-expended      ;; energy bee spent to get to resource
   state                ;; state bee is in
   next-state           ;; State to transition to at the end of the time step.
                        ;; states: inactive = Inactive, toResource = Direct to Resource, randSearch = Random Search,
@@ -52,9 +55,9 @@ patches-own
   ephemeral            ;; value to determine if resource disappears
   food-wasted          ;; wasted food of ephemeral resource that disappears
 
-  c0?  ;; no resources within 2 patches
-  c1?  ;; at least one resource one patch away
-  c2?  ;; not c1 and at least one resource two patches away
+  c0?      ;; no resources within 2 patches
+  c1?      ;; at least one resource one patch away
+  c2?      ;; not c1 and at least one resource two patches away
   c-parent ;; 'parent' (resource) patch for c1 and c2 patches
 ]
 
@@ -76,8 +79,11 @@ to setup
   ]
   setup-turtles
   setup-patches
+
   set end-setup 1
   set fd-amt 1   ;; fd 15 on big map: 25 km/h = 6.9 m/s = 15 patches/tick
+  set flight-cost 0.0009745127436
+  set J-per-microL 5.819
 end
 
 to error-check ;; error checks on user input
@@ -206,6 +212,7 @@ to setup-resource-choose  ;; assign new food patches, including quantity and qua
       [ set quality random-poisson quality_mean ]
     ]
     [ set quality quality_mean ]
+    set quality quality * J-per-microL
     ; Resource quantity
     set quantity 100 ; 100 trips to this flower
 
@@ -269,7 +276,7 @@ to go  ;; forever button
     if state = "inactive"
     [ inactive ]
     if state = "toResource"
-    [  ]
+    [ go-to-resource ]
     if state = "randSearch"
     [ random-search ]
     if state = "forage"
@@ -308,6 +315,11 @@ to inactive
   stop
 end
 
+to wiggle
+  lt (90 - random 180)
+  if not can-move? (fd-amt * 0.2) [ rt 180 ]
+end
+
 to random-search
   ifelse (resource? = True)
   [
@@ -316,22 +328,24 @@ to random-search
   ]
   [
     let closest min-one-of patches-with-resource? [distance turtle 0]
-    ifelse ((distance closest) < (25 / 6.67))
+    let dist distance closest
+    ifelse (dist < (25 / 6.67))
     [
       move-to closest
+      set energy-expended (energy-expended - (flight-cost * dist))
       set next-state "forage"
       stop
     ]
     [
       wiggle
       fd fd-amt * 0.2
+      set energy-expended (energy-expended - (flight-cost * 0.2))
     ]
   ]
 end
 
-to wiggle
-  lt (90 - random 180)
-  if not can-move? (fd-amt * 0.2) [ rt 180 ]
+to go-to-resource
+
 end
 
 to forage-nectar
