@@ -45,7 +45,7 @@ turtles-own
                        ;; states: inactive-unemp = Inactive (unemployed), inactive-emp = Inactive (knows resource),
                        ;;         toResource = Direct to Resource, random-search = Random Search,
                        ;;         forage = Forage at Resource, return-to-hive = Return to Hive, dance = Dancing
-  ; variables specific to some states
+                       ; variables specific to some states
   time-foraging        ;; if bee is foraging, time bee has spent foraging on current foraging trip (else 0)
   mem-goto             ;; "mem" if bee has returning from resource, "goto" if bee learned patch from dancer, "" otherwise
   resource-in-mem      ;; patch remembered by returning bee or patch recruited bee is going to (learned from dancer)
@@ -83,15 +83,15 @@ to setup
     set size 2
     set color yellow
   ]
+  set-global-variables
   setup-turtles
   setup-patches
 
   set end-setup 1
-  set-global-variables
 end
 
 to set-global-variables ; set a variety of global variables
-  set fd-amt 1   ;; fd 15 on big map: 25 km/h = 6.9 m/s = 15 patches/tick
+  set fd-amt 15   ;; fd 15 on big map: 25 km/h = 6.9 m/s = 15 patches/tick
   set flight-cost 0.0009745127436
   set J-per-microL 5.819
   set nectar-influx 0
@@ -233,6 +233,7 @@ to setup-resource-choose  ;; assign new food patches, including quantity and qua
     ]
     [ set quality quality_mean ]
     set quality quality * J-per-microL
+    set quality precision quality 2
     ; Resource quantity
     set quantity 100 ; 100 trips to this flower
 
@@ -290,6 +291,8 @@ end
 ;;;;;;;;;;;;;;;;;;;;;
 
 to go
+  show "---New Tick---"
+  show ticks
   ; turtle stuff
   ask turtles
   [ ;if who >= ticks [ stop ] ;; delay initial departure
@@ -315,6 +318,15 @@ to go
       set state next-state
       set next-state ""
     ]
+
+    show "turtle stuff"
+    show state
+    show collected
+    show energy-expended
+    show time-foraging
+    show mem-goto
+    show resource-in-mem
+    show prob-forage
   ]
 
   ; patch stuff TODO
@@ -326,9 +338,16 @@ to go
   ]
 
   ; update nectar-influx
-  set nectar-influx (hive-collected / ticks / population)
+  ifelse (ticks = 0)
+  [ set nectar-influx 0 ]
+  [ set nectar-influx (hive-collected / ticks / population) ]
 
   tick
+
+  ;; print stuff
+  show "globals"
+  show nectar-influx
+  show hive-collected
 end
 
 to inactive-unemp
@@ -339,7 +358,7 @@ to inactive-unemp
     [ set next-state "goto-resource" ]
   ]
   [
-    if (random 10000 <= 165) ; actual map: 1000000 -> 0.000165/tick ;; ADJUST to actual values
+    if (random 1000 <= 165) ; actual map: 1000000 -> 0.000165/tick ;; ADJUST to actual values
     [ set next-state "random-search" ]
   ]
 end
@@ -465,12 +484,15 @@ to dance
   [
     let bee-recruit one-of turtles with [state = "inactive-unemp"]
     let resource-patch resource-in-mem
-    ask bee-recruit
+    if bee-recruit != nobody
     [
-      set next-state "inactive-unemp"
-      set resource-in-mem resource-patch
-      set mem-goto "goto"
-      set energy-expended 325
+      ask bee-recruit
+      [
+        set next-state "inactive-unemp"
+        set resource-in-mem resource-patch
+        set mem-goto "goto"
+        set energy-expended 325
+      ]
     ]
   ]
   ; either abandon resource or set prob-forage
@@ -502,13 +524,13 @@ to remove-patch
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-336
+348
 10
-1347
-1042
-500
-500
-1.0
+1166
+849
+50
+50
+8.0
 1
 10
 1
@@ -518,10 +540,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--500
-500
--500
-500
+-50
+50
+-50
+50
 1
 1
 1
@@ -547,9 +569,9 @@ NIL
 
 BUTTON
 231
-72
+81
 306
-105
+114
 NIL
 go
 T
@@ -571,7 +593,7 @@ population
 population
 0.0
 20
-5
+3
 1
 1
 NIL
@@ -630,7 +652,7 @@ SWITCH
 403
 quality_label?
 quality_label?
-0
+1
 1
 -1000
 
@@ -653,7 +675,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-0
+1
 
 MONITOR
 217
@@ -684,7 +706,7 @@ SWITCH
 443
 quantity_label?
 quantity_label?
-1
+0
 1
 -1000
 
@@ -707,7 +729,7 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
-0
+3
 
 @#$#@#$#@
 ## WHAT IS IT?
