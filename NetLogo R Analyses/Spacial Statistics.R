@@ -54,8 +54,9 @@ d.data.all[d.idx.8,] # Best sequence is d.data.all[821:840,]
 
 ### Sparse Testing
 #s.data.all <- read.csv("Bees R sparse testing_10rep-table.csv", header = TRUE, skip = 6)[-c(6,7,9)]
-s.data.all <- read.csv("Bees R sparse testing_10rep_detailed-table.csv", header = TRUE, skip = 6)
-s.data.all$grp <- (floor((s.data.all$X.run.number.-1) / 10)) + 1
+#s.data.all <- read.csv("Bees R sparse testing_10rep_detailed-table.csv", header = TRUE, skip = 6)
+s.data.all <- read.csv("Bees R sparse testing_1500-table.csv", header = TRUE, skip = 6)
+s.data.all$grp <- (floor((s.data.all$X.run.number.-1) / 4)) + 1
 s.data <- s.data.all %>% filter(c1_mult > c2_mult)
 s.num <- 0.03
 
@@ -63,17 +64,17 @@ s.num <- 0.03
 s.data.4 <- s.data %>% filter(abs(R - 0.4) <= s.num)
 temp.4 <- which.max(table(s.data.4$grp))
 table(s.data.4$grp)
-s.idx.4 <- (10 * as.numeric(names(temp.4))) 
+s.idx.4 <- (4 * as.numeric(names(temp.4))) 
 s.data.all[s.idx.4,]
 
 s.data.6 <- s.data %>% filter(abs(R - 0.6) <= s.num)
 temp.6 <- which.max(table(s.data.6$grp)) 
 table(s.data.6$grp)
-s.idx.6 <- 10 * as.numeric(names(temp.6))
+s.idx.6 <- 4 * as.numeric(names(temp.6))
 s.data.all[s.idx.6,]
 
 s.data.8 <- s.data %>% filter(abs(R - 0.8) <= s.num)
 temp.8 <- which.max(table(s.data.8$grp)) 
 table(s.data.8$grp)
-s.idx.8 <- 10 * as.numeric(names(temp.8))
+s.idx.8 <- 4 * as.numeric(names(temp.8))
 s.data.all[s.idx.8,]
