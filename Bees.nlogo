@@ -286,7 +286,7 @@ end
 
 
 ;;;;;;;;;;;;;;;;;;;;;
-;;; Go procedures ;;;
+;;; State Machine ;;;
 ;;;;;;;;;;;;;;;;;;;;;
 
 to go
@@ -317,7 +317,7 @@ to go
     ]
   ]
 
-  ; patch stuff
+  ; patch stuff TODO
   if ephemeral? = True
   [ ask patches
     [
@@ -325,15 +325,18 @@ to go
     ]
   ]
 
+  ; update nectar-influx
+  set nectar-influx (hive-collected / ticks / population)
+
   tick
 end
 
 to inactive-unemp
-  ; unemployed bee
-  if (mem-goto = "mem") [user-message "employed bee is in unemployed state"]
+  ; unemployed bee [ user-message "employed bee is in unemployed state" ]
   ifelse (mem-goto = "goto")
   [
-    if (random (1 / 0.00125) < 1) [set next-state "goto-resource"]
+    if (random (1 / 0.00125) < 1)
+    [ set next-state "goto-resource" ]
   ]
   [
     if (random 10000 <= 165) ; actual map: 1000000 -> 0.000165/tick ;; ADJUST to actual values
@@ -342,7 +345,7 @@ to inactive-unemp
 end
 
 to inactive-emp
-  if (mem-goto != "mem") [user-message "unemployed bee is in employed state"]
+  if (mem-goto != "mem"or resource-in-mem = "" ) [ user-message "unemployed bee is in employed state" ]
   if (mem-goto = "mem")
   [ if (random (1 / prob-forage) < 1) [set next-state "goto-resource"] ]
 end
@@ -366,10 +369,12 @@ to random-search
     fd (fd-amt * 0.2)
     set energy-expended (energy-expended + (flight-cost * fd-amt * 0.2))
   ]
+  ; chance of returning to hive (is 0.0025)
+  if (random 400 < 1) [ set next-state "return-to-hive" ]
 end
 
 to goto-resource
-  if (resource-in-mem = "") [user-message "toResource bee has no patch to go to"]
+  if (resource-in-mem = "") [user-message "goto-resource bee has no patch to go to"]
   let dist-resource (distance resource-in-mem)
   ifelse (dist-resource < fd-amt)
   [
@@ -391,6 +396,7 @@ to forage
     ; Resource in mind is functionally gone and not worth remembering
     set mem-goto ""
     set resource-in-mem ""
+    ;;; reset energy-expended here??
   ]
   [
     set color pink
@@ -475,11 +481,13 @@ to dance
     set mem-goto ""
     set resource-in-mem ""
     set prob-forage 0
+    set collected 0
     set energy-expended 0
     set next-state "inactive-unemp"
   ]
   [
     set prob-forage 0.0035 * e-res
+    set collected 0
     set energy-expended 0
     set next-state "inactive-emp"
   ]
