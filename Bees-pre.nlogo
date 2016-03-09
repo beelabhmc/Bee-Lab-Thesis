@@ -615,7 +615,7 @@ c1_mult
 c1_mult
 1
 1501
-901
+1501
 1
 1
 NIL
@@ -630,7 +630,7 @@ c2_mult
 c2_mult
 1
 1501
-901
+1501
 1
 1
 NIL
@@ -645,7 +645,7 @@ patchiness
 patchiness
 1
 21
-1
+21
 1
 1
 NIL
@@ -1113,21 +1113,18 @@ setup</setup>
       <value value="true"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="R sparse testing" repetitions="7" runMetricsEveryStep="false">
+  <experiment name="R sparse testing" repetitions="4" runMetricsEveryStep="false">
     <setup>reset-timer
 setup</setup>
     <go>go</go>
     <exitCondition>end-setup = 1</exitCondition>
     <metric>R</metric>
     <metric>timer</metric>
-    <steppedValueSet variable="c1_mult" first="1" step="200" last="1401"/>
-    <steppedValueSet variable="c2_mult" first="1" step="200" last="1401"/>
+    <steppedValueSet variable="c1_mult" first="1" step="300" last="1501"/>
+    <steppedValueSet variable="c2_mult" first="1" step="300" last="1501"/>
     <steppedValueSet variable="patchiness" first="1" step="4" last="21"/>
     <enumeratedValueSet variable="resource_density">
       <value value="&quot;sparse&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="calc_R">
-      <value value="true"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="min-pxcor">
       <value value="-1500"/>
