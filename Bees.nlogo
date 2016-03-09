@@ -25,13 +25,16 @@ globals
   R          ;; R spatial statistic of map
   end-setup  ;; logical signifying map has been made. used to end environment testing runs
 
-  patches-with-resource?  ;; agentset of patches with resource? = True
   patch-with-hive         ;; agentset of hive patch
   fd-amt                  ;; number of patches that bees move each tick
-  flight-cost   ;; energy expended per unit moved on map
-  J-per-microL  ;; conversion form microliters to Joules
-  nectar-influx ;; total energy collected / simulation duration (in time steps) / bee
-  RI            ;; recruitment intensity, 0 when comunication is off, .016 when it is on
+  flight-cost    ;; energy expended per unit moved on map
+  J-per-microL   ;; conversion form microliters to Joules
+  RI             ;; recruitment intensity, 0 when comunication is off, .016 when it is on
+
+  patches-with-resource?  ;; agentset of patches with resource? = True
+  patches-with-r-and-q    ;; agentset of patches with resource? = True and quantity > 0
+  nectar-influx   ;; total energy collected / simulation duration (in time steps) / bee
+  hive-collected  ;; Joules (of nectar) returned to hive
 ]
 turtles-own
 [
@@ -40,18 +43,17 @@ turtles-own
   state                ;; state bee is in
   next-state           ;; State to transition to at the end of the time step.
                        ;; states: inactive-unemp = Inactive (unemployed), inactive-emp = Inactive (knows resource),
-                       ;;         toResource = Direct to Resource, randSearch = Random Search,
-                       ;;         forage = Forage at Resource, return = Return to Hive, dance = Dancing
+                       ;;         toResource = Direct to Resource, random-search = Random Search,
+                       ;;         forage = Forage at Resource, return-to-hive = Return to Hive, dance = Dancing
   ; variables specific to some states
   time-foraging        ;; if bee is foraging, time bee has spent foraging on current foraging trip (else 0)
-  resource-in-mem      ;; patch remembered by returning bee or patch recruited bee is going to (learned from dancer)
   mem-goto             ;; "mem" if bee has returning from resource, "goto" if bee learned patch from dancer, "" otherwise
+  resource-in-mem      ;; patch remembered by returning bee or patch recruited bee is going to (learned from dancer)
   prob-forage          ;; probability that bee that has found resource will go back to resource. is a var because depends on e-res
 ]
 patches-own
 [
   hive?                ;; true on hive patches
-  hive-collected       ;; Joules (of nectar) returned to hive
   resource?            ;; true on resource patches
   resource-new?        ;; true on resource patches before setup-resource-surrounding
   quantity             ;; amount of food per patch
@@ -140,6 +142,7 @@ to setup-patches
     R-calc
     show R
   ]
+  set patches-with-r-and-q patches-with-resource?
 
 end
 
@@ -295,15 +298,13 @@ to go
     [ inactive-unemp ]
     if state = "inactive-emp"
     [ inactive-emp ]
-    if state = "inactive-return"
-    [ inactive-return ]
-    if state = "toResource"
+    if state = "goto-resource"
     [ goto-resource ]
-    if state = "randSearch"
+    if state = "random-search"
     [ random-search ]
     if state = "forage"
-    [ forage-nectar ]
-    if state = "return"
+    [ forage ]
+    if state = "return-to-hive"
     [ return-to-hive ]
     if state = "dance"
     [ dance ]
@@ -329,32 +330,21 @@ end
 
 to inactive-unemp
   ; unemployed bee
-  if (mem-goto != "" or resource-in-mem != "mem") [user-message "unemployed bee remebers resource"]
-  if (random 10000 <= 165) ; actual map: 1000000 -> 0.000165/tick ;; ADJUST to actual values
-  [ set next-state "randSearch" ]
+  if (mem-goto = "mem") [user-message "employed bee is in unemployed state"]
+  ifelse (mem-goto = "goto")
+  [
+    if (random (1 / 0.00125) < 1) [set next-state "goto-resource"]
+  ]
+  [
+    if (random 10000 <= 165) ; actual map: 1000000 -> 0.000165/tick ;; ADJUST to actual values
+    [ set next-state "random-search" ]
+  ]
 end
 
 to inactive-emp
-  ; bee that has returned from a patch
+  if (mem-goto != "mem") [user-message "unemployed bee is in employed state"]
   if (mem-goto = "mem")
-  [ if (random (1 / prob-forage) < 1) [set next-state "toResource"] ]
-
-  ; bee that has learned of a patch;;;;;;;
-  if (mem-goto = "goto")
-  [ if (random (1 / 0.00125) < 1) [set next-state "toResource"] ]
-end
-
-to inactive-return
-  ifelse (distancexy 0 0 < fd-amt)
-  [
-    move-to patch 0 0
-    set next-state "inactive-unemp"
-    set energy-expended 0
-  ]
-  [
-    face patch 0 0
-    fd fd-amt
-  ]
+  [ if (random (1 / prob-forage) < 1) [set next-state "goto-resource"] ]
 end
 
 to wiggle
@@ -363,56 +353,60 @@ to wiggle
 end
 
 to random-search
-  ifelse (resource? = True)
-  [ set next-state "forage"   stop ]
+  let closest min-one-of patches-with-r-and-q [distance myself]
+  let dist distance closest
+  ifelse (dist < (25 / 6.67))
   [
-    let closest min-one-of patches-with-resource? [distance myself]   ;;;check this
-    let dist distance closest
-    ifelse (dist < (25 / 6.67))
-    [
-      move-to closest
-      set energy-expended (energy-expended - (flight-cost * dist))
-      set next-state "forage"
-      stop
-    ]
-    [
-      wiggle
-      fd (fd-amt * 0.2)
-      set energy-expended (energy-expended + (flight-cost * fd-amt * 0.2))
-    ]
+    move-to closest
+    set energy-expended (energy-expended - (flight-cost * dist))
+    set next-state "forage"
+  ]
+  [
+    wiggle
+    fd (fd-amt * 0.2)
+    set energy-expended (energy-expended + (flight-cost * fd-amt * 0.2))
   ]
 end
 
 to goto-resource
-  ifelse (distance resource-in-mem < fd-amt)
+  if (resource-in-mem = "") [user-message "toResource bee has no patch to go to"]
+  let dist-resource (distance resource-in-mem)
+  ifelse (dist-resource < fd-amt)
   [
     move-to resource-in-mem
-    set energy-expended (energy-expended + (flight-cost * (distance resource-in-mem)))
+    set energy-expended (energy-expended + (flight-cost * (dist-resource)))
     set next-state "forage"
   ]
   [
-    face ...
+    face resource-in-mem
     fd fd-amt
     set energy-expended (energy-expended + (flight-cost * fd-amt))
   ]
 end
 
-to forage-nectar
-  set color pink
-  set time-foraging time-foraging + 1
-  if (time-foraging = 48) ; 15 sec/tick -> 12 minutes is 48 ticks
+to forage
+  ifelse (quantity = 0)
   [
-    ifelse (quantity = 0)
-    [ set nex]
+    set next-state "random-search"
+    ; Resource in mind is functionally gone and not worth remembering
+    set mem-goto ""
+    set resource-in-mem ""
+  ]
+  [
+    set color pink
+    set time-foraging time-foraging + 1
+    if (time-foraging = 48) ; 15 sec/tick -> 12 minutes is 48 ticks
     [
       set collected collected + quality
-      set resource-in-mem patch-here
       set mem-goto "mem"
-      set next-state "return"
+      set resource-in-mem patch-here
+      set next-state "return-to-hive"
       set time-foraging 0
 
       ;; Update patch
       set quantity quantity - 1
+      if (quantity = 0) ; update agentset of resources with quantity > 0
+      [ set patches-with-r-and-q patches-with-r-and-q with [quantity > 0] ]
       if quantity_label?
       [
         set plabel quantity
@@ -421,6 +415,7 @@ to forage-nectar
           set pcolor white
           set plabel ""
         ]
+
       ]
     ]
   ]
@@ -429,23 +424,34 @@ end
 to return-to-hive
   ifelse (hive?)
   [
-    set color yellow
-    set hive-collected hive-collected + collected
-    set next-state "dance"
+    ifelse (collected = 0)
+    [
+      set next-state "inactive-unemp"
+      set energy-expended 0
+    ]
+    [
+      set color yellow
+      set hive-collected hive-collected + collected
+      set next-state "dance"
+    ]
   ]
   [
-    ifelse (distancexy 0 0 < fd-amt)
-    [ move-to patch 0 0 ]
+    let dist-hive distancexy 0 0
+    ifelse (dist-hive < fd-amt)
+    [
+      move-to patch 0 0
+      set energy-expended (energy-expended + (flight-cost * dist-hive))
+    ]
     [
       facexy 0 0
       fd fd-amt
-      ;; TODO: energy-expended?
+      set energy-expended (energy-expended + (flight-cost * fd-amt))
     ]
   ]
 end
 
 to dance
-  ; recruit another bee to resource?
+  ; recruit another bee to resource
   let e-res (collected / energy-expended)
   let p-recruit (RI * e-res / nectar-influx)
   let p-recruit-num (1 / p-recruit)
@@ -455,23 +461,26 @@ to dance
     let resource-patch resource-in-mem
     ask bee-recruit
     [
-      set next-state "inactive-emp"
+      set next-state "inactive-unemp"
       set resource-in-mem resource-patch
       set mem-goto "goto"
       set energy-expended 325
     ]
   ]
-  ; abandon resource?
+  ; either abandon resource or set prob-forage
   let p-abandon (0.25 / e-res)
   let p-abandon-num (1 / p-abandon)
   ifelse (p-abandon-num < 1)
   [
-    set resource-in-mem ""
     set mem-goto ""
+    set resource-in-mem ""
+    set prob-forage 0
+    set energy-expended 0
     set next-state "inactive-unemp"
   ]
   [
     set prob-forage 0.0035 * e-res
+    set energy-expended 0
     set next-state "inactive-emp"
   ]
 end
