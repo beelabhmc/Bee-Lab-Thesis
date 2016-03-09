@@ -1120,9 +1120,9 @@ setup</setup>
     <exitCondition>end-setup = 1</exitCondition>
     <metric>R</metric>
     <metric>timer</metric>
-    <steppedValueSet variable="c1_mult" first="1" step="300" last="1501"/>
-    <steppedValueSet variable="c2_mult" first="1" step="300" last="1501"/>
-    <steppedValueSet variable="patchiness" first="1" step="4" last="21"/>
+    <steppedValueSet variable="c1_mult" first="1501" step="300" last="2101"/>
+    <steppedValueSet variable="c2_mult" first="1" step="300" last="2101"/>
+    <steppedValueSet variable="patchiness" first="1" step="4" last="25"/>
     <enumeratedValueSet variable="resource_density">
       <value value="&quot;sparse&quot;"/>
     </enumeratedValueSet>
