@@ -480,6 +480,8 @@ to dance
   let e-res (collected / energy-expended)
   let p-recruit (RI * e-res / nectar-influx)
   let p-recruit-num (1 / p-recruit)
+  show e-res
+  show p-recruit
   if (random p-recruit-num < 1)
   [
     let bee-recruit one-of turtles with [state = "inactive-unemp"]
@@ -593,7 +595,7 @@ population
 population
 0.0
 20
-3
+1
 1
 1
 NIL
