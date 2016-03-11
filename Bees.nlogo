@@ -38,7 +38,7 @@ globals
 ]
 turtles-own
 [
-  collected            ;; amount of food collected by each bee
+  collected            ;; amount of energy collected by each bee
   energy-expended      ;; energy bee spent to get to resource
   state                ;; state bee is in
   next-state           ;; State to transition to at the end of the time step.
@@ -415,14 +415,14 @@ to forage
     ; Resource in mind is functionally gone and not worth remembering
     set mem-goto ""
     set resource-in-mem ""
-    ;;; reset energy-expended here??
   ]
   [
     set color pink
     set time-foraging time-foraging + 1
     if (time-foraging = 48) ; 15 sec/tick -> 12 minutes is 48 ticks
     [
-      set collected collected + quality
+      ;;; collect etc first
+      set collected quality
       set mem-goto "mem"
       set resource-in-mem patch-here
       set next-state "return-to-hive"
@@ -453,6 +453,7 @@ to return-to-hive
     [
       set next-state "inactive-unemp"
       set energy-expended 0
+
     ]
     [
       set color yellow
@@ -595,7 +596,7 @@ population
 population
 0.0
 20
-1
+15
 1
 1
 NIL
