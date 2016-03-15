@@ -597,7 +597,7 @@ SLIDER
 population
 population
 0.0
-20
+3000
 15
 1
 1
