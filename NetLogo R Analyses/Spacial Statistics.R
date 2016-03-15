@@ -55,7 +55,7 @@ d.data.all[d.idx.8,] # Best sequence is d.data.all[821:840,]
 ### Sparse Testing
 #s.data.all <- read.csv("Bees R sparse testing_10rep-table.csv", header = TRUE, skip = 6)[-c(6,7,9)]
 #s.data.all <- read.csv("Bees R sparse testing_10rep_detailed-table.csv", header = TRUE, skip = 6)
-s.data.all <- read.csv("Bees R sparse testing_1500-table.csv", header = TRUE, skip = 6)
+s.data.all <- read.csv("Bees R sparse testing_1500_2-table.csv", header = TRUE, skip = 6)
 s.data.all$grp <- (floor((s.data.all$X.run.number.-1) / 4)) + 1
 s.data <- s.data.all %>% filter(c1_mult > c2_mult)
 s.num <- 0.03
