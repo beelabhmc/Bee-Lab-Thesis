@@ -364,7 +364,8 @@ to inactive-unemp
 end
 
 to inactive-emp
-  if (mem-goto != "mem"or resource-in-mem = "" ) [ user-message "unemployed bee is in employed state" ]
+  if (mem-goto != "mem") [ user-message "employed bee is not mem" ]
+  if (resource-in-mem = "") [ user-message "employed bee has no resource in memory" ]
   if (mem-goto = "mem")
   [ if (random (1 / prob-forage) < 1) [set next-state "goto-resource"] ]
 end
