@@ -76,7 +76,7 @@ to setup
   reset-timer
   reset-ticks
   error-check
-  show "Start"
+  ;show "Start"
   set-default-shape turtles "bee"
   crt population
   [
@@ -127,7 +127,7 @@ to setup-patches
   while [(abs(R-exp - R) > 0.03) and (loop-num <= 20)]
   [
     set loop-num loop-num + 1
-    show (word "new loop: " loop-num)
+    ;show (word "new loop: " loop-num)
     ask patches [ setup-patch-initial ]
     repeat patchiness
     [
@@ -140,7 +140,7 @@ to setup-patches
     set patch-with-hive patches with [hive?]
 
     R-calc
-    show R
+    ;show R
   ]
   set patches-with-r-and-q patches-with-resource?
 
@@ -291,8 +291,8 @@ end
 ;;;;;;;;;;;;;;;;;;;;;
 
 to go
-  show "---New Tick---"
-  show ticks
+  ;show "---New Tick---"
+  ;show ticks
   ; turtle stuff
   ask turtles
   [ ;if who >= ticks [ stop ] ;; delay initial departure
@@ -319,14 +319,14 @@ to go
       set next-state ""
     ]
 
-    show "turtle stuff"
-    show state
-    show collected
-    show energy-expended
-    show time-foraging
-    show mem-goto
-    show resource-in-mem
-    show prob-forage
+;    show "turtle stuff"
+;    show state
+;    show collected
+;    show energy-expended
+;    show time-foraging
+;    show mem-goto
+;    show resource-in-mem
+;    show prob-forage
   ]
 
   ;;; TODO: patch ephemeral stuff
@@ -345,9 +345,9 @@ to go
   tick
 
   ;; print stuff
-  show "globals"
-  show nectar-influx
-  show hive-collected
+  ;show "globals"
+  ;show nectar-influx
+  ;show hive-collected
 end
 
 to inactive-unemp
@@ -598,7 +598,7 @@ population
 population
 0.0
 3000
-15
+500
 1
 1
 NIL
@@ -680,7 +680,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-0
+1
 
 MONITOR
 217
@@ -722,7 +722,7 @@ SWITCH
 105
 communication?
 communication?
-1
+0
 1
 -1000
 
