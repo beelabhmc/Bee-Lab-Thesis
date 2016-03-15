@@ -478,24 +478,25 @@ to return-to-hive
 end
 
 to dance
-  ; recruit another bee to resource
   let e-res (collected / energy-expended)
-  let p-recruit (RI * e-res / nectar-influx)
-  let p-recruit-num (1 / p-recruit)
-  show e-res
-  show p-recruit
-  if (random p-recruit-num < 1)
+  ; recruit another bee to resource
+  if communication?
   [
-    let bee-recruit one-of turtles with [state = "inactive-unemp"]
-    let resource-patch resource-in-mem
-    if bee-recruit != nobody
+    let p-recruit (RI * e-res / nectar-influx)
+    let p-recruit-num (1 / p-recruit)
+    if (random p-recruit-num < 1)
     [
-      ask bee-recruit
+      let bee-recruit one-of turtles with [state = "inactive-unemp"]
+      let resource-patch resource-in-mem
+      if (bee-recruit != nobody)
       [
-        set next-state "inactive-unemp"
-        set resource-in-mem resource-patch
-        set mem-goto "goto"
-        set energy-expended 325
+        ask bee-recruit
+        [
+          set next-state "inactive-unemp"
+          set resource-in-mem resource-patch
+          set mem-goto "goto"
+          set energy-expended 325
+        ]
       ]
     ]
   ]
@@ -530,11 +531,11 @@ end
 GRAPHICS-WINDOW
 348
 10
-1166
-849
-50
-50
-8.0
+3359
+3042
+1500
+1500
+1.0
 1
 10
 1
@@ -544,10 +545,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--50
-50
--50
-50
+-1500
+1500
+-1500
+1500
 1
 1
 1
@@ -679,7 +680,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-1
+0
 
 MONITOR
 217
@@ -710,7 +711,7 @@ SWITCH
 443
 quantity_label?
 quantity_label?
-0
+1
 1
 -1000
 
@@ -721,7 +722,7 @@ SWITCH
 105
 communication?
 communication?
-0
+1
 1
 -1000
 
@@ -1253,6 +1254,62 @@ setup</setup>
       <value value="&quot;0.6&quot;"/>
       <value value="&quot;0.8&quot;"/>
       <value value="&quot;1.0&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="Practice Run" repetitions="2" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <exitCondition>ticks = 2400</exitCondition>
+    <metric>R</metric>
+    <metric>loop-num</metric>
+    <metric>J-per-microL</metric>
+    <metric>nectar-influx</metric>
+    <metric>hive-collected</metric>
+    <metric>timer</metric>
+    <enumeratedValueSet variable="quality_label?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="R_value">
+      <value value="&quot;1.0&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="ephemeral?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="resource_density">
+      <value value="&quot;dense&quot;"/>
+      <value value="&quot;sparse&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="communication?">
+      <value value="true"/>
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="quality_distrib">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="quantity_label?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="population">
+      <value value="500"/>
+      <value value="3000"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="bee_label?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="quality_mean">
+      <value value="25"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="min-pxcor">
+      <value value="-1500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-pxcor">
+      <value value="1500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="min-pycor">
+      <value value="-1500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-pycor">
+      <value value="1500"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
