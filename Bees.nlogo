@@ -41,6 +41,7 @@ turtles-own
   collected            ;; amount of energy collected by each bee
   energy-expended      ;; energy bee spent to get to resource
   state                ;; state bee is in
+  state-list
   next-state           ;; State to transition to at the end of the time step.
                        ;; states: inactive-unemp = Inactive (unemployed), inactive-emp = Inactive (knows resource),
                        ;;         toResource = Direct to Resource, random-search = Random Search,
@@ -106,6 +107,7 @@ to setup-turtles
   ask turtles
   [
     set state "inactive-unemp"
+    set state-list ["inactive-unemp"]
     set collected 0
     set energy-expended 0
     set next-state ""
@@ -316,6 +318,7 @@ to go
     if next-state != ""
     [
       set state next-state
+      set state-list lput next-state state-list
       set next-state ""
     ]
 
@@ -352,6 +355,14 @@ end
 
 to inactive-unemp
   ; unemployed bee [ user-message "employed bee is in unemployed state" ]
+  if (collected != 0)
+  [
+    show state-list
+    show collected
+    user-message "inactive-unemp: collected != 0"
+  ]
+  if (mem-goto = "mem") [ user-message "unemployed bee has mem-goto=mem" ]
+  if (mem-goto = "" and resource-in-mem != "") [ user-message "unemployed bee with mem-goto='' has resource in memory" ]
   ifelse (mem-goto = "goto")
   [
     if (random (1 / 0.00125) < 1)
@@ -364,6 +375,12 @@ to inactive-unemp
 end
 
 to inactive-emp
+  if (collected != 0)
+  [
+    show state-list
+    show collected
+    user-message "inactive-emp: collected != 0"
+  ]
   if (mem-goto != "mem") [ user-message "employed bee is not mem" ]
   if (resource-in-mem = "") [ user-message "employed bee has no resource in memory" ]
   if (mem-goto = "mem")
@@ -376,6 +393,15 @@ to wiggle
 end
 
 to random-search
+  if (collected != 0 or resource-in-mem != "" or mem-goto != "")
+  [
+    show self
+    show resource-in-mem
+    show mem-goto
+    show collected
+    show state-list
+    user-message "in random-search with collected != 0"
+  ]
   let closest min-one-of patches-with-r-and-q [distance myself]
   let dist distance closest
   ifelse (dist <= (25 / 6.67))
@@ -501,6 +527,14 @@ to dance
       ]
     ]
   ]
+  if (resource-in-mem = "" or mem-goto != "mem")
+  [
+    show self
+    show state-list
+    show mem-goto
+    show resource-in-mem
+    user-message "dancer without resource mem"
+  ]
   ; either abandon resource or set prob-forage
   let p-abandon (0.25 / e-res)
   let p-abandon-num (1 / p-abandon)
@@ -532,10 +566,10 @@ end
 GRAPHICS-WINDOW
 348
 10
-3359
-3042
-1500
-1500
+1359
+1042
+500
+500
 1.0
 1
 10
@@ -546,10 +580,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--1500
-1500
--1500
-1500
+-500
+500
+-500
+500
 1
 1
 1
@@ -622,7 +656,7 @@ false
 "" ""
 PENS
 "remaining" 1.0 0 -13840069 true "" "plotxy ticks sum [quantity] of patches"
-"collected" 1.0 0 -2674135 true "" "plotxy ticks sum [collected] of turtles"
+"collected" 1.0 0 -2674135 true "" "plotxy ticks hive-collected"
 "wasted" 1.0 0 -7500403 true "" "if ephemeral? [plotxy ticks sum [food-wasted] of patches]"
 
 SWITCH
@@ -681,7 +715,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-1
+0
 
 MONITOR
 217

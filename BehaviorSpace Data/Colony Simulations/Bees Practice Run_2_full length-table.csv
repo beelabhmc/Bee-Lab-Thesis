@@ -1,7 +1,7 @@
 "BehaviorSpace results (NetLogo 5.3)"
 "Bees.nlogo"
 "Practice Run"
-"03/14/2016 20:50:41:029 -0700"
+"03/15/2016 07:59:16:869 -0700"
 "min-pxcor","max-pxcor","min-pycor","max-pycor"
 "-1500","1500","-1500","1500"
 "[run number]","quality_label?","R_value","ephemeral?","resource_density","communication?","quality_distrib","quantity_label?","population","bee_label?","quality_mean","min-pxcor","max-pxcor","min-pycor","max-pycor","[step]","R","loop-num","J-per-microL","nectar-influx","hive-collected","timer"
