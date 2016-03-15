@@ -124,7 +124,7 @@ to setup-patches
   resource-patch-calculations
   set loop-num 0
 
-  while [(abs(R-exp - R) > 0.03) and (loop-num <= 15)]
+  while [(abs(R-exp - R) > 0.03) and (loop-num <= 20)]
   [
     set loop-num loop-num + 1
     show (word "new loop: " loop-num)
@@ -164,7 +164,7 @@ to R-parameters ;; Set c1-mult, c2-mult, and patchiness based on desired R value
   if (resource_density = "dense" and R_value = "0.8") [ set R-exp 0.8 set c1-mult  41  set c2-mult  1  set patchiness 21 ]
   if (resource_density = "dense" and R_value = "1.0") [ set R-exp 1.0 set c1-mult   1  set c2-mult  1  set patchiness  1 ]
 
-  if (resource_density = "sparse" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 1351  set c2-mult 1251  set patchiness 13 ]
+  if (resource_density = "sparse" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 2101  set c2-mult 1801  set patchiness 13 ]
   if (resource_density = "sparse" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 1501  set c2-mult  901  set patchiness 13 ]
   if (resource_density = "sparse" and R_value = "0.8") [ set R-exp 0.8 set c1-mult 1201  set c2-mult    1  set patchiness  9 ]
   if (resource_density = "sparse" and R_value = "1.0") [ set R-exp 1.0 set c1-mult    1  set c2-mult    1  set patchiness  1 ]
@@ -329,7 +329,7 @@ to go
     show prob-forage
   ]
 
-  ; patch stuff TODO
+  ;;; TODO: patch ephemeral stuff
   if ephemeral? = True
   [ ask patches
     [
@@ -358,7 +358,7 @@ to inactive-unemp
     [ set next-state "goto-resource" ]
   ]
   [
-    if (random 1000 <= 165) ; actual map: 1000000 -> 0.000165/tick ;; ADJUST to actual values
+    if (random 1000000 <= 165) ; actual map: 1000000 -> 0.000165/tick ;; ADJUST to actual values
     [ set next-state "random-search" ]
   ]
 end
@@ -377,7 +377,7 @@ end
 to random-search
   let closest min-one-of patches-with-r-and-q [distance myself]
   let dist distance closest
-  ifelse (dist < (25 / 6.67))
+  ifelse (dist <= (25 / 6.67))
   [
     move-to closest
     set energy-expended (energy-expended - (flight-cost * dist))
@@ -412,26 +412,23 @@ to forage
   ifelse (quantity = 0)
   [
     set next-state "random-search"
-    ; Resource in mind is functionally gone and not worth remembering
     set mem-goto ""
     set resource-in-mem ""
   ]
   [
     set color pink
     set time-foraging time-foraging + 1
-    if (time-foraging = 48) ; 15 sec/tick -> 12 minutes is 48 ticks
+    if (time-foraging = 1)
     [
-      ;;; collect etc first
+      ; Collect resource first
       set collected quality
       set mem-goto "mem"
       set resource-in-mem patch-here
-      set next-state "return-to-hive"
-      set time-foraging 0
 
-      ;; Update patch
+      ; Update patch
       set quantity quantity - 1
-      if (quantity = 0) ; update agentset of resources with quantity > 0
-      [ set patches-with-r-and-q patches-with-r-and-q with [quantity > 0] ]
+      ; update agentset of resources with quantity > 0
+      if (quantity = 0) [ set patches-with-r-and-q patches-with-r-and-q with [quantity > 0] ]
       if quantity_label?
       [
         set plabel quantity
@@ -440,8 +437,12 @@ to forage
           set pcolor white
           set plabel ""
         ]
-
       ]
+    ]
+    if (time-foraging = 48) ; 15 sec/tick -> 12 minutes is 48 ticks
+    [
+      set next-state "return-to-hive"
+      set time-foraging 0
     ]
   ]
 end
