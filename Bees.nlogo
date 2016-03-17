@@ -1361,6 +1361,10 @@ setup</setup>
     <metric>count patches with [resource? and quantity = 50]</metric>
     <metric>count patches with [resource? and quantity = 0]</metric>
     <metric>max [dist-hive-max] of turtles</metric>
+    <enumeratedValueSet variable="resource_density">
+      <value value="&quot;dense&quot;"/>
+      <value value="&quot;sparse&quot;"/>
+    </enumeratedValueSet>
     <enumeratedValueSet variable="R_value">
       <value value="&quot;0.4&quot;"/>
       <value value="&quot;0.6&quot;"/>
@@ -1370,10 +1374,6 @@ setup</setup>
     <enumeratedValueSet variable="communication?">
       <value value="true"/>
       <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="resource_density">
-      <value value="&quot;dense&quot;"/>
-      <value value="&quot;sparse&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="population">
       <value value="500"/>
