@@ -709,7 +709,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-1
+0
 
 MONITOR
 217
@@ -1333,6 +1333,55 @@ setup</setup>
       <value value="3000"/>
     </enumeratedValueSet>
     <steppedValueSet variable="repetitions" first="1" step="1" last="2"/>
+    <enumeratedValueSet variable="min-pxcor">
+      <value value="-750"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-pxcor">
+      <value value="750"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="min-pycor">
+      <value value="-750"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-pycor">
+      <value value="750"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="Practice-ish Run" repetitions="1" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <exitCondition>ticks = 2400</exitCondition>
+    <metric>R</metric>
+    <metric>loop-num</metric>
+    <metric>J-per-microL</metric>
+    <metric>nectar-influx</metric>
+    <metric>hive-collected</metric>
+    <metric>imported</metric>
+    <metric>exported</metric>
+    <metric>timer-post-setup</metric>
+    <metric>timer</metric>
+    <metric>count patches with [resource?]</metric>
+    <metric>count patches with [resource? and quantity = 50]</metric>
+    <metric>count patches with [resource? and quantity = 0]</metric>
+    <metric>max [dist-hive-max] of turtles</metric>
+    <enumeratedValueSet variable="R_value">
+      <value value="&quot;0.4&quot;"/>
+      <value value="&quot;0.6&quot;"/>
+      <value value="&quot;0.8&quot;"/>
+      <value value="&quot;1.0&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="communication?">
+      <value value="true"/>
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="resource_density">
+      <value value="&quot;dense&quot;"/>
+      <value value="&quot;sparse&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="population">
+      <value value="500"/>
+      <value value="3000"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="repetitions" first="1" step="1" last="10"/>
     <enumeratedValueSet variable="min-pxcor">
       <value value="-750"/>
     </enumeratedValueSet>
