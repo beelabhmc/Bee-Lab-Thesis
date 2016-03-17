@@ -744,6 +744,21 @@ R_value
 "0.4" "0.6" "0.8" "1.0"
 3
 
+SLIDER
+31
+210
+203
+243
+repetitions
+repetitions
+0
+10
+10
+1
+1
+NIL
+HORIZONTAL
+
 @#$#@#$#@
 ## WHAT IS IT?
 
