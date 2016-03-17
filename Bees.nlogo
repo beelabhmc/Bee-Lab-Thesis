@@ -485,10 +485,12 @@ to return-to-hive
 end
 
 to dance
+  if (energy-expended = 0) [ user-message "energy-expended = 0" ]
   let e-res (collected / energy-expended)
   ; recruit another bee to resource
   if communication?
   [
+    if (nectar-influx = 0) [ user-message "nectar-influx = 0" ]
     let p-recruit (RI * e-res / nectar-influx)
     let p-recruit-num (1 / p-recruit)
     if (random p-recruit-num < 1)
@@ -516,6 +518,7 @@ to dance
     user-message "dancer without resource mem"
   ]
   ; either abandon resource or set prob-forage
+  if (e-res = 0) [ user-message "e-res = 0" ]
   let p-abandon (0.25 / e-res)
   let p-abandon-num (1 / p-abandon)
   ifelse (p-abandon-num < 1)
@@ -1271,10 +1274,10 @@ setup</setup>
       <value value="&quot;1.0&quot;"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="Practice Run" repetitions="2" runMetricsEveryStep="false">
+  <experiment name="Practice Run" repetitions="1" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
-    <exitCondition>ticks = 1400</exitCondition>
+    <exitCondition>ticks = 1000</exitCondition>
     <metric>R</metric>
     <metric>loop-num</metric>
     <metric>J-per-microL</metric>
