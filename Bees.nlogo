@@ -90,7 +90,8 @@ to setup
   ]
   set-global-variables
   ; map
-  let curr-dir "/Users/swoodman/Desktop/maps/"
+  let curr-dir "/Users/beelab/Desktop/Woodman-Thesis/Bee-Lab-Thesis/maps/"
+  ;let curr-dir "/Users/swoodman/Desktop/maps/"
   set name-map (word curr-dir repetitions "__" population "_" resource_density "_" R_value ".csv")
   ifelse file-exists? name-map
   [ import-world (name-map) set imported true]
