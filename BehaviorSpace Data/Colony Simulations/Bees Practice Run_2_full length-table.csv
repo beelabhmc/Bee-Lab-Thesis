@@ -1,7 +1,1 @@
-"BehaviorSpace results (NetLogo 5.3)"
-"Bees.nlogo"
-"Practice Run"
-"03/16/2016 23:46:08:434 -0700"
-"min-pxcor","max-pxcor","min-pycor","max-pycor"
-"-500","500","-500","500"
-"[run number]","quality_label?","R_value","ephemeral?","resource_density","communication?","quality_distrib","quantity_label?","population","bee_label?","quality_mean","min-pxcor","max-pxcor","min-pycor","max-pycor","[step]","R","loop-num","J-per-microL","nectar-influx","hive-collected","timer","count patches with [resource?]","count patches with [resource? and quantity = 100]","count patches with [resource? and quantity = 0]"
+BehaviorSpace results (NetLogo 5.3),,,,,,,,,,,,,,,,,,,,,,,,Bees.nlogo,,,,,,,,,,,,,,,,,,,,,,,,Practice Run,,,,,,,,,,,,,,,,,,,,,,,,03/16/2016 23:57:58:119 -0700,,,,,,,,,,,,,,,,,,,,,,,,min-pxcor,max-pxcor,min-pycor,max-pycor,,,,,,,,,,,,,,,,,,,,,-500,500,-500,500,,,,,,,,,,,,,,,,,,,,,[run number],quality_label?,R_value,ephemeral?,resource_density,communication?,quality_distrib,quantity_label?,population,bee_label?,quality_mean,min-pxcor,max-pxcor,min-pycor,max-pycor,[step],R,loop-num,J-per-microL,nectar-influx,hive-collected,timer,count patches with [resource?],count patches with [resource? and quantity = 100],count patches with [resource? and quantity = 0]1,FALSE,"""1.0""",FALSE,"""dense""",TRUE,TRUE,FALSE,500,FALSE,25,-1500,1500,-1500,1500,1000,1.001373082,1,5.819,0.147904224,73878.16,2306.346,12876,12851,12,FALSE,"""1.0""",FALSE,"""dense""",TRUE,TRUE,FALSE,3000,FALSE,25,-1500,1500,-1500,1500,1000,0.998627546,1,5.819,0.119372232,357758.58,2341.494,12836,12771,163,FALSE,"""1.0""",FALSE,"""dense""",FALSE,TRUE,FALSE,500,FALSE,25,-1500,1500,-1500,1500,1000,1.009718277,1,5.819,0.135835856,67850.01,2294.997,12658,12637,1
