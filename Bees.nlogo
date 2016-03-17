@@ -250,7 +250,7 @@ to setup-resource-choose  ;; assign new food patches, including quantity and qua
     set quality quality * J-per-microL
     set quality precision quality 2
     ; Resource quantity
-    set quantity 100 ; 100 trips to this flower
+    set quantity 50 ; 50 trips to this flower
 
                      ; Resource label, if necessary
     if quality_label?  [ set plabel quality ]
@@ -383,7 +383,7 @@ to inactive-emp
 end
 
 to wiggle
-  lt (90 - random 180)
+  lt (45 - random 90)
   if not can-move? (fd-amt * 0.2) [ rt 180 ]
 end
 
@@ -554,10 +554,10 @@ end
 GRAPHICS-WINDOW
 348
 10
-1359
-1042
-500
-500
+3359
+3042
+1500
+1500
 1.0
 1
 10
@@ -568,10 +568,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--500
-500
--500
-500
+-1500
+1500
+-1500
+1500
 1
 1
 1
@@ -621,7 +621,7 @@ population
 population
 0.0
 3000
-1646
+3000
 1
 1
 NIL
@@ -703,7 +703,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-1
+0
 
 MONITOR
 217
@@ -768,7 +768,7 @@ repetitions
 repetitions
 0
 10
-10
+1
 1
 1
 NIL
@@ -1303,12 +1303,14 @@ setup</setup>
     <metric>J-per-microL</metric>
     <metric>nectar-influx</metric>
     <metric>hive-collected</metric>
+    <metric>imported</metric>
+    <metric>exported</metric>
+    <metric>timer-post-setup</metric>
     <metric>timer</metric>
     <metric>count patches with [resource?]</metric>
     <metric>count patches with [resource? and quantity = 100]</metric>
     <metric>count patches with [resource? and quantity = 0]</metric>
     <enumeratedValueSet variable="R_value">
-      <value value="&quot;0.8&quot;"/>
       <value value="&quot;1.0&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="resource_density">
