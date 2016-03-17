@@ -1,5 +1,9 @@
 globals
 [
+  imported
+  exported
+  name-map
+
   num-patches-t        ;; total number of patches on the map
   area-t               ;; total area in kilometers of the map. One patch is 6.67m by 6.67m
   density              ;; number of patches per square kilometer. sparse = 1, dense = 32
@@ -85,8 +89,15 @@ to setup
     set color yellow
   ]
   set-global-variables
+  ; map
+  let curr-dir "/Users/swoodman/Desktop/maps/"
+  set name-map (word curr-dir repetitions "__" population "_" resource_density "_" R_value ".csv")
+  ifelse file-exists? name-map
+  [ import-world (name-map) set imported true]
+  [ setup-patches  export-world (name-map) set exported true]
+  show word "import" imported
+  show word "export" exported
   setup-turtles
-  setup-patches
 
   set end-setup 1
 end
@@ -97,6 +108,9 @@ to set-global-variables ; set a variety of global variables
   set J-per-microL 5.819
   set nectar-influx 0
   ifelse communication? [set RI 0.016] [set RI 0]
+
+  set imported false
+  set exported false
 end
 
 to error-check ;; error checks on user input
