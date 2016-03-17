@@ -4,6 +4,7 @@ globals
   exported
   name-map
   timer-post-setup
+  bees-recruited
 
   num-patches-t        ;; total number of patches on the map
   area-t               ;; total area in kilometers of the map. One patch is 6.67m by 6.67m
@@ -43,6 +44,8 @@ globals
 ]
 turtles-own
 [
+  dist-hive-max
+
   collected            ;; amount of energy collected by each bee
   energy-expended      ;; energy bee spent to get to resource
   state                ;; state bee is in
@@ -308,6 +311,9 @@ to go
   ; turtle stuff
   ask turtles
   [
+    let dist-hive distancexy 0 0
+    if (dist-hive > dist-hive-max) [ set dist-hive-max dist-hive ]
+
     ;; Actions based on states
     if state = "inactive-unemp"
     [ inactive-unemp ]
@@ -1327,16 +1333,16 @@ setup</setup>
     </enumeratedValueSet>
     <steppedValueSet variable="repetitions" first="1" step="1" last="2"/>
     <enumeratedValueSet variable="min-pxcor">
-      <value value="-1500"/>
+      <value value="-1050"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="max-pxcor">
-      <value value="1500"/>
+      <value value="1050"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="min-pycor">
-      <value value="-1500"/>
+      <value value="-1050"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="max-pycor">
-      <value value="1500"/>
+      <value value="1050"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
