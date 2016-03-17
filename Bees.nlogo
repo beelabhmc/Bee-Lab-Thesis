@@ -118,7 +118,6 @@ to set-global-variables ; set a variety of global variables
 end
 
 to error-check ;; error checks on user input
-  if (resource_density = "sparse" and R_value = "0.4") [user-message "sparse 0.4 has no valid parameters"]
 end
 
 to setup-turtles
@@ -365,7 +364,6 @@ to go
 end
 
 to inactive-unemp
-  ; unemployed bee [ user-message "employed bee is in unemployed state" ]
   if (collected != 0) [ user-message "inactive-unemp: collected != 0" ]
   if (mem-goto = "mem") [ user-message "unemployed bee has mem-goto=mem" ]
   if (mem-goto = "" and resource-in-mem != "") [ user-message "unemployed bee with mem-goto='' has resource in memory" ]
