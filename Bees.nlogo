@@ -44,7 +44,7 @@ turtles-own
   state-list
   next-state           ;; State to transition to at the end of the time step.
                        ;; states: inactive-unemp = Inactive (unemployed), inactive-emp = Inactive (knows resource),
-                       ;;         toResource = Direct to Resource, random-search = Random Search,
+                       ;;         goto-resource = Direct to Resource, random-search = Random Search,
                        ;;         forage = Forage at Resource, return-to-hive = Return to Hive, dance = Dancing
                        ; variables specific to some states
   time-foraging        ;; if bee is foraging, time bee has spent foraging on current foraging trip (else 0)
@@ -293,8 +293,6 @@ end
 ;;;;;;;;;;;;;;;;;;;;;
 
 to go
-  ;show "---New Tick---"
-  ;show ticks
   ; turtle stuff
   ask turtles
   [ ;if who >= ticks [ stop ] ;; delay initial departure
@@ -346,21 +344,11 @@ to go
   [ set nectar-influx (hive-collected / ticks / population) ]
 
   tick
-
-  ;; print stuff
-  ;show "globals"
-  ;show nectar-influx
-  ;show hive-collected
 end
 
 to inactive-unemp
   ; unemployed bee [ user-message "employed bee is in unemployed state" ]
-  if (collected != 0)
-  [
-    show state-list
-    show collected
-    user-message "inactive-unemp: collected != 0"
-  ]
+  if (collected != 0) [ user-message "inactive-unemp: collected != 0" ]
   if (mem-goto = "mem") [ user-message "unemployed bee has mem-goto=mem" ]
   if (mem-goto = "" and resource-in-mem != "") [ user-message "unemployed bee with mem-goto='' has resource in memory" ]
   ifelse (mem-goto = "goto")
@@ -375,12 +363,7 @@ to inactive-unemp
 end
 
 to inactive-emp
-  if (collected != 0)
-  [
-    show state-list
-    show collected
-    user-message "inactive-emp: collected != 0"
-  ]
+  if (collected != 0) [ user-message "inactive-emp: collected != 0" ]
   if (mem-goto != "mem") [ user-message "employed bee is not mem" ]
   if (resource-in-mem = "") [ user-message "employed bee has no resource in memory" ]
   if (mem-goto = "mem")
@@ -393,15 +376,7 @@ to wiggle
 end
 
 to random-search
-  if (collected != 0 or resource-in-mem != "" or mem-goto != "")
-  [
-    show self
-    show resource-in-mem
-    show mem-goto
-    show collected
-    show state-list
-    user-message "in random-search with collected != 0"
-  ]
+  if (collected != 0) [ user-message "in random-search with collected != 0" ]
   let closest min-one-of patches-with-r-and-q [distance myself]
   let dist distance closest
   ifelse (dist <= (25 / 6.67))
@@ -420,6 +395,7 @@ to random-search
 end
 
 to goto-resource
+  if (collected != 0) [ user-message "in goto-resource with collected != 0" ]
   if (resource-in-mem = "") [user-message "goto-resource bee has no patch to go to"]
   let dist-resource (distance resource-in-mem)
   ifelse (dist-resource < fd-amt)
@@ -436,17 +412,21 @@ to goto-resource
 end
 
 to forage
-  ifelse (quantity = 0)
+  set time-foraging time-foraging + 1
+  ifelse (quantity = 0 and time-foraging = 1)
   [
+    if (collected != 0) [ user-message "in start of forage with collected != 0" ]
+
     set next-state "random-search"
     set mem-goto ""
     set resource-in-mem ""
+    set time-foraging 0
   ]
   [
     set color pink
-    set time-foraging time-foraging + 1
     if (time-foraging = 1)
     [
+      if (quantity = 0) [ user-message "trying to forage from patch with no more resource" ]
       ; Collect resource first
       set collected quality
       set mem-goto "mem"
@@ -566,11 +546,11 @@ end
 GRAPHICS-WINDOW
 348
 10
-1359
-1042
+5363
+5046
 500
 500
-1.0
+5.0
 1
 10
 1
@@ -715,7 +695,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-0
+1
 
 MONITOR
 217
