@@ -90,7 +90,7 @@ to setup
   ; patches
   let curr-dir "/Users/beelab/Desktop/Woodman-Thesis/Bee-Lab-Thesis/maps/"
   ;let curr-dir "/Users/swoodman/Desktop/maps/"
-  set name-map (word curr-dir repetitions "__" population "_" resource_density "_" R_value ".csv")
+  set name-map (word curr-dir repetitions "__" resource_density "_" R_value ".csv")
   ifelse file-exists? name-map
   [ import-world (name-map)  set imported true]
   [ setup-patches   export-world (name-map)   set exported true]
@@ -560,10 +560,10 @@ end
 GRAPHICS-WINDOW
 348
 10
-3359
-3042
-1500
-1500
+1859
+1542
+750
+750
 1.0
 1
 10
@@ -574,10 +574,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--1500
-1500
--1500
-1500
+-750
+750
+-750
+750
 1
 1
 1
@@ -627,7 +627,7 @@ population
 population
 0.0
 3000
-3000
+500
 1
 1
 NIL
@@ -709,7 +709,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-0
+1
 
 MONITOR
 217
