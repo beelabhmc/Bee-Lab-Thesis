@@ -43,14 +43,14 @@ turtles-own
   state                ;; state bee is in
   state-list
   next-state           ;; State to transition to at the end of the time step.
-                       ;; states: inactive-unemp = Inactive (unemployed), inactive-emp = Inactive (knows resource),
+                       ;; states: inactive-unemp = Inactive (unemployed), inactive-emp = Inactive (employed),
                        ;;         goto-resource = Direct to Resource, random-search = Random Search,
                        ;;         forage = Forage at Resource, return-to-hive = Return to Hive, dance = Dancing
-                       ; variables specific to some states
+  ; variables specific to some states
   time-foraging        ;; if bee is foraging, time bee has spent foraging on current foraging trip (else 0)
   mem-goto             ;; "mem" if bee has returning from resource, "goto" if bee learned patch from dancer, "" otherwise
-  resource-in-mem      ;; patch remembered by returning bee or patch recruited bee is going to (learned from dancer)
-  prob-forage          ;; probability that bee that has found resource will go back to resource. is a var because depends on e-res
+  resource-in-mem      ;; patch remembered by returning bee or patch recruited bee is going to (learned from dancer), "" otherwise
+  prob-forage          ;; probability that bee that has found resource will go back to resource. Depends on e-res.
 ]
 patches-own
 [
@@ -129,7 +129,6 @@ to setup-patches
   while [(abs(R-exp - R) > 0.03) and (loop-num <= 20)]
   [
     set loop-num loop-num + 1
-    ;show (word "new loop: " loop-num)
     ask patches [ setup-patch-initial ]
     repeat patchiness
     [
@@ -142,7 +141,6 @@ to setup-patches
     set patch-with-hive patches with [hive?]
 
     R-calc
-    ;show R
   ]
   set patches-with-r-and-q patches-with-resource?
 
@@ -281,7 +279,6 @@ to R-calc ;; Calculate R spatial value
     set list-dist lput dist list-dist
 
   ]
-  ;show sort list-dist
   set Ra mean list-dist
   set Re 1 / (2 * sqrt density)
   set R Ra / Re
@@ -295,7 +292,7 @@ end
 to go
   ; turtle stuff
   ask turtles
-  [ ;if who >= ticks [ stop ] ;; delay initial departure
+  [
     ;; Actions based on states
     if state = "inactive-unemp"
     [ inactive-unemp ]
@@ -413,10 +410,9 @@ end
 
 to forage
   set time-foraging time-foraging + 1
+  if (collected != 0 and time-foraging = 1) [ user-message "in start of forage with collected != 0" ]
   ifelse (quantity = 0 and time-foraging = 1)
   [
-    if (collected != 0) [ user-message "in start of forage with collected != 0" ]
-
     set next-state "random-search"
     set mem-goto ""
     set resource-in-mem ""
@@ -486,11 +482,13 @@ end
 
 to dance
   if (energy-expended = 0) [ user-message "energy-expended = 0" ]
+  if (resource-in-mem = "" or mem-goto != "mem") [ user-message "dancer without resource mem" ]
+  if (nectar-influx = 0) [ user-message "nectar-influx = 0" ]
+
   let e-res (collected / energy-expended)
   ; recruit another bee to resource
   if communication?
   [
-    if (nectar-influx = 0) [ user-message "nectar-influx = 0" ]
     let p-recruit (RI * e-res / nectar-influx)
     let p-recruit-num (1 / p-recruit)
     if (random p-recruit-num < 1)
@@ -508,14 +506,6 @@ to dance
         ]
       ]
     ]
-  ]
-  if (resource-in-mem = "" or mem-goto != "mem")
-  [
-    show self
-    show state-list
-    show mem-goto
-    show resource-in-mem
-    user-message "dancer without resource mem"
   ]
   ; either abandon resource or set prob-forage
   if (e-res = 0) [ user-message "e-res = 0" ]
