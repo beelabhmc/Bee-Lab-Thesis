@@ -1316,8 +1316,13 @@ setup</setup>
     <metric>count patches with [resource?]</metric>
     <metric>count patches with [resource? and quantity = 100]</metric>
     <metric>count patches with [resource? and quantity = 0]</metric>
+    <metric>max [dist-hive-max] of turtles</metric>
     <enumeratedValueSet variable="R_value">
       <value value="&quot;1.0&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="communication?">
+      <value value="true"/>
+      <value value="false"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="resource_density">
       <value value="&quot;dense&quot;"/>
@@ -1327,22 +1332,18 @@ setup</setup>
       <value value="500"/>
       <value value="3000"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="communication?">
-      <value value="true"/>
-      <value value="false"/>
-    </enumeratedValueSet>
     <steppedValueSet variable="repetitions" first="1" step="1" last="2"/>
     <enumeratedValueSet variable="min-pxcor">
-      <value value="-1050"/>
+      <value value="-750"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="max-pxcor">
-      <value value="1050"/>
+      <value value="750"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="min-pycor">
-      <value value="-1050"/>
+      <value value="-750"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="max-pycor">
-      <value value="1050"/>
+      <value value="750"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
