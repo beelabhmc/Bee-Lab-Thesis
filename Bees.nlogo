@@ -546,11 +546,11 @@ end
 GRAPHICS-WINDOW
 348
 10
-5363
-5046
+1359
+1042
 500
 500
-5.0
+1.0
 1
 10
 1
@@ -1274,13 +1274,16 @@ setup</setup>
   <experiment name="Practice Run" repetitions="2" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
-    <exitCondition>ticks = 2400</exitCondition>
+    <exitCondition>ticks = 1400</exitCondition>
     <metric>R</metric>
     <metric>loop-num</metric>
     <metric>J-per-microL</metric>
     <metric>nectar-influx</metric>
     <metric>hive-collected</metric>
     <metric>timer</metric>
+    <metric>count patches with [resource?]</metric>
+    <metric>count patches with [resource? and quantity = 100]</metric>
+    <metric>count patches with [resource? and quantity = 0]</metric>
     <enumeratedValueSet variable="quality_label?">
       <value value="false"/>
     </enumeratedValueSet>
