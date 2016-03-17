@@ -3,6 +3,7 @@ globals
   imported
   exported
   name-map
+  timer-post-setup
 
   num-patches-t        ;; total number of patches on the map
   area-t               ;; total area in kilometers of the map. One patch is 6.67m by 6.67m
@@ -81,26 +82,25 @@ to setup
   reset-timer
   reset-ticks
   error-check
-  ;show "Start"
+  set-global-variables
+
+  ; patches
+  let curr-dir "/Users/beelab/Desktop/Woodman-Thesis/Bee-Lab-Thesis/maps/"
+  ;let curr-dir "/Users/swoodman/Desktop/maps/"
+  set name-map (word curr-dir repetitions "__" population "_" resource_density "_" R_value ".csv")
+  ifelse file-exists? name-map
+  [ import-world (name-map)  set imported true]
+  [ setup-patches   export-world (name-map)   set exported true]
+  set timer-post-setup timer
+
+  ;turtles
   set-default-shape turtles "bee"
   crt population
   [
     set size 2
     set color yellow
   ]
-  set-global-variables
-  ; map
-  let curr-dir "/Users/beelab/Desktop/Woodman-Thesis/Bee-Lab-Thesis/maps/"
-  ;let curr-dir "/Users/swoodman/Desktop/maps/"
-  set name-map (word curr-dir repetitions "__" population "_" resource_density "_" R_value ".csv")
-  ifelse file-exists? name-map
-  [ import-world (name-map) set imported true]
-  [ setup-patches  export-world (name-map) set exported true]
-  show word "import" imported
-  show word "export" exported
   setup-turtles
-
-  set end-setup 1
 end
 
 to set-global-variables ; set a variety of global variables
@@ -621,7 +621,7 @@ population
 population
 0.0
 3000
-500
+1646
 1
 1
 NIL
@@ -1307,39 +1307,23 @@ setup</setup>
     <metric>count patches with [resource?]</metric>
     <metric>count patches with [resource? and quantity = 100]</metric>
     <metric>count patches with [resource? and quantity = 0]</metric>
-    <enumeratedValueSet variable="quality_label?">
-      <value value="false"/>
-    </enumeratedValueSet>
     <enumeratedValueSet variable="R_value">
+      <value value="&quot;0.8&quot;"/>
       <value value="&quot;1.0&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="ephemeral?">
-      <value value="false"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="resource_density">
       <value value="&quot;dense&quot;"/>
       <value value="&quot;sparse&quot;"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="communication?">
-      <value value="true"/>
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="quality_distrib">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="quantity_label?">
-      <value value="false"/>
-    </enumeratedValueSet>
     <enumeratedValueSet variable="population">
       <value value="500"/>
       <value value="3000"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="bee_label?">
+    <enumeratedValueSet variable="communication?">
+      <value value="true"/>
       <value value="false"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="quality_mean">
-      <value value="25"/>
-    </enumeratedValueSet>
+    <steppedValueSet variable="repetitions" first="1" step="1" last="2"/>
     <enumeratedValueSet variable="min-pxcor">
       <value value="-1500"/>
     </enumeratedValueSet>
