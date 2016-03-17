@@ -1,3 +1,10 @@
+globals
+[
+  imported
+  exported
+  name-map
+  done
+]
 patches-own
 [
   value
@@ -14,13 +21,19 @@ to setup
   clear-all
   ask patches [ setup-patches ]
   ask patches with [value = 0] [ patch-test ]
-  show count patches with [value = 0]
-  show count patches with [c1? = True]
-  show count patches with [c2? = True]
+  set imported false
+  set exported false
+  set done false
   reset-ticks
 
-  ;export-world (word "/Users/swoodman/Desktop/tester-world-" date-and-time ".csv")
-  ;import-world "/Users/swoodman/Desktop/tester-world.csv"
+  let curr-dir "/Users/swoodman/Desktop/maps/"
+  set name-map (word curr-dir reps "__" population "_" resource_density "_" R_value ".csv")
+  show name-map
+  ifelse file-exists? name-map
+  [ import-world (name-map) set imported true]
+  [ export-world (name-map) set exported true]
+
+  set done true
 end
 
 to setup-patches
@@ -111,6 +124,67 @@ NIL
 NIL
 NIL
 NIL
+1
+
+SLIDER
+17
+121
+189
+154
+reps
+reps
+0
+10
+10
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+17
+179
+189
+212
+population
+population
+0
+100
+100
+1
+1
+NIL
+HORIZONTAL
+
+CHOOSER
+17
+237
+155
+282
+R_value
+R_value
+"0.4" "0.6" "0.8" "1.0"
+3
+
+SWITCH
+17
+304
+175
+337
+communication?
+communication?
+0
+1
+-1000
+
+CHOOSER
+17
+351
+155
+396
+resource_density
+resource_density
+"dense" "sparse"
 1
 
 @#$#@#$#@
@@ -460,6 +534,34 @@ NetLogo 5.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="map_test" repetitions="1" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <exitCondition>done</exitCondition>
+    <metric>imported</metric>
+    <metric>exported</metric>
+    <metric>name-map</metric>
+    <enumeratedValueSet variable="population">
+      <value value="50"/>
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="R_value">
+      <value value="&quot;0.4&quot;"/>
+      <value value="&quot;0.6&quot;"/>
+      <value value="&quot;0.8&quot;"/>
+      <value value="&quot;1.0&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="resource_density">
+      <value value="&quot;dense&quot;"/>
+      <value value="&quot;sparse&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="communication?">
+      <value value="true"/>
+      <value value="false"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="reps" first="1" step="1" last="10"/>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
