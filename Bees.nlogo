@@ -379,7 +379,7 @@ to random-search
   ifelse (dist <= (25 / 6.67))
   [
     move-to closest
-    set energy-expended (energy-expended - (flight-cost * dist))
+    set energy-expended (energy-expended + (flight-cost * dist))
     set next-state "forage"
   ]
   [
