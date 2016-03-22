@@ -87,6 +87,9 @@ to setup
   error-check
   set-global-variables
 
+  let local-communication? communication?
+  let local-population population
+
   ; patches
   let curr-dir "/Users/beelab/Desktop/Woodman-Thesis/Bee-Lab-Thesis/maps/"
   ;let curr-dir "/Users/swoodman/Desktop/maps/"
@@ -95,6 +98,9 @@ to setup
   [ import-world (name-map)  set imported true]
   [ setup-patches   export-world (name-map)   set exported true]
   set timer-post-setup timer
+
+  set communication? local-communication?
+  set population local-population
 
   ;turtles
   set-default-shape turtles "bee"
@@ -707,7 +713,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-0
+1
 
 MONITOR
 217
@@ -761,7 +767,7 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
-3
+0
 
 SLIDER
 31
@@ -1348,6 +1354,8 @@ setup</setup>
     <setup>setup</setup>
     <go>go</go>
     <exitCondition>ticks = 2400</exitCondition>
+    <metric>population</metric>
+    <metric>communication?</metric>
     <metric>R</metric>
     <metric>loop-num</metric>
     <metric>J-per-microL</metric>
@@ -1380,6 +1388,56 @@ setup</setup>
       <value value="3000"/>
     </enumeratedValueSet>
     <steppedValueSet variable="repetitions" first="1" step="1" last="10"/>
+    <enumeratedValueSet variable="min-pxcor">
+      <value value="-750"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-pxcor">
+      <value value="750"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="min-pycor">
+      <value value="-750"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-pycor">
+      <value value="750"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="Fix things Run" repetitions="1" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <exitCondition>ticks = 1</exitCondition>
+    <metric>communication?</metric>
+    <metric>population</metric>
+    <metric>R</metric>
+    <metric>loop-num</metric>
+    <metric>J-per-microL</metric>
+    <metric>nectar-influx</metric>
+    <metric>hive-collected</metric>
+    <metric>imported</metric>
+    <metric>exported</metric>
+    <metric>timer-post-setup</metric>
+    <metric>timer</metric>
+    <metric>count patches with [resource?]</metric>
+    <metric>count patches with [resource? and quantity = 50]</metric>
+    <metric>count patches with [resource? and quantity = 0]</metric>
+    <metric>max [dist-hive-max] of turtles</metric>
+    <enumeratedValueSet variable="resource_density">
+      <value value="&quot;dense&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="R_value">
+      <value value="&quot;0.4&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="communication?">
+      <value value="true"/>
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="population">
+      <value value="500"/>
+      <value value="3000"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="repetitions">
+      <value value="1"/>
+      <value value="2"/>
+    </enumeratedValueSet>
     <enumeratedValueSet variable="min-pxcor">
       <value value="-750"/>
     </enumeratedValueSet>
