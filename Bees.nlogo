@@ -1371,7 +1371,6 @@ setup</setup>
     <metric>max [dist-hive-max] of turtles</metric>
     <enumeratedValueSet variable="resource_density">
       <value value="&quot;dense&quot;"/>
-      <value value="&quot;sparse&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="R_value">
       <value value="&quot;0.4&quot;"/>
