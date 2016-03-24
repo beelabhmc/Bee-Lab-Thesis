@@ -631,7 +631,7 @@ population
 population
 0.0
 3000
-500
+3000
 1
 1
 NIL
@@ -713,7 +713,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-1
+0
 
 MONITOR
 217
@@ -755,7 +755,7 @@ SWITCH
 105
 communication?
 communication?
-0
+1
 1
 -1000
 
@@ -767,7 +767,7 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
-0
+3
 
 SLIDER
 31
@@ -778,7 +778,7 @@ repetitions
 repetitions
 0
 10
-1
+7
 1
 1
 NIL
@@ -1370,7 +1370,7 @@ setup</setup>
     <metric>count patches with [resource? and quantity = 0]</metric>
     <metric>max [dist-hive-max] of turtles</metric>
     <enumeratedValueSet variable="resource_density">
-      <value value="&quot;dense&quot;"/>
+      <value value="&quot;sparse&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="R_value">
       <value value="&quot;0.4&quot;"/>
