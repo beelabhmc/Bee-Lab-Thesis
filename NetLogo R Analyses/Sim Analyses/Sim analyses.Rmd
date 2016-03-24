@@ -14,13 +14,21 @@ This is the simulation analyses for the dense environment
 ```{r}
 ## Dense simulation data
 dense.data <- read.csv("../../BehaviorSpace Data/Colony Simulations/Bees sim_dense-table.csv", 
-                       header = TRUE, skip = 6)[c(1:6,14,15,17:20,23:28)]
+                       header = TRUE, skip = 6)[c(1:6,14,15,17:20,23:29)]
 dense.data$communication. <- as.factor(dense.data$communication.)
 dense.data$population <- as.factor(dense.data$population)
+dense.data$log.nectar <- log(dense.data$nectar.mL..bee)
 dense.data.some <- dense.data %>% filter(R_value == "\"0.8\"" | R_value == "\"1.0\"")
 
 # Plot results
 boxplot(nectar.mL..bee ~ communication.+population+R_value, data=dense.data, ylab = "Nectar(mL)/bee", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Dense sims", 
+        names = c("0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0"))
+
+boxplot(log.nectar ~ communication.+population+R_value, data=dense.data, ylab = "Log(Nectar(mL)/bee)", 
         xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Dense sims", 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
@@ -48,14 +56,22 @@ And here are the analyses for the sparse simulation
 ```{r}
 ## Dense simulation data
 sparse.data <- read.csv("../../BehaviorSpace Data/Colony Simulations/Bees sim_sparse-table.csv", 
-                        header = TRUE, skip = 6)[c(1:6,14,15,17:20,23:28)]
+                        header = TRUE, skip = 6)[c(1:6,14,15,17:20,23:29)]
 sparse.data$communication. <- as.factor(sparse.data$communication.)
 sparse.data$population <- as.factor(sparse.data$population)
+sparse.data$log.nectar <- log(sparse.data$nectar.mL..bee)
 sparse.data.some <- sparse.data %>% filter(R_value == "\"0.8\"" | R_value == "\"1.0\"")
 
 # Plot results
 boxplot(nectar.mL..bee ~ communication.+population+R_value, data=sparse.data, ylab = "Nectar(mL)/bee", 
         xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", 
+        names = c("0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0"))
+
+boxplot(log.nectar ~ communication.+population+R_value, data=sparse.data, ylab = "Log(Nectar(mL)/bee)", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Dense sims", 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
