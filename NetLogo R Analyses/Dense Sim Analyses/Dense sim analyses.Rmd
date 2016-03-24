@@ -43,3 +43,35 @@ Now for the actual data analysis.
 
 ```{r}
 ```
+
+
+And here are the analyses for the sparse simulation
+
+```{r}
+## Dense simulation data
+sparse.data <- read.csv("Bees sim_sparse-table.csv", header = TRUE, skip = 6)[c(1:6,14,15,17:20,23:28)]
+sparse.data$communication. <- as.factor(sparse.data$communication.)
+sparse.data$population <- as.factor(sparse.data$population)
+sparse.data.some <- sparse.data %>% filter(R_value == "\"0.8\"" | R_value == "\"1.0\"")
+
+# Plot results
+boxplot(nectar.mL..bee ~ communication.+population+R_value, data=sparse.data, ylab = "Nectar(mL)/bee", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", 
+        names = c("0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0"))
+
+boxplot(nectar.mL..bee ~ communication.+population+R_value, data=sparse.data.some, ylab = "Nectar(mL)/bee", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", 
+        names = c("", "", "", "", 
+                  "", "", "", "", 
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0")
+        )
+
+
+
+
+
+```
