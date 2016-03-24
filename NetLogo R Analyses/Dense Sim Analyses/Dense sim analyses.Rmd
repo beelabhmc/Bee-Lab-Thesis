@@ -1,0 +1,45 @@
+---
+title: "Dense Simulation Analyses"
+author: Sam Woodman
+output: html_document
+---
+
+```{r}
+library(dplyr)
+setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/BehaviorSpace Data/Colony Simulations/")
+```
+
+This is the simulation analyses for the dense environment
+
+```{r}
+library(dplyr)
+setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/BehaviorSpace Data/Colony Simulations/")
+
+## Dense simulation data
+dense.data <- read.csv("Bees sim_dense-table.csv", header = TRUE, skip = 6)[c(1:6,14,15,17:20,23:28)]
+dense.data$communication. <- as.factor(dense.data$communication.)
+dense.data$population <- as.factor(dense.data$population)
+dense.data.some <- dense.data %>% filter(R_value == "\"0.8\"" | R_value == "\"1.0\"")
+
+# Plot results
+boxplot(nectar.mL..bee ~ communication.+population+R_value, data=dense.data, ylab = "Nectar(mL)/bee", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", 
+        names = c("0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0"))
+
+boxplot(nectar.mL..bee ~ communication.+population+R_value, data=dense.data.some, ylab = "Nectar(mL)/bee", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", 
+        names = c("", "", "", "", 
+                  "", "", "", "", 
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0")
+        )
+
+```
+
+Now for the actual data analysis.
+
+```{r}
+```
