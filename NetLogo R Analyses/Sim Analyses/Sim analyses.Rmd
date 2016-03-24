@@ -1,36 +1,34 @@
 ---
-title: "Dense Simulation Analyses"
+title: "Simulation Analyses"
 author: Sam Woodman
 output: html_document
 ---
 
 ```{r}
 library(dplyr)
-setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/BehaviorSpace Data/Colony Simulations/")
+#setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/BehaviorSpace Data/Colony Simulations/")
 ```
 
 This is the simulation analyses for the dense environment
 
 ```{r}
-library(dplyr)
-setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/BehaviorSpace Data/Colony Simulations/")
-
 ## Dense simulation data
-dense.data <- read.csv("Bees sim_dense-table.csv", header = TRUE, skip = 6)[c(1:6,14,15,17:20,23:28)]
+dense.data <- read.csv("../../BehaviorSpace Data/Colony Simulations/Bees sim_dense-table.csv", 
+                       header = TRUE, skip = 6)[c(1:6,14,15,17:20,23:28)]
 dense.data$communication. <- as.factor(dense.data$communication.)
 dense.data$population <- as.factor(dense.data$population)
 dense.data.some <- dense.data %>% filter(R_value == "\"0.8\"" | R_value == "\"1.0\"")
 
 # Plot results
 boxplot(nectar.mL..bee ~ communication.+population+R_value, data=dense.data, ylab = "Nectar(mL)/bee", 
-        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Dense sims", 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
 
 boxplot(nectar.mL..bee ~ communication.+population+R_value, data=dense.data.some, ylab = "Nectar(mL)/bee", 
-        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Some dense sims", 
         names = c("", "", "", "", 
                   "", "", "", "", 
                   "0.8", "0.8", "0.8", "0.8",
@@ -49,7 +47,8 @@ And here are the analyses for the sparse simulation
 
 ```{r}
 ## Dense simulation data
-sparse.data <- read.csv("Bees sim_sparse-table.csv", header = TRUE, skip = 6)[c(1:6,14,15,17:20,23:28)]
+sparse.data <- read.csv("../../BehaviorSpace Data/Colony Simulations/Bees sim_sparse-table.csv", 
+                        header = TRUE, skip = 6)[c(1:6,14,15,17:20,23:28)]
 sparse.data$communication. <- as.factor(sparse.data$communication.)
 sparse.data$population <- as.factor(sparse.data$population)
 sparse.data.some <- sparse.data %>% filter(R_value == "\"0.8\"" | R_value == "\"1.0\"")
@@ -63,7 +62,7 @@ boxplot(nectar.mL..bee ~ communication.+population+R_value, data=sparse.data, yl
                   "1.0", "1.0", "1.0", "1.0"))
 
 boxplot(nectar.mL..bee ~ communication.+population+R_value, data=sparse.data.some, ylab = "Nectar(mL)/bee", 
-        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Sparse sims", 
         names = c("", "", "", "", 
                   "", "", "", "", 
                   "0.8", "0.8", "0.8", "0.8",
@@ -75,3 +74,4 @@ boxplot(nectar.mL..bee ~ communication.+population+R_value, data=sparse.data.som
 
 
 ```
+
