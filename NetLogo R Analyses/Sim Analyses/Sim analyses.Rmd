@@ -6,88 +6,174 @@ output: html_document
 
 ```{r}
 library(dplyr)
-#setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/BehaviorSpace Data/Colony Simulations/")
+# setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/NetLogo R Analyses/Sim Analyses")
+
+# Dense simulation data
+dense.data <- read.csv("Bees sim_dense-table.csv", 
+                       header = TRUE, skip = 6)[-c(7:13,15:16,21:22)]
+names(dense.data)[4] <- "communication"
+names(dense.data)[11] <- "nectar.bee"
+dense.data$R_value <- as.factor(sapply(dense.data$R_value, 
+                                       function(i) {i <- paste("d:", substr(i, 2,4))}))
+names(dense.data)[3] <- "environment"
+dense.data$communication <- as.factor(dense.data$communication)
+dense.data$population <- as.factor(dense.data$population)
+dense.data$log.nectar.bee <- log(dense.data$nectar.bee)
+dense.data.some <- dense.data %>% filter(environment == "d: 0.8" | 
+                                           environment == "d: 1.0")
+
+# Sparse simulation data
+sparse.data <- read.csv("Bees sim_sparse-table.csv", 
+                        header = TRUE, skip = 6)[-c(7:13,15:16,21:22)]
+names(sparse.data)[4] <- "communication"
+names(sparse.data)[11] <- "nectar.bee"
+sparse.data$R_value <- as.factor(sapply(sparse.data$R_value, 
+                                        function(i) {i <- paste("s:", substr(i, 2,4))}))
+names(sparse.data)[3] <- "environment"
+sparse.data$communication <- as.factor(sparse.data$communication)
+sparse.data$population <- as.factor(sparse.data$population)
+sparse.data$log.nectar.bee <- log(sparse.data$nectar.bee)
+sparse.data.some <- sparse.data %>% filter(environment == "s: 0.8" | 
+                                             environment == "s: 1.0")
+
+# All
+all.data <- rbind(dense.data, sparse.data)
 ```
 
-This is the simulation analyses for the dense environment
+## Plots
+Here are the plot of the dense and sparse simulation runs
 
+### Dense
 ```{r}
-## Dense simulation data
-dense.data <- read.csv("../../BehaviorSpace Data/Colony Simulations/Bees sim_dense-table.csv", 
-                       header = TRUE, skip = 6)[c(1:6,14,15,17:20,23:29)]
-dense.data$communication. <- as.factor(dense.data$communication.)
-dense.data$population <- as.factor(dense.data$population)
-dense.data$log.nectar <- log(dense.data$nectar.mL..bee)
-dense.data.some <- dense.data %>% filter(R_value == "\"0.8\"" | R_value == "\"1.0\"")
-
 # Plot results
-boxplot(nectar.mL..bee ~ communication.+population+R_value, data=dense.data, ylab = "Nectar(mL)/bee", 
+boxplot(nectar.bee ~ communication+population+environment, data=dense.data, ylab = "Nectar(mL)/bee", 
         xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Dense sims", 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
 
-boxplot(log.nectar ~ communication.+population+R_value, data=dense.data, ylab = "Log(Nectar(mL)/bee)", 
+boxplot(log.nectar.bee ~ communication+population+environment, data=dense.data, ylab = "Log(Nectar(mL)/bee)", 
         xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Dense sims", 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
 
-boxplot(nectar.mL..bee ~ communication.+population+R_value, data=dense.data.some, ylab = "Nectar(mL)/bee", 
+boxplot(nectar.bee ~ communication+population+environment, data=dense.data.some, ylab = "Nectar(mL)/bee", 
         xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Some dense sims", 
         names = c("", "", "", "", 
                   "", "", "", "", 
                   "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0")
-        )
+                  "1.0", "1.0", "1.0", "1.0"))
 
 ```
 
-Now for the actual data analysis.
+
+### Sparse
 
 ```{r}
-```
-
-
-And here are the analyses for the sparse simulation
-
-```{r}
-## Dense simulation data
-sparse.data <- read.csv("../../BehaviorSpace Data/Colony Simulations/Bees sim_sparse-table.csv", 
-                        header = TRUE, skip = 6)[c(1:6,14,15,17:20,23:29)]
-sparse.data$communication. <- as.factor(sparse.data$communication.)
-sparse.data$population <- as.factor(sparse.data$population)
-sparse.data$log.nectar <- log(sparse.data$nectar.mL..bee)
-sparse.data.some <- sparse.data %>% filter(R_value == "\"0.8\"" | R_value == "\"1.0\"")
-
 # Plot results
-boxplot(nectar.mL..bee ~ communication.+population+R_value, data=sparse.data, ylab = "Nectar(mL)/bee", 
+boxplot(nectar.bee ~ communication+population+environment, data=sparse.data, ylab = "Nectar(mL)/bee", 
         xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
 
-boxplot(log.nectar ~ communication.+population+R_value, data=sparse.data, ylab = "Log(Nectar(mL)/bee)", 
-        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Dense sims", 
+boxplot(log.nectar.bee ~ communication+population+environment, data=sparse.data, ylab = "Log(Nectar(mL)/bee)", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Sparse sims", 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
 
-boxplot(nectar.mL..bee ~ communication.+population+R_value, data=sparse.data.some, ylab = "Nectar(mL)/bee", 
+boxplot(nectar.bee ~ communication+population+environment, data=sparse.data.some, ylab = "Nectar(mL)/bee", 
         xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Sparse sims", 
         names = c("", "", "", "", 
                   "", "", "", "", 
                   "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0")
-        )
+                  "1.0", "1.0", "1.0", "1.0"))
+```
 
 
+## Data Analyses-ANOVAs
+
+Now for the actual data analysis. We will perform anova tests to test for first significant pairwise interactions between colony size, communication, and environment and then for all factors (wording-fix).
+
+### 1. Testing for an interaction effect between colony size and communication
+```{r}
+null <- lm(nectar.bee ~ population+communication+environment, data = all.data)
+alt.1a <- lm(nectar.bee ~ population*communication+environment, data = all.data)
+anova(null, alt.1a)
+```
+
+### 2. Testing for an interaction effect between colony size and environment
+```{r}
+alt.1b <- lm(nectar.bee ~ population*environment+communication, data = all.data)
+anova(null, alt.1b)
+```
+
+### 3. Testing for an interaction effect between communication and environment
+```{r}
+alt.1c <- lm(nectar.bee ~ population+communication*environment, data = all.data)
+anova(null, alt.1c)
+```
+
+### 4. Testing for an interaction effect between colony size, communication, and environment
+```{r}
+null.all.1 <- lm(nectar.bee ~ population + communication + environment + 
+                 population*communication + population*environment + communication*environment, data = all.data)
+alt.all.1 <- lm(nectar.bee ~ population*communication*environment, data = all.data)
+anova(null.all.1, alt.all.1)
+```
 
 
+## Data Analyses-Tukey's post-hoc
+```{r}
+a1 <- aov(nectar.bee ~ population+communication*environment, data = all.data)
+#TukeyHSD(x=a1, conf.level=0.95)
+```
 
+
+## Other
+### Found vs Untouched
+```{r}
+# found.all
+null.2 <- glm(cbind(found.resources, untouched.resources) ~ population+communication+environment, family = binomial(), data = all.data)
+alt.2a <- glm(cbind(found.resources, untouched.resources) ~ population*communication+environment, family = binomial(), data = all.data)
+alt.2b <- glm(cbind(found.resources, untouched.resources) ~ population+communication*environment, family = binomial(), data = all.data)
+alt.2c <- glm(cbind(found.resources, untouched.resources) ~ population*environment+communication, family = binomial(), data = all.data)
+
+anova(null.2, alt.2a, test="Chisq")
+anova(null.2, alt.2b, test="Chisq")
+anova(null.2, alt.2c, test="Chisq")
+```
+
+```{r}
+null.all.2 <- glm(cbind(found.resources, untouched.resources) ~ population + communication + environment + 
+                 population*communication + population*environment + communication*environment, family = binomial(), data = all.data)
+alt.all.2 <- glm(cbind(found.resources, untouched.resources) ~ population*environment*communication, family = binomial(), data = all.data)
+anova(null.all.2, alt.all.2, test="Chisq")
+```
+
+### Depleted vs Found and not depleted
+```{r}
+# found.all
+null.3 <- glm(cbind(depleted.resources, (found.resources-depleted.resources)) ~ population+communication+environment, family = binomial(), data = all.data)
+alt.3a <- glm(cbind(depleted.resources, (found.resources-depleted.resources)) ~ population*communication+environment, family = binomial(), data = all.data)
+alt.3b <- glm(cbind(depleted.resources, (found.resources-depleted.resources)) ~ population+communication*environment, family = binomial(), data = all.data)
+alt.3c <- glm(cbind(depleted.resources, (found.resources-depleted.resources)) ~ population*environment+communication, family = binomial(), data = all.data)
+
+anova(null.3, alt.3a, test="Chisq")
+anova(null.3, alt.3b, test="Chisq")
+anova(null.3, alt.3c, test="Chisq")
+```
+
+```{r}
+null.all.3 <- glm(cbind(depleted.resources, (found.resources-depleted.resources)) ~ population + communication + environment + 
+                 population*communication + population*environment + communication*environment, family = binomial(), data = all.data)
+alt.all.3 <- glm(cbind(depleted.resources, (found.resources-depleted.resources)) ~ population*environment*communication, family = binomial(), data = all.data)
+anova(null.all.3, alt.all.3, test="Chisq")
 ```
 
