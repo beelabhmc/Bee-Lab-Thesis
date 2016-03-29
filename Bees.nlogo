@@ -31,22 +31,28 @@ globals
   R          ;; R spatial statistic of map
   end-setup  ;; logical signifying map has been made. used to end environment testing runs
 
-  patch-with-hive         ;; agentset of hive patch
-  fd-amt                  ;; number of patches that bees move each tick
+  fd-amt         ;; number of patches that bees move each tick
   flight-cost    ;; energy expended per unit moved on map
   J-per-microL   ;; conversion form microliters to Joules
   RI             ;; recruitment intensity, 0 when comunication is off, .016 when it is on
 
+  patch-with-hive         ;; agentset of hive patch
   patches-with-resource?  ;; agentset of patches with resource? = True
   patches-with-r-and-q    ;; agentset of patches with resource? = True and quantity > 0
+
   nectar-influx   ;; total energy collected / simulation duration (in time steps) / bee
-  hive-collected  ;; Joules (of nectar) returned to hive
+  hive-collected  ;; mL of nectar returned to hive
+  foraged-count   ;; Total number of bees that returned to hive with nectar
+  dance-quality   ;; Total quality of resources bees danced for
+  dance-quantity  ;; Number of resources for which bees danced
+  random-quality  ;; Total quality of resources bees found through random searching
+  random-quantity ;; Number of resources bees found through random searching
 ]
 turtles-own
 [
   dist-hive-max
 
-  collected            ;; amount of energy collected by each bee
+  collected            ;; mL of nectar collected by each bee
   energy-expended      ;; energy bee spent to get to resource
   state                ;; state bee is in
   state-list
@@ -91,13 +97,20 @@ to setup
   let local-population population
 
   ; patches
-  let curr-dir "/Users/beelab/Desktop/Woodman-Thesis/Bee-Lab-Thesis/maps/"
-  ;let curr-dir "/Users/swoodman/Desktop/maps/"
-  set name-map (word curr-dir repetitions "__" resource_density "_" R_value ".csv")
-  ifelse file-exists? name-map
-  [ import-world (name-map)  set imported true]
-  [ setup-patches   export-world (name-map)   set exported true]
-  set timer-post-setup timer
+  ifelse (save_map)
+  [
+    let curr-dir "/Users/beelab/Desktop/Woodman-Thesis/Bee-Lab-Thesis/maps/"
+    ;let curr-dir "/Users/swoodman/Desktop/maps/"
+    set name-map (word curr-dir repetitions "__" resource_density "_" R_value ".csv")
+    ifelse file-exists? name-map
+    [ import-world (name-map)  set imported true]
+    [ setup-patches   export-world (name-map)   set exported true]
+    set timer-post-setup timer
+  ]
+  [
+    setup-patches
+    set timer-post-setup timer
+  ]
 
   set communication? local-communication?
   set population local-population
@@ -252,10 +265,13 @@ to setup-resource-choose  ;; assign new food patches, including quantity and qua
     [
       ifelse (c1-2-select)
       [ set quality [quality] of c-parent ]
-      [ set quality random-poisson quality_mean ]
+      [ ifelse (random 2 = 0)
+        [ set quality random-poisson 10 ]
+        [ set quality random-poisson 40  ]
+      ]
     ]
     [ set quality quality_mean ]
-    set quality quality * J-per-microL
+    ;set quality quality * J-per-microL
     set quality precision quality 2
     ; Resource quantity
     set quantity 50 ; 50 trips to this flower
@@ -406,6 +422,9 @@ to random-search
     move-to closest
     set energy-expended (energy-expended + (flight-cost * dist))
     set next-state "forage"
+    ; globals
+    set random-quality  random-quality + quality
+    set random-quantity random-quantity + 1
   ]
   [
     wiggle
@@ -487,6 +506,7 @@ to return-to-hive
     [
       set color yellow
       set hive-collected hive-collected + collected
+      set foraged-count foraged-count + 1
       set next-state "dance"
     ]
   ]
@@ -510,7 +530,7 @@ to dance
   if (resource-in-mem = "" or mem-goto != "mem") [ user-message "dancer without resource mem" ]
   if (nectar-influx = 0) [ user-message "nectar-influx = 0" ]
 
-  let e-res (collected / energy-expended)
+  let e-res ((collected * J-per-microL) / energy-expended)
   ; recruit another bee to resource
   if communication?
   [
@@ -518,6 +538,10 @@ to dance
     let p-recruit-num (1 / p-recruit)
     if (random p-recruit-num < 1)
     [
+      ; global recorder variables
+      set dance-quality  dance-quality + collected
+      set dance-quantity dance-quantity + 1
+      ; recruit bee
       let bee-recruit one-of turtles with [state = "inactive-unemp"]
       let resource-patch resource-in-mem
       if (bee-recruit != nobody)
@@ -564,11 +588,11 @@ end
 GRAPHICS-WINDOW
 348
 10
-1859
-1542
-750
-750
-1.0
+1363
+1046
+100
+100
+5.0
 1
 10
 1
@@ -578,10 +602,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--750
-750
--750
-750
+-100
+100
+-100
+100
 1
 1
 1
@@ -690,7 +714,7 @@ SWITCH
 403
 quality_label?
 quality_label?
-1
+0
 1
 -1000
 
@@ -713,7 +737,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-0
+1
 
 MONITOR
 217
@@ -783,6 +807,17 @@ repetitions
 1
 NIL
 HORIZONTAL
+
+SWITCH
+31
+329
+149
+362
+save_map
+save_map
+1
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1350,15 +1385,12 @@ setup</setup>
       <value value="750"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="Practice-ish Run" repetitions="1" runMetricsEveryStep="false">
+  <experiment name="Simulation Run" repetitions="1" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
     <exitCondition>ticks = 2400</exitCondition>
-    <metric>population</metric>
-    <metric>communication?</metric>
     <metric>R</metric>
     <metric>loop-num</metric>
-    <metric>J-per-microL</metric>
     <metric>nectar-influx</metric>
     <metric>hive-collected</metric>
     <metric>imported</metric>
@@ -1367,9 +1399,16 @@ setup</setup>
     <metric>timer</metric>
     <metric>count patches with [resource?]</metric>
     <metric>count patches with [resource? and quantity = 50]</metric>
+    <metric>count patches with [resource? and quantity != 50]</metric>
     <metric>count patches with [resource? and quantity = 0]</metric>
     <metric>max [dist-hive-max] of turtles</metric>
+    <metric>foraged-count</metric>
+    <metric>dance-quality</metric>
+    <metric>dance-quantity</metric>
+    <metric>random-quality</metric>
+    <metric>random-quantity</metric>
     <enumeratedValueSet variable="resource_density">
+      <value value="&quot;dense&quot;"/>
       <value value="&quot;sparse&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="R_value">
@@ -1387,6 +1426,9 @@ setup</setup>
       <value value="3000"/>
     </enumeratedValueSet>
     <steppedValueSet variable="repetitions" first="1" step="1" last="10"/>
+    <enumeratedValueSet variable="save_map">
+      <value value="true"/>
+    </enumeratedValueSet>
     <enumeratedValueSet variable="min-pxcor">
       <value value="-750"/>
     </enumeratedValueSet>
