@@ -817,7 +817,7 @@ SWITCH
 362
 save_map
 save_map
-1
+0
 1
 -1000
 
