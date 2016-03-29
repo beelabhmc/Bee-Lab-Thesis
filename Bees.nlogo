@@ -415,6 +415,7 @@ end
 
 to random-search
   if (collected != 0) [ user-message "in random-search with collected != 0" ]
+  if (any? patches-with-r-and-q = false) [user-message "No more resources with any quantity"]
   let closest min-one-of patches-with-r-and-q [distance myself]
   let dist distance closest
   ifelse (dist <= (25 / 6.67))
@@ -476,6 +477,7 @@ to forage
       set quantity quantity - 1
       ; update agentset of resources with quantity > 0
       if (quantity = 0) [ set patches-with-r-and-q patches-with-r-and-q with [quantity > 0] ]
+      if (patches-with-r-and-q = nobody) [user-message "No more resources with any quantity"]
       if quantity_label?
       [
         set plabel quantity
