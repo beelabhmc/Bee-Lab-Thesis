@@ -6,7 +6,7 @@ output: html_document
 
 ```{r}
 library(dplyr)
-# setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/NetLogo R Analyses/Sim Analyses")
+# setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/NetLogo R Analyses/Sim Analyses2")
 
 # Dense simulation data
 dense.data <- read.csv("Bees sim_dense-table.csv", 
