@@ -8,36 +8,29 @@ output: html_document
 library(dplyr)
 # setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/NetLogo R Analyses/Sim Analyses2")
 
-# Dense simulation data
-dense.data <- read.csv("Bees sim_dense-table.csv", 
-                       header = TRUE, skip = 6)[-c(7:13,15:16,21:22)]
-names(dense.data)[4] <- "communication"
-names(dense.data)[11] <- "nectar.bee"
-dense.data$R_value <- as.factor(sapply(dense.data$R_value, 
-                                       function(i) {i <- paste("d:", substr(i, 2,4))}))
-names(dense.data)[3] <- "environment"
-dense.data$communication <- as.factor(dense.data$communication)
-dense.data$population <- as.factor(dense.data$population)
-dense.data$log.nectar.bee <- log(dense.data$nectar.bee)
+# Simulation data
+all.data <- read.csv("Bees sim_all2-table.csv", skip = 6, stringsAsFactors=FALSE)
+
+# Data cleanup
+all.data$environment <- as.factor(sapply(1:nrow(all.data), 
+                                         function(i) {i <- paste(substr(all.data$resource_density[i],2,2), ": ", 
+                                                                 substr(all.data$R_value[i], 2,4), sep = "")}))
+names(all.data)[5] <- "communication"
+all.data$communication <- as.factor(all.data$communication)
+all.data$population <- as.factor(all.data$population)
+names(all.data)[11] <- "nectar.bee"
+all.data$log.nectar.bee <- log(all.data$nectar.bee)
+
+# Dense
+dense.data <- all.data %>% filter(resource_density == "\"dense\"")
+dense.data$environment <- as.factor(as.character(dense.data$environment))
 dense.data.some <- dense.data %>% filter(environment == "d: 0.8" | 
                                            environment == "d: 1.0")
-
-# Sparse simulation data
-sparse.data <- read.csv("Bees sim_sparse-table.csv", 
-                        header = TRUE, skip = 6)[-c(7:13,15:16,21:22)]
-names(sparse.data)[4] <- "communication"
-names(sparse.data)[11] <- "nectar.bee"
-sparse.data$R_value <- as.factor(sapply(sparse.data$R_value, 
-                                        function(i) {i <- paste("s:", substr(i, 2,4))}))
-names(sparse.data)[3] <- "environment"
-sparse.data$communication <- as.factor(sparse.data$communication)
-sparse.data$population <- as.factor(sparse.data$population)
-sparse.data$log.nectar.bee <- log(sparse.data$nectar.bee)
+# Sparse
+sparse.data <- all.data %>% filter(resource_density == "\"sparse\"")
+sparse.data$environment <- as.factor(as.character(sparse.data$environment))
 sparse.data.some <- sparse.data %>% filter(environment == "s: 0.8" | 
                                              environment == "s: 1.0")
-
-# All
-all.data <- rbind(dense.data, sparse.data)
 ```
 
 ## Plots
@@ -123,16 +116,9 @@ anova(null, alt.1c)
 ### 4. Testing for an interaction effect between colony size, communication, and environment
 ```{r}
 null.all.1 <- lm(nectar.bee ~ population + communication + environment + 
-                 population*communication + population*environment + communication*environment, data = all.data)
+                   population*communication + population*environment + communication*environment, data = all.data)
 alt.all.1 <- lm(nectar.bee ~ population*communication*environment, data = all.data)
 anova(null.all.1, alt.all.1)
-```
-
-
-## Data Analyses-Tukey's post-hoc
-```{r}
-a1 <- aov(nectar.bee ~ population+communication*environment, data = all.data)
-#TukeyHSD(x=a1, conf.level=0.95)
 ```
 
 
@@ -140,10 +126,10 @@ a1 <- aov(nectar.bee ~ population+communication*environment, data = all.data)
 ### Found vs Untouched
 ```{r}
 # found.all
-null.2 <- glm(cbind(found.resources, untouched.resources) ~ population+communication+environment, family = binomial(), data = all.data)
-alt.2a <- glm(cbind(found.resources, untouched.resources) ~ population*communication+environment, family = binomial(), data = all.data)
-alt.2b <- glm(cbind(found.resources, untouched.resources) ~ population+communication*environment, family = binomial(), data = all.data)
-alt.2c <- glm(cbind(found.resources, untouched.resources) ~ population*environment+communication, family = binomial(), data = all.data)
+null.2 <- glm(cbind(resources.found, resources.untouched) ~ population+communication+environment, family = binomial(), data = all.data)
+alt.2a <- glm(cbind(resources.found, resources.untouched) ~ population*communication+environment, family = binomial(), data = all.data)
+alt.2b <- glm(cbind(resources.found, resources.untouched) ~ population+communication*environment, family = binomial(), data = all.data)
+alt.2c <- glm(cbind(resources.found, resources.untouched) ~ population*environment+communication, family = binomial(), data = all.data)
 
 anova(null.2, alt.2a, test="Chisq")
 anova(null.2, alt.2b, test="Chisq")
@@ -151,19 +137,19 @@ anova(null.2, alt.2c, test="Chisq")
 ```
 
 ```{r}
-null.all.2 <- glm(cbind(found.resources, untouched.resources) ~ population + communication + environment + 
-                 population*communication + population*environment + communication*environment, family = binomial(), data = all.data)
-alt.all.2 <- glm(cbind(found.resources, untouched.resources) ~ population*environment*communication, family = binomial(), data = all.data)
+null.all.2 <- glm(cbind(resources.found, resources.untouched) ~ population + communication + environment + 
+                    population*communication + population*environment + communication*environment, family = binomial(), data = all.data)
+alt.all.2 <- glm(cbind(resources.found, resources.untouched) ~ population*environment*communication, family = binomial(), data = all.data)
 anova(null.all.2, alt.all.2, test="Chisq")
 ```
 
 ### Depleted vs Found and not depleted
 ```{r}
 # found.all
-null.3 <- glm(cbind(depleted.resources, (found.resources-depleted.resources)) ~ population+communication+environment, family = binomial(), data = all.data)
-alt.3a <- glm(cbind(depleted.resources, (found.resources-depleted.resources)) ~ population*communication+environment, family = binomial(), data = all.data)
-alt.3b <- glm(cbind(depleted.resources, (found.resources-depleted.resources)) ~ population+communication*environment, family = binomial(), data = all.data)
-alt.3c <- glm(cbind(depleted.resources, (found.resources-depleted.resources)) ~ population*environment+communication, family = binomial(), data = all.data)
+null.3 <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ population+communication+environment, family = binomial(), data = all.data)
+alt.3a <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ population*communication+environment, family = binomial(), data = all.data)
+alt.3b <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ population+communication*environment, family = binomial(), data = all.data)
+alt.3c <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ population*environment+communication, family = binomial(), data = all.data)
 
 anova(null.3, alt.3a, test="Chisq")
 anova(null.3, alt.3b, test="Chisq")
@@ -171,9 +157,9 @@ anova(null.3, alt.3c, test="Chisq")
 ```
 
 ```{r}
-null.all.3 <- glm(cbind(depleted.resources, (found.resources-depleted.resources)) ~ population + communication + environment + 
-                 population*communication + population*environment + communication*environment, family = binomial(), data = all.data)
-alt.all.3 <- glm(cbind(depleted.resources, (found.resources-depleted.resources)) ~ population*environment*communication, family = binomial(), data = all.data)
+null.all.3 <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ population + communication + environment + 
+                    population*communication + population*environment + communication*environment, family = binomial(), data = all.data)
+alt.all.3 <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ population*environment*communication, family = binomial(), data = all.data)
 anova(null.all.3, alt.all.3, test="Chisq")
 ```
 
