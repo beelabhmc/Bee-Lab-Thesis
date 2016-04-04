@@ -1,0 +1,7 @@
+"BehaviorSpace results (NetLogo 5.3)"
+"Bees.nlogo"
+"Simulation Run"
+"04/04/2016 12:10:15:360 -0700"
+"min-pxcor","max-pxcor","min-pycor","max-pycor"
+"-750","750","-750","750"
+"[run number]","resource_density","R_value","communication?","population","repetitions","save_map","min-pxcor","max-pxcor","min-pycor","max-pycor","[step]","R","loop-num","nectar-influx","hive-collected","imported","exported","timer-post-setup","timer","count patches with [resource?]","count patches with [resource? and quantity = 50]","count patches with [resource? and quantity != 50]","count patches with [resource? and quantity = 0]","max [dist-hive-max] of turtles","foraged-count","dance-quality","dance-quantity","random-quality","random-quantity"
