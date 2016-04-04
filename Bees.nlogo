@@ -60,7 +60,7 @@ turtles-own
                        ;; states: inactive-unemp = Inactive (unemployed), inactive-emp = Inactive (employed),
                        ;;         goto-resource = Direct to Resource, random-search = Random Search,
                        ;;         forage = Forage at Resource, return-to-hive = Return to Hive, dance = Dancing
-  ; variables specific to some states
+                       ; variables specific to some states
   time-foraging        ;; if bee is foraging, time bee has spent foraging on current foraging trip (else 0)
   mem-goto             ;; "mem" if bee has returning from resource, "goto" if bee learned patch from dancer, "" otherwise
   resource-in-mem      ;; patch remembered by returning bee or patch recruited bee is going to (learned from dancer), "" otherwise
@@ -271,12 +271,12 @@ to setup-resource-choose  ;; assign new food patches, including quantity and qua
       ]
     ]
     [ set quality quality_mean ]
-    ;set quality quality * J-per-microL
+    set quality quality * J-per-microL
     set quality precision quality 2
     ; Resource quantity
     set quantity 50 ; 50 trips to this flower
 
-                     ; Resource label, if necessary
+                    ; Resource label, if necessary
     if quality_label?  [ set plabel quality ]
     if quantity_label? [ set plabel quantity ]
   ]
@@ -357,23 +357,6 @@ to go
       set state next-state
       set state-list lput next-state state-list
       set next-state ""
-    ]
-
-;    show "turtle stuff"
-;    show state
-;    show collected
-;    show energy-expended
-;    show time-foraging
-;    show mem-goto
-;    show resource-in-mem
-;    show prob-forage
-  ]
-
-  ;;; TODO: patch ephemeral stuff
-  if ephemeral? = True
-  [ ask patches
-    [
-      if resource? [if (random 10000 < 10) [ remove-patch ]]
     ]
   ]
 
@@ -532,7 +515,7 @@ to dance
   if (resource-in-mem = "" or mem-goto != "mem") [ user-message "dancer without resource mem" ]
   if (nectar-influx = 0) [ user-message "nectar-influx = 0" ]
 
-  let e-res ((collected * J-per-microL) / energy-expended)
+  let e-res (collected / energy-expended)
   ; recruit another bee to resource
   if communication?
   [
@@ -577,14 +560,6 @@ to dance
     set energy-expended 0
     set next-state "inactive-emp"
   ]
-end
-
-to remove-patch
-  set food-wasted quantity * quality
-  set quantity 0
-  set pcolor pink
-  set plabel ""
-  set resource? False
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
