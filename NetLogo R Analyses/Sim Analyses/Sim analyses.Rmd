@@ -103,28 +103,28 @@ Now for the actual data analysis. We will perform anova tests to test for first 
 
 ### 1. Testing for an interaction effect between colony size and communication
 ```{r}
-null <- lm(nectar.bee ~ population+communication+environment, data = all.data)
-alt.1a <- lm(nectar.bee ~ population*communication+environment, data = all.data)
+null <- lm(log.nectar.bee ~ population+communication+environment, data = all.data)
+alt.1a <- lm(log.nectar.bee ~ population*communication+environment, data = all.data)
 anova(null, alt.1a)
 ```
 
 ### 2. Testing for an interaction effect between colony size and environment
 ```{r}
-alt.1b <- lm(nectar.bee ~ population*environment+communication, data = all.data)
+alt.1b <- lm(log.nectar.bee ~ population*environment+communication, data = all.data)
 anova(null, alt.1b)
 ```
 
 ### 3. Testing for an interaction effect between communication and environment
 ```{r}
-alt.1c <- lm(nectar.bee ~ population+communication*environment, data = all.data)
+alt.1c <- lm(log.nectar.bee ~ population+communication*environment, data = all.data)
 anova(null, alt.1c)
 ```
 
 ### 4. Testing for an interaction effect between colony size, communication, and environment
 ```{r}
-null.all.1 <- lm(nectar.bee ~ population + communication + environment + 
+null.all.1 <- lm(log.nectar.bee ~ population + communication + environment + 
                  population*communication + population*environment + communication*environment, data = all.data)
-alt.all.1 <- lm(nectar.bee ~ population*communication*environment, data = all.data)
+alt.all.1 <- lm(log.nectar.bee ~ population*communication*environment, data = all.data)
 anova(null.all.1, alt.all.1)
 ```
 

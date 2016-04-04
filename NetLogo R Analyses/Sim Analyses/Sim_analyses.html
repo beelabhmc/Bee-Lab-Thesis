@@ -214,58 +214,58 @@ boxplot(nectar.bee ~ communication+population+environment, data=sparse.data, yla
 <p>Now for the actual data analysis. We will perform anova tests to test for first significant pairwise interactions between colony size, communication, and environment and then for all factors (wording-fix).</p>
 <div id="testing-for-an-interaction-effect-between-colony-size-and-communication" class="section level3">
 <h3>1. Testing for an interaction effect between colony size and communication</h3>
-<pre class="r"><code>null &lt;- lm(nectar.bee ~ population+communication+environment, data = all.data)
-alt.1a &lt;- lm(nectar.bee ~ population*communication+environment, data = all.data)
+<pre class="r"><code>null &lt;- lm(log.nectar.bee ~ population+communication+environment, data = all.data)
+alt.1a &lt;- lm(log.nectar.bee ~ population*communication+environment, data = all.data)
 anova(null, alt.1a)</code></pre>
 <pre><code>## Analysis of Variance Table
 ## 
-## Model 1: nectar.bee ~ population + communication + environment
-## Model 2: nectar.bee ~ population * communication + environment
-##   Res.Df       RSS Df Sum of Sq      F Pr(&gt;F)
-## 1    310 176644513                           
-## 2    309 175466928  1   1177584 2.0737 0.1509</code></pre>
+## Model 1: log.nectar.bee ~ population + communication + environment
+## Model 2: log.nectar.bee ~ population * communication + environment
+##   Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+## 1    310 123.09                           
+## 2    309 122.34  1   0.75357 1.9033 0.1687</code></pre>
 </div>
 <div id="testing-for-an-interaction-effect-between-colony-size-and-environment" class="section level3">
 <h3>2. Testing for an interaction effect between colony size and environment</h3>
-<pre class="r"><code>alt.1b &lt;- lm(nectar.bee ~ population*environment+communication, data = all.data)
+<pre class="r"><code>alt.1b &lt;- lm(log.nectar.bee ~ population*environment+communication, data = all.data)
 anova(null, alt.1b)</code></pre>
 <pre><code>## Analysis of Variance Table
 ## 
-## Model 1: nectar.bee ~ population + communication + environment
-## Model 2: nectar.bee ~ population * environment + communication
-##   Res.Df       RSS Df Sum of Sq      F Pr(&gt;F)
-## 1    310 176644513                           
-## 2    303 170775485  7   5869028 1.4876  0.171</code></pre>
-</div>
-<div id="testing-for-an-interaction-effect-between-communication-and-environment" class="section level3">
-<h3>3. Testing for an interaction effect between communication and environment</h3>
-<pre class="r"><code>alt.1c &lt;- lm(nectar.bee ~ population+communication*environment, data = all.data)
-anova(null, alt.1c)</code></pre>
-<pre><code>## Analysis of Variance Table
-## 
-## Model 1: nectar.bee ~ population + communication + environment
-## Model 2: nectar.bee ~ population + communication * environment
-##   Res.Df       RSS Df Sum of Sq      F    Pr(&gt;F)    
-## 1    310 176644513                                  
-## 2    303 138293566  7  38350947 12.004 1.604e-13 ***
+## Model 1: log.nectar.bee ~ population + communication + environment
+## Model 2: log.nectar.bee ~ population * environment + communication
+##   Res.Df    RSS Df Sum of Sq      F  Pr(&gt;F)  
+## 1    310 123.09                              
+## 2    303 118.08  7    5.0102 1.8366 0.07992 .
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
+<div id="testing-for-an-interaction-effect-between-communication-and-environment" class="section level3">
+<h3>3. Testing for an interaction effect between communication and environment</h3>
+<pre class="r"><code>alt.1c &lt;- lm(log.nectar.bee ~ population+communication*environment, data = all.data)
+anova(null, alt.1c)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: log.nectar.bee ~ population + communication + environment
+## Model 2: log.nectar.bee ~ population + communication * environment
+##   Res.Df    RSS Df Sum of Sq     F Pr(&gt;F)
+## 1    310 123.09                          
+## 2    303 118.59  7    4.5041 1.644 0.1226</code></pre>
+</div>
 <div id="testing-for-an-interaction-effect-between-colony-size-communication-and-environment" class="section level3">
 <h3>4. Testing for an interaction effect between colony size, communication, and environment</h3>
-<pre class="r"><code>null.all.1 &lt;- lm(nectar.bee ~ population + communication + environment + 
+<pre class="r"><code>null.all.1 &lt;- lm(log.nectar.bee ~ population + communication + environment + 
                  population*communication + population*environment + communication*environment, data = all.data)
-alt.all.1 &lt;- lm(nectar.bee ~ population*communication*environment, data = all.data)
+alt.all.1 &lt;- lm(log.nectar.bee ~ population*communication*environment, data = all.data)
 anova(null.all.1, alt.all.1)</code></pre>
 <pre><code>## Analysis of Variance Table
 ## 
-## Model 1: nectar.bee ~ population + communication + environment + population * 
+## Model 1: log.nectar.bee ~ population + communication + environment + population * 
 ##     communication + population * environment + communication * 
 ##     environment
-## Model 2: nectar.bee ~ population * communication * environment
-##   Res.Df       RSS Df Sum of Sq      F Pr(&gt;F)
-## 1    295 131246954                           
-## 2    288 128169892  7   3077062 0.9877 0.4403</code></pre>
+## Model 2: log.nectar.bee ~ population * communication * environment
+##   Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+## 1    295 112.83                           
+## 2    288 112.21  7   0.61728 0.2263 0.9789</code></pre>
 </div>
 </div>
 <div id="data-analyses-tukeys-post-hoc" class="section level2">
