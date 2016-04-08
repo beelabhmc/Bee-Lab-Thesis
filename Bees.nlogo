@@ -276,7 +276,6 @@ to setup-resource-choose  ;; assign new food patches, including quantity and qua
       set quality quality_mean
       set quality quality * J-per-microL
     ]
-    set quality quality * J-per-microL
     set quality precision quality 2
     ;show quality
     ; Resource quantity
@@ -571,10 +570,10 @@ end
 GRAPHICS-WINDOW
 348
 10
-1166
-849
-50
-50
+12366
+12049
+750
+750
 8.0
 1
 10
@@ -585,10 +584,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--50
-50
--50
-50
+-750
+750
+-750
+750
 1
 1
 1
@@ -638,7 +637,7 @@ population
 population
 0.0
 3000
-514
+500
 1
 1
 NIL
