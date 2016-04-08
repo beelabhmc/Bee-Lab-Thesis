@@ -277,7 +277,6 @@ to setup-resource-choose  ;; assign new food patches, including quantity and qua
       set quality quality * J-per-microL
     ]
     set quality precision quality 2
-    ;show quality
     ; Resource quantity
     set quantity 50 ; 50 trips to this flower
 
