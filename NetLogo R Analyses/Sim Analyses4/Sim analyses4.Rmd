@@ -30,20 +30,24 @@ all.data$environment <- as.factor(sapply(1:nrow(all.data),
 # Dense
 dense.data <- all.data %>% filter(resource_density == "\"dense\"")
 dense.data$environment <- as.factor(as.character(dense.data$environment))
-dense.data.some <- dense.data %>% filter(environment == "d: 0.8" | 
-                                           environment == "d: 1.0")
 # Sparse
 sparse.data <- all.data %>% filter(resource_density == "\"sparse\"")
 sparse.data$environment <- as.factor(as.character(sparse.data$environment))
-sparse.data.some <- sparse.data %>% filter(environment == "s: 0.8" | 
-                                             environment == "s: 1.0")
 # Comm
 comm.data <- all.data %>% filter(communication == TRUE)
+
+# New table for dance and random avg quality
+dance.data <- data.frame(energy.avg = comm.data$dance.avg, environment = comm.data$environment, 
+                         communication = comm.data$communication, population = comm.data$population,
+                         id.method = rep("dance", length(comm.data[,1])))
+random.data <- data.frame(energy.avg = comm.data$random.avg, environment = comm.data$environment, 
+                         communication = comm.data$communication, population = comm.data$population,
+                         id.method = rep("random", length(comm.data[,1])))
+avg.data <- rbind(dance.data, random.data)
 ```
 
-## Plots of the dense and sparse simulation runs
+## Plots of the simulation runs
 
-### All
 ```{r}
 # Plot results
 boxplot(energy.bee ~ communication+population+environment, data=all.data, 
@@ -60,9 +64,9 @@ boxplot(energy.bee ~ communication+population+environment, data=all.data,
 legend("topright", pch = 15, col = c("green", "red", "brown", "blue"), 
        c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
 
-boxplot(log.energy.bee ~ communication+population+environment, data=all.data, 
-        col = c("green", "red", "brown", "blue"), las = 2, main = "All simulations", 
-        xlab = "Resource density (R value)", ylab = "Log(Energy(J)/bee)", 
+boxplot(energy.bee ~ communication+population+environment, data=all.data, log = "y", 
+        col = c("green", "red", "brown", "blue"), las = 2, main = "Log plot of energy collected (J) per bee", 
+        xlab = "Resource density (R value)", ylab = "Energy(J)/bee", 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
@@ -74,58 +78,6 @@ boxplot(log.energy.bee ~ communication+population+environment, data=all.data,
 legend("topright", pch = 15, col = c("green", "red", "brown", "blue"), 
        c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
 ```
-
-### Dense
-```{r}
-# Plot results
-boxplot(energy.bee ~ communication+population+environment, data=dense.data, 
-        col = c("green", "red", "brown", "blue"), las = 2, main = "Dense simulations", 
-        xlab = "Resource density (R value)", ylab = "Energy(J)/bee", 
-        names = c("0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0"))
-legend("topright", pch = 15, cex = 0.45, col = c("green", "red", "brown", "blue"), 
-       c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
-#legend(15, 1400, pch = 15, col = c("green", "red", "brown", "blue"), xpd = TRUE, 
-#       c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
-
-boxplot(log.energy.bee ~ communication+population+environment, data=dense.data, 
-        col = c("green", "red", "brown", "blue"), las = 2, main = "Dense simulations", 
-        xlab = "Resource density (R value)", ylab = "Log(Energy(J)/bee)", 
-        names = c("0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0"))
-legend("topright", pch = 15, cex = .45, col = c("green", "red", "brown", "blue"), 
-       c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
-```
-
-### Sparse
-
-```{r}
-# Plot results
-boxplot(energy.bee ~ communication+population+environment, data=sparse.data, 
-        col = c("green", "red", "brown", "blue"), las = 2, main = "Sparse simulations", 
-        xlab = "Resource density (R value)", ylab = "Energy(J)/bee", 
-        names = c("0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0"))
-legend("topright", pch = 15, cex = 0.5, col = c("green", "red", "brown", "blue"), 
-       c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
-
-boxplot(log.energy.bee ~ communication+population+environment, data=sparse.data, 
-        col = c("green", "red", "brown", "blue"), las = 2, main = "Sparse simulations", 
-        xlab = "Resource density (R value)", ylab = "Log(Energy(J)/bee)", 
-        names = c("0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0"))
-legend("topright", pch = 15, cex = 0.5, col = c("green", "red", "brown", "blue"), 
-       c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
-```
-
 
 
 ## Data Analyses-Testing for an interaction effect with ANOVAs
@@ -162,6 +114,23 @@ anova(null.all.1, alt.all.1)
 
 ## Other
 ### Found vs Untouched
+Proportion of resources that are found
+```{r}
+boxplot((resources.found/resources) ~ communication+population+environment, data=all.data, 
+        col = c("green", "red", "brown", "blue"), las = 2, main = "", 
+        xlab = "Resource density (R value)", ylab = "", 
+        names = c("0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0",
+                  "0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0"))
+legend("topleft", pch = 15, col = c("green", "red", "brown", "blue"), 
+       c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
+```
+
 ```{r}
 # found.all
 null.2 <- glm(cbind(resources.found, resources.untouched) ~ population+communication+environment, 
@@ -189,6 +158,22 @@ anova(null.all.2, alt.all.2, test="Chisq")
 ```
 
 ### Depleted vs Found and not depleted
+```{r}
+boxplot((resources.depleted/resources.found) ~ communication+population+environment, data=all.data, 
+        col = c("green", "red", "brown", "blue"), las = 2, main = "", 
+        xlab = "Resource density (R value)", ylab = "", 
+        names = c("0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0",
+                  "0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0"))
+legend("topleft", pch = 15, cex = 0.55, col = c("green", "red", "brown", "blue"), 
+       c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
+```
+
 ```{r}
 # found.all
 null.3 <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ 
@@ -225,37 +210,24 @@ anova(null.all.3, alt.all.3, test="Chisq")
 
 #### Plots
 ```{r}
-plot(all.data$dance.avg, col = "red")
-points(all.data$random.avg, col = "green")
+plot(x = all.data$dance.avg, y = all.data$random.avg)
+abline(a = 0, b = 1)
 
-boxplot(dance.avg ~ communication+population+environment, data=all.data, 
-        col = c("green", "red", "brown", "blue"), las = 2, main = "All simulations", 
+boxplot(avg.diff ~ population+environment, data=comm.data, 
+        col = c("green", "red"), las = 2, main = "Simulations with communication", 
         xlab = "Resource density (R value)", ylab = "Energy(J)/bee", 
         ylim = c(60, 250), 
-        names = c("0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0",
-                  "0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0"))
+        names = c("0.4", "0.4",
+                  "0.6", "0.6",
+                  "0.8", "0.8",
+                  "1.0", "1.0",
+                  "0.4", "0.4",
+                  "0.6", "0.6",
+                  "0.8", "0.8",
+                  "1.0", "1.0"))
 legend("topright", pch = 15, col = c("green", "red", "brown", "blue"), 
-       c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
+       c("Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
 
-boxplot(random.avg ~ communication+population+environment, data=all.data, 
-        col = c("green", "red", "brown", "blue"), las = 2, main = "All simulations", 
-        xlab = "Resource density (R value)", ylab = "Energy(J)/bee", ylim = c(60, 250), 
-        names = c("0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0",
-                  "0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0"))
-legend("topright", pch = 15, col = c("green", "red", "brown", "blue"), 
-       c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
 ```
 
 #### 1. Colony size and communication
