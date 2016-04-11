@@ -99,8 +99,8 @@ to setup
   ; patches
   ifelse (save_map)
   [
-    let curr-dir "/Users/beelab/Desktop/Woodman-Thesis/Bee-Lab-Thesis/maps/"
-    ;let curr-dir "/Users/swoodman/Desktop/maps/"
+    ;let curr-dir "/Users/beelab/Desktop/Woodman-Thesis/Bee-Lab-Thesis/maps/"
+    let curr-dir "/Users/swoodman/Desktop/maps/"
     set name-map (word curr-dir repetitions "__" resource_density "_" R_value ".csv")
     ifelse file-exists? name-map
     [ import-world (name-map)  set imported true]
@@ -638,7 +638,7 @@ population
 population
 0.0
 3000
-500
+3000
 1
 1
 NIL
@@ -720,7 +720,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-1
+0
 
 MONITOR
 217
@@ -762,7 +762,7 @@ SWITCH
 105
 communication?
 communication?
-1
+0
 1
 -1000
 
@@ -774,7 +774,7 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
-0
+3
 
 SLIDER
 31
@@ -785,7 +785,7 @@ repetitions
 repetitions
 0
 10
-1
+4
 1
 1
 NIL
@@ -798,7 +798,7 @@ SWITCH
 362
 save_map
 save_map
-1
+0
 1
 -1000
 
@@ -1428,12 +1428,9 @@ setup</setup>
   <experiment name="Fix things Run" repetitions="1" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
-    <exitCondition>ticks = 1</exitCondition>
-    <metric>communication?</metric>
-    <metric>population</metric>
+    <exitCondition>ticks = 2400</exitCondition>
     <metric>R</metric>
     <metric>loop-num</metric>
-    <metric>J-per-microL</metric>
     <metric>nectar-influx</metric>
     <metric>hive-collected</metric>
     <metric>imported</metric>
@@ -1442,13 +1439,19 @@ setup</setup>
     <metric>timer</metric>
     <metric>count patches with [resource?]</metric>
     <metric>count patches with [resource? and quantity = 50]</metric>
+    <metric>count patches with [resource? and quantity != 50]</metric>
     <metric>count patches with [resource? and quantity = 0]</metric>
     <metric>max [dist-hive-max] of turtles</metric>
+    <metric>foraged-count</metric>
+    <metric>dance-quality</metric>
+    <metric>dance-quantity</metric>
+    <metric>random-quality</metric>
+    <metric>random-quantity</metric>
     <enumeratedValueSet variable="resource_density">
-      <value value="&quot;dense&quot;"/>
+      <value value="&quot;sparse&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="R_value">
-      <value value="&quot;0.4&quot;"/>
+      <value value="&quot;1.0&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="communication?">
       <value value="true"/>
@@ -1458,9 +1461,9 @@ setup</setup>
       <value value="500"/>
       <value value="3000"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="repetitions">
-      <value value="1"/>
-      <value value="2"/>
+    <steppedValueSet variable="repetitions" first="1" step="1" last="10"/>
+    <enumeratedValueSet variable="save_map">
+      <value value="true"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="min-pxcor">
       <value value="-750"/>
