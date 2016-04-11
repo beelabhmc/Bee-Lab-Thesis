@@ -1,0 +1,194 @@
+---
+title: "Simulation Analyses"
+author: Sam Woodman
+output: html_document
+---
+
+```{r}
+library(dplyr)
+# setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/NetLogo R Analyses/Sim Analyses3")
+
+# Simulation data
+all.data <- read.csv("Bees sim_all3-table.csv", skip = 6, stringsAsFactors=FALSE)
+
+# Data cleanup
+all.data$environment <- as.factor(sapply(1:nrow(all.data), 
+                                         function(i) {i <- paste(substr(all.data$resource_density[i],2,2), 
+                                                                 ": ", 
+                                                                 substr(all.data$R_value[i], 2,4), 
+                                                                 sep = "")}))
+names(all.data)[5] <- "communication"
+all.data$communication <- as.factor(all.data$communication)
+all.data$population <- as.factor(all.data$population)
+all.data$log.energy.bee <- log(all.data$energy.bee)
+
+# Dense
+dense.data <- all.data %>% filter(resource_density == "\"dense\"")
+dense.data$environment <- as.factor(as.character(dense.data$environment))
+dense.data.some <- dense.data %>% filter(environment == "d: 0.8" | 
+                                           environment == "d: 1.0")
+# Sparse
+sparse.data <- all.data %>% filter(resource_density == "\"sparse\"")
+sparse.data$environment <- as.factor(as.character(sparse.data$environment))
+sparse.data.some <- sparse.data %>% filter(environment == "s: 0.8" | 
+                                             environment == "s: 1.0")
+```
+
+## Plots of the dense and sparse simulation runs
+
+### Dense
+```{r}
+# Plot results
+boxplot(energy.bee ~ communication+population+environment, data=dense.data, ylab = "Energy(J)/bee", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Dense sims", 
+        names = c("0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0"))
+
+boxplot(log.energy.bee ~ communication+population+environment, data=dense.data, ylab = "Log(Energy(J)/bee)", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Dense sims", 
+        names = c("0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0"))
+```
+
+### Sparse
+
+```{r}
+# Plot results
+boxplot(energy.bee ~ communication+population+environment, data=sparse.data, ylab = "Energy (J)/bee", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", 
+        names = c("0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0"))
+
+boxplot(log.energy.bee ~ communication+population+environment, data=sparse.data, ylab = "Log(Energy (J)/bee)", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", main = "Sparse sims", 
+        names = c("0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0"))
+```
+
+### All
+```{r}
+# Plot results
+boxplot(energy.bee ~ communication+population+environment, data=all.data, ylab = "Energy (J)/bee", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", 
+        names = c("0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0",
+                  "0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0"))
+
+boxplot(log.energy.bee ~ communication+population+environment, data=all.data, ylab = "Log(Energy (J)/bee)", 
+        xlab = "Parameters left to right: F_500, T_500, F_3000, T_3000", 
+        names = c("0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0",
+                  "0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0"))
+```
+
+## Data Analyses-Testing for an interaction effect with ANOVAs
+
+Now for the actual data analysis. We will perform anova tests to test for first significant pairwise interactions between colony size, communication, and environment and then for all factors (wording-fix).
+
+### 1. Colony size and communication
+```{r}
+null <- lm(log.energy.bee ~ population+communication+environment, data = all.data)
+alt.1a <- lm(log.energy.bee ~ population*communication+environment, data = all.data)
+anova(null, alt.1a)
+```
+
+### 2. Colony size and environment
+```{r}
+alt.1b <- lm(log.energy.bee ~ population*environment+communication, data = all.data)
+anova(null, alt.1b)
+```
+
+### 3. Communication and environment
+```{r}
+alt.1c <- lm(log.energy.bee ~ population+communication*environment, data = all.data)
+anova(null, alt.1c)
+```
+
+### 4. Colony size, communication, and environment
+```{r}
+null.all.1 <- lm(log.energy.bee ~ population + communication + environment + 
+                   population*communication + population*environment + communication*environment, data = all.data)
+alt.all.1 <- lm(log.energy.bee ~ population*communication*environment, data = all.data)
+anova(null.all.1, alt.all.1)
+```
+
+
+## Other
+### Found vs Untouched
+```{r}
+# found.all
+null.2 <- glm(cbind(resources.found, resources.untouched) ~ population+communication+environment, 
+              family = binomial(), data = all.data)
+alt.2a <- glm(cbind(resources.found, resources.untouched) ~ population*communication+environment, 
+              family = binomial(), data = all.data)
+anova(null.2, alt.2a, test="Chisq")
+
+alt.2b <- glm(cbind(resources.found, resources.untouched) ~ population+communication*environment, 
+              family = binomial(), data = all.data)
+anova(null.2, alt.2b, test="Chisq")
+
+alt.2c <- glm(cbind(resources.found, resources.untouched) ~ population*environment+communication, 
+              family = binomial(), data = all.data)
+anova(null.2, alt.2c, test="Chisq")
+```
+
+```{r}
+null.all.2 <- glm(cbind(resources.found, resources.untouched) ~ population + communication + environment + 
+                    population*communication + population*environment + communication*environment, 
+                  family = binomial(), data = all.data)
+alt.all.2 <- glm(cbind(resources.found, resources.untouched) ~ population*environment*communication, 
+                 family = binomial(), data = all.data)
+anova(null.all.2, alt.all.2, test="Chisq")
+```
+
+### Depleted vs Found and not depleted
+```{r}
+# found.all
+null.3 <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ population+communication+environment, 
+              family = binomial(), data = all.data)
+alt.3a <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ population*communication+environment, 
+              family = binomial(), data = all.data)
+anova(null.3, alt.3a, test="Chisq")
+
+alt.3b <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ population+communication*environment, 
+              family = binomial(), data = all.data)
+anova(null.3, alt.3b, test="Chisq")
+
+alt.3c <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ population*environment+communication, 
+              family = binomial(), data = all.data)
+anova(null.3, alt.3c, test="Chisq")
+```
+
+```{r}
+null.all.3 <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ population + communication + environment + 
+                    population*communication + population*environment + communication*environment, 
+                  family = binomial(), data = all.data)
+alt.all.3 <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ population*environment*communication, 
+                 family = binomial(), data = all.data)
+anova(null.all.3, alt.all.3, test="Chisq")
+```
+
+### Avg Random Quality vs Avg Dance Quality
+```{r}
+comm.data <- all.data %>% filter(communication == "TRUE")
+t.test(comm.data$dance.avg, comm.data$random.avg)
+```
+
