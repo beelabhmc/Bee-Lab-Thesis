@@ -402,6 +402,8 @@ end
 
 to random-search
   if (collected != 0) [ user-message "in random-search with collected != 0" ]
+  if (mem-goto != "") [ user-message "in random-search with mem-goto != blank" ]
+  if (resource-in-mem != "") [ user-message "in random-search with resource-in-mem != blank" ]
   if (any? patches-with-r-and-q = false) [user-message "No more resources with any quantity"]
   let closest min-one-of patches-with-r-and-q [distance myself]
   let dist distance closest
