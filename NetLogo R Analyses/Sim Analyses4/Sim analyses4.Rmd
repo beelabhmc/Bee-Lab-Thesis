@@ -27,12 +27,6 @@ all.data$environment <- as.factor(sapply(1:nrow(all.data),
                                                                  ": ", substr(all.data$R_value[i], 2,4), 
                                                                  sep = "")}))
 
-# Dense
-dense.data <- all.data %>% filter(resource_density == "\"dense\"")
-dense.data$environment <- as.factor(as.character(dense.data$environment))
-# Sparse
-sparse.data <- all.data %>% filter(resource_density == "\"sparse\"")
-sparse.data$environment <- as.factor(as.character(sparse.data$environment))
 # Comm
 comm.data <- all.data %>% filter(communication == TRUE)
 
@@ -210,50 +204,51 @@ anova(null.all.3, alt.all.3, test="Chisq")
 
 #### Plots
 ```{r}
-plot(x = all.data$dance.avg, y = all.data$random.avg)
-abline(a = 0, b = 1)
+# plot(x = all.data$dance.avg, y = all.data$random.avg)
+# abline(a = 0, b = 1)
 
-boxplot(avg.diff ~ population+environment, data=comm.data, 
-        col = c("green", "red"), las = 2, main = "Simulations with communication", 
-        xlab = "Resource density (R value)", ylab = "Energy(J)/bee", 
-        ylim = c(60, 250), 
-        names = c("0.4", "0.4",
-                  "0.6", "0.6",
-                  "0.8", "0.8",
-                  "1.0", "1.0",
-                  "0.4", "0.4",
-                  "0.6", "0.6",
-                  "0.8", "0.8",
-                  "1.0", "1.0"))
-legend("topright", pch = 15, col = c("green", "red", "brown", "blue"), 
-       c("Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
-
+boxplot(energy.avg ~ id.method+population+environment, data=avg.data, 
+        col = c("green", "red", "brown", "blue"), las = 2, main = "Simulations with communication", 
+        xlab = "Resource density (R value)", ylab = "Average Energy(J)/dancing or foraging event", 
+        names = c("0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0",
+                  "0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0"))
+legend("topright", pch = 15, cex = 0.55, col = c("green", "red", "brown", "blue"), 
+       c("Dance, Pop=500", "Rand, Pop=500", "Dance, Pop=3000", "Rand, Pop=3000"))
 ```
 
-#### 1. Colony size and communication
+#### 1. Colony size and Method
 ```{r}
-#null <- glm(cbind(dance.avg, random.avg) ~ population+communication+environment, data = all.data[!is.na(all.data$dance.avg),])
-#alt.1a <- lm(log.energy.bee ~ population*communication+environment, data = all.data)
-#anova(null, alt.1a)
+null <- lm(energy.avg ~ population+id.method+environment, data = avg.data)
+alt.1a <- lm(energy.avg ~ population*id.method+environment, data = avg.data)
+anova(null, alt.1a)
 ```
 
 #### 2. Colony size and environment
 ```{r}
-#alt.1b <- lm(log.energy.bee ~ population*environment+communication, data = all.data)
-#anova(null, alt.1b)
+alt.1b <- lm(energy.avg ~ population*environment+id.method, data = avg.data)
+anova(null, alt.1b)
 ```
 
-#### 3. Communication and environment
+#### 3. Method and environment
 ```{r}
-#alt.1c <- lm(energy.bee ~ population+communication*environment, data = all.data)
-#anova(lm(energy.bee ~ population+communication+environment, data = all.data), alt.1c)
+alt.1c <- lm(energy.avg ~ population+id.method*environment, data = avg.data)
+anova(null, alt.1c)
 ```
 
 #### 4. Colony size, communication, and environment
 ```{r}
-#null.all.1 <- lm(log.energy.bee ~ population + communication + environment + 
-#                   population*communication + population*environment + communication*environment, data = all.data)
-#alt.all.1 <- lm(log.energy.bee ~ population*communication*environment, data = all.data)
-#anova(null.all.1, alt.all.1)
+null.all.1 <- lm(energy.avg ~ population + id.method + environment + 
+                   population*id.method + population*environment + id.method*environment, data = avg.data)
+alt.all.1 <- lm(energy.avg ~ population*id.method*environment, data = avg.data)
+anova(null.all.1, alt.all.1)
+
+anova(lm((dance.avg-random.avg) ~ environment+population, data = comm.data),
+      lm((dance.avg-random.avg) ~ environment*population, data = comm.data))
 ```
 
