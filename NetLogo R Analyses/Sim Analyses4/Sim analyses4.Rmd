@@ -78,23 +78,42 @@ legend("topright", pch = 15, col = c("green", "red", "brown", "blue"),
 
 Now for the actual data analysis. We will perform anova tests to test for first significant pairwise interactions between colony size, communication, and environment and then for all factors (wording-fix).
 
+### Colony Size
+```{r}
+null.0 <- lm(log.energy.bee ~ 1, data = all.data)
+alt.0a <- lm(log.energy.bee ~ population, data = all.data)
+anova(null.0, alt.0a)
+```
+
+### Communication
+```{r}
+alt.0b <- lm(log.energy.bee ~ communication, data = all.data)
+anova(null.0, alt.0b)
+```
+
+### Environment
+```{r}
+alt.0c <- lm(log.energy.bee ~ environment, data = all.data)
+anova(null.0, alt.0c)
+```
+
 ### 1. Colony size and communication
 ```{r}
-null <- lm(log.energy.bee ~ population+communication+environment, data = all.data)
+null.1 <- lm(log.energy.bee ~ population+communication+environment, data = all.data)
 alt.1a <- lm(log.energy.bee ~ population*communication+environment, data = all.data)
-anova(null, alt.1a)
+anova(null.1, alt.1a)
 ```
 
 ### 2. Colony size and environment
 ```{r}
 alt.1b <- lm(log.energy.bee ~ population*environment+communication, data = all.data)
-anova(null, alt.1b)
+anova(null.1, alt.1b)
 ```
 
 ### 3. Communication and environment
 ```{r}
-alt.1c <- lm(energy.bee ~ population+communication*environment, data = all.data)
-anova(lm(energy.bee ~ population+communication+environment, data = all.data), alt.1c)
+alt.1c <- lm(log.energy.bee ~ population+environment*communication, data = all.data)
+anova(null.1, alt.1c)
 ```
 
 ### 4. Colony size, communication, and environment
@@ -125,23 +144,30 @@ legend("topleft", pch = 15, col = c("green", "red", "brown", "blue"),
        c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
 ```
 
+#### Population * Communication
 ```{r}
-# found.all
 null.2 <- glm(cbind(resources.found, resources.untouched) ~ population+communication+environment, 
               family = binomial(), data = all.data)
 alt.2a <- glm(cbind(resources.found, resources.untouched) ~ population*communication+environment, 
               family = binomial(), data = all.data)
 anova(null.2, alt.2a, test="Chisq")
+```
 
+#### Communication * Environment
+```{r}
 alt.2b <- glm(cbind(resources.found, resources.untouched) ~ population+communication*environment, 
               family = binomial(), data = all.data)
 anova(null.2, alt.2b, test="Chisq")
+```
 
+#### Population * Environment
+```{r}
 alt.2c <- glm(cbind(resources.found, resources.untouched) ~ population*environment+communication, 
               family = binomial(), data = all.data)
 anova(null.2, alt.2c, test="Chisq")
 ```
 
+#### Population * Environment * Communication
 ```{r}
 null.all.2 <- glm(cbind(resources.found, resources.untouched) ~ population + communication + environment + 
                     population*communication + population*environment + communication*environment, 
@@ -151,7 +177,9 @@ alt.all.2 <- glm(cbind(resources.found, resources.untouched) ~ population*enviro
 anova(null.all.2, alt.all.2, test="Chisq")
 ```
 
+
 ### Depleted vs Found and not depleted
+#### Plot
 ```{r}
 boxplot((resources.depleted/resources.found) ~ communication+population+environment, data=all.data, 
         col = c("green", "red", "brown", "blue"), las = 2, main = "", 
@@ -168,8 +196,8 @@ legend("topleft", pch = 15, cex = 0.55, col = c("green", "red", "brown", "blue")
        c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
 ```
 
+#### Population * Communication
 ```{r}
-# found.all
 null.3 <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ 
                 population+communication+environment, 
               family = binomial(), data = all.data)
@@ -177,18 +205,25 @@ alt.3a <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~
                 population*communication+environment, 
               family = binomial(), data = all.data)
 anova(null.3, alt.3a, test="Chisq")
+```
 
+#### Communication * Environment
+```{r}
 alt.3b <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ 
                 population+communication*environment, 
               family = binomial(), data = all.data)
 anova(null.3, alt.3b, test="Chisq")
+```
 
+#### Population * Environment
+```{r}
 alt.3c <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ 
                 population*environment+communication, 
               family = binomial(), data = all.data)
 anova(null.3, alt.3c, test="Chisq")
 ```
 
+#### Population * Environment * Communication
 ```{r}
 null.all.3 <- glm(cbind(resources.depleted, (resources.found-resources.depleted)) ~ 
                     population + communication + environment + 
@@ -202,7 +237,7 @@ anova(null.all.3, alt.all.3, test="Chisq")
 
 ### Avg Random Quality vs Avg Dance Quality
 
-#### Plots
+#### Plot
 ```{r}
 # plot(x = all.data$dance.avg, y = all.data$random.avg)
 # abline(a = 0, b = 1)
@@ -222,33 +257,84 @@ legend("topright", pch = 15, cex = 0.55, col = c("green", "red", "brown", "blue"
        c("Dance, Pop=500", "Rand, Pop=500", "Dance, Pop=3000", "Rand, Pop=3000"))
 ```
 
-#### 1. Colony size and Method
+#### 1. Population * Method
 ```{r}
-null <- lm(energy.avg ~ population+id.method+environment, data = avg.data)
-alt.1a <- lm(energy.avg ~ population*id.method+environment, data = avg.data)
-anova(null, alt.1a)
+null.4 <- lm(energy.avg ~ population+id.method+environment, data = avg.data)
+alt.4a <- lm(energy.avg ~ population*id.method+environment, data = avg.data)
+anova(null.4, alt.4a)
+```
+
+#### 2. Population * environment
+```{r}
+alt.4b <- lm(energy.avg ~ population*environment+id.method, data = avg.data)
+anova(null.4, alt.4b)
+```
+
+#### 3. Method * environment
+```{r}
+alt.4c <- lm(energy.avg ~ population+id.method*environment, data = avg.data)
+anova(null.4, alt.4c)
+```
+
+#### 4. Population * communication * environment
+```{r}
+null.all.4 <- lm(energy.avg ~ population + id.method + environment + 
+                   population*id.method + population*environment + id.method*environment, data = avg.data)
+alt.all.4 <- lm(energy.avg ~ population*id.method*environment, data = avg.data)
+anova(null.all.4, alt.all.4)
+```
+
+#### Difference between averages
+```{r}
+anova(lm((dance.avg-random.avg) ~ environment+population, data = comm.data),
+      lm((dance.avg-random.avg) ~ environment*population, data = comm.data))
+```
+
+
+### Quality of resources found through random searching
+
+#### Plot
+```{r}
+boxplot(random.avg ~ communication+population+environment, data=all.data, 
+        col = c("green", "red", "brown", "blue"), las = 2, main = "All simulations-random avg", 
+        xlab = "Resource density (R value)", ylab = "Energy(J)/resource found", 
+        names = c("0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0",
+                  "0.4", "0.4", "0.4", "0.4",
+                  "0.6", "0.6", "0.6", "0.6",
+                  "0.8", "0.8", "0.8", "0.8",
+                  "1.0", "1.0", "1.0", "1.0"))
+legend("topright", pch = 15, col = c("green", "red", "brown", "blue"), 
+       c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
+```
+
+
+#### 1. Colony size and communication
+```{r}
+null.5 <- lm(random.avg ~ population+communication+environment, data = all.data)
+alt.5a <- lm(random.avg ~ population*communication+environment, data = all.data)
+anova(null.5, alt.5a)
 ```
 
 #### 2. Colony size and environment
 ```{r}
-alt.1b <- lm(energy.avg ~ population*environment+id.method, data = avg.data)
-anova(null, alt.1b)
+alt.5b <- lm(random.avg ~ population*environment+communication, data = all.data)
+anova(null.5, alt.5b)
 ```
 
-#### 3. Method and environment
+#### 3. Communication and environment
 ```{r}
-alt.1c <- lm(energy.avg ~ population+id.method*environment, data = avg.data)
-anova(null, alt.1c)
+alt.5c <- lm(random.avg ~ population+communication*environment, data = all.data)
+anova(null.5, alt.5c)
 ```
 
 #### 4. Colony size, communication, and environment
 ```{r}
-null.all.1 <- lm(energy.avg ~ population + id.method + environment + 
-                   population*id.method + population*environment + id.method*environment, data = avg.data)
-alt.all.1 <- lm(energy.avg ~ population*id.method*environment, data = avg.data)
-anova(null.all.1, alt.all.1)
-
-anova(lm((dance.avg-random.avg) ~ environment+population, data = comm.data),
-      lm((dance.avg-random.avg) ~ environment*population, data = comm.data))
+null.all.5 <- lm(random.avg ~ population + communication + environment + 
+                   population*communication + population*environment + communication*environment, data = all.data)
+alt.all.5 <- lm(random.avg ~ population*communication*environment, data = all.data)
+anova(null.all.5, alt.all.5)
 ```
 
