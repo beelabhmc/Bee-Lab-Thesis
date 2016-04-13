@@ -266,9 +266,10 @@ to setup-resource-choose  ;; assign new food patches, including quantity and qua
       ifelse (c1-2-select)
       [ set quality [quality] of c-parent ]
       [
-        ifelse (random 2 = 0)
-        [ set quality random-poisson 10 ]
-        [ set quality random-poisson 40  ]
+        set quality random-poisson 25
+        ;ifelse (random 2 = 0)
+        ;[ set quality random-poisson 10 ]
+        ;[ set quality random-poisson 40  ]
         set quality quality * J-per-microL
       ]
     ]
