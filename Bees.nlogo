@@ -99,8 +99,8 @@ to setup
   ; patches
   ifelse (save_map)
   [
-    ;let curr-dir "/Users/beelab/Desktop/Woodman-Thesis/Bee-Lab-Thesis/maps/"
-    let curr-dir "/Users/swoodman/Desktop/maps/"
+    let curr-dir "/Users/beelab/Desktop/Woodman-Thesis/Bee-Lab-Thesis/maps/"
+    ;let curr-dir "/Users/swoodman/Desktop/maps/"
     set name-map (word curr-dir repetitions "__" resource_density "_" R_value ".csv")
     ifelse file-exists? name-map
     [ import-world (name-map)  set imported true]
@@ -721,7 +721,7 @@ CHOOSER
 resource_density
 resource_density
 "sparse" "dense"
-0
+1
 
 MONITOR
 217
@@ -775,7 +775,7 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
-3
+0
 
 SLIDER
 31
@@ -786,7 +786,7 @@ repetitions
 repetitions
 0
 10
-4
+6
 1
 1
 NIL
