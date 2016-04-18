@@ -639,7 +639,7 @@ population
 population
 0.0
 3000
-3000
+500
 1
 1
 NIL
@@ -786,7 +786,7 @@ repetitions
 repetitions
 0
 10
-6
+1
 1
 1
 NIL
