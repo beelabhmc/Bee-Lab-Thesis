@@ -46,7 +46,7 @@ avg.data <- rbind(dance.data, random.data)
 # Plot results
 boxplot(energy.bee ~ communication+population+environment, data=all.data, 
         col = c("green", "red", "brown", "blue"), las = 2, main = "", cex.axis = 0.8,  
-        xlab = "Resource density (R value) and distribution", ylab = "Energy(J) collected/bee", 
+        xlab = "Resource distribution (R value) and density", ylab = "Energy(J) collected/bee", 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
@@ -63,7 +63,7 @@ axis(1, at = c(8, 24), labels = c("Dense", "Sparse"), line = 0.9, tick = FALSE, 
 
 boxplot(energy.bee ~ communication+population+environment, data=all.data, log = "y", 
         col = c("green", "red", "brown", "blue"), las = 2, main = "", cex.axis = 0.8, 
-        xlab = "Resource density (R value) and distribution", ylab = "Log(Energy(J) collected/bee)", 
+        xlab = "Resource distribution (R value) and density", ylab = "Log(Energy(J) collected/bee)", 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
@@ -136,7 +136,7 @@ Proportion of resources that are found
 ```{r}
 boxplot((resources.found/resources) ~ communication+population+environment, data=all.data, 
         col = c("green", "red", "brown", "blue"), las = 2, main = "", cex.axis = 0.8, 
-        xlab = "Resource density (R value)", ylab = "", 
+        xlab = "Resource distribution (R value) and density", ylab = "", 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
@@ -145,7 +145,7 @@ boxplot((resources.found/resources) ~ communication+population+environment, data
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
-legend("topright", pch = 15, cex = 0.8, col = c("green", "red", "brown", "blue"), 
+legend("topleft", pch = 15, cex = 0.8, col = c("green", "red", "brown", "blue"), 
        c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
 axis(1, at = c(0.5, 16.5, 32.5), labels = c("", "", ""), line = 2.05)
 axis(1, at = c(8, 24), labels = c("Dense", "Sparse"), line = 0.9, tick = FALSE, cex.axis = 0.8)
@@ -190,7 +190,7 @@ anova(null.all.2, alt.all.2, test="Chisq")
 ```{r}
 boxplot((resources.depleted/resources.found) ~ communication+population+environment, data=all.data, 
         col = c("green", "red", "brown", "blue"), las = 2, main = "", cex.axis = 0.8, 
-        xlab = "Resource density (R value)", ylab = "", 
+        xlab = "Resource distribution (R value) and density", ylab = "", 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
@@ -252,8 +252,8 @@ anova(null.all.3, alt.all.3, test="Chisq")
 # abline(a = 0, b = 1)
 
 boxplot(energy.avg ~ id.method+population+environment, data=avg.data, 
-        col = c("green", "red", "brown", "blue"), las = 2, cex.axis = 0.8, main = "Simulations with communication", 
-        xlab = "Resource density (R value)", ylab = "Average Energy(J)/dancing or foraging event", 
+        col = c("green", "red", "brown", "blue"), las = 2, cex.axis = 0.8, main = "", 
+        xlab = "Resource distribution (R value) and density", ylab = "Average Energy(J)/dancing or foraging event", 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
@@ -262,7 +262,7 @@ boxplot(energy.avg ~ id.method+population+environment, data=avg.data,
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
-legend("topright", pch = 15, cex = 0.55, col = c("green", "red", "brown", "blue"), 
+legend("topright", pch = 15, cex = 0.8, col = c("green", "red", "brown", "blue"), 
        c("Dance, Pop=500", "Rand, Pop=500", "Dance, Pop=3000", "Rand, Pop=3000"))
 axis(1, at = c(0.5, 16.5, 32.5), labels = c("", "", ""), line = 2.05)
 axis(1, at = c(8, 24), labels = c("Dense", "Sparse"), line = 0.9, tick = FALSE, cex.axis = 0.8)
@@ -308,7 +308,7 @@ anova(lm((dance.avg-random.avg) ~ environment+population, data = comm.data),
 ```{r}
 boxplot(random.avg ~ communication+population+environment, data=all.data, 
         col = c("green", "red", "brown", "blue"), las = 2, main = "All simulations-random avg", 
-        xlab = "Resource density (R value)", ylab = "Energy(J)/resource found", 
+        xlab = "Resource distribution (R value) and density", ylab = "Energy(J)/resource found", 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
@@ -319,6 +319,8 @@ boxplot(random.avg ~ communication+population+environment, data=all.data,
                   "1.0", "1.0", "1.0", "1.0"))
 legend("topright", pch = 15, col = c("green", "red", "brown", "blue"), 
        c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
+axis(1, at = c(0.5, 16.5, 32.5), labels = c("", "", ""), line = 2.05)
+axis(1, at = c(8, 24), labels = c("Dense", "Sparse"), line = 0.9, tick = FALSE, cex.axis = 0.8)
 ```
 
 
