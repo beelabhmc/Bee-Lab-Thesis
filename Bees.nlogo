@@ -111,6 +111,7 @@ to setup
     setup-patches
     set timer-post-setup timer
   ]
+  set end-setup 1
 
   set communication? local-communication?
   set population local-population
@@ -777,7 +778,7 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
-2
+3
 
 SLIDER
 31
@@ -1304,10 +1305,7 @@ setup</setup>
     </enumeratedValueSet>
   </experiment>
   <experiment name="R trials" repetitions="10" runMetricsEveryStep="false">
-    <setup>set-patch-size 1
-resize-world -1500 1500 -1500 1500
-reset-timer
-setup</setup>
+    <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="1"/>
     <exitCondition>end-setup = 1</exitCondition>
@@ -1315,14 +1313,37 @@ setup</setup>
     <metric>loop-num</metric>
     <metric>timer</metric>
     <enumeratedValueSet variable="resource_density">
-      <value value="&quot;sparse&quot;"/>
-      <value value="&quot;dense&quot;"/>
+      <value value="&quot;extra_sparse&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="R_value">
       <value value="&quot;0.4&quot;"/>
       <value value="&quot;0.6&quot;"/>
       <value value="&quot;0.8&quot;"/>
       <value value="&quot;1.0&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="communication?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="population">
+      <value value="500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="repetitions">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="save_map">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="min-pxcor">
+      <value value="-750"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-pxcor">
+      <value value="750"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="min-pycor">
+      <value value="-750"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-pycor">
+      <value value="750"/>
     </enumeratedValueSet>
   </experiment>
   <experiment name="Practice Run" repetitions="1" runMetricsEveryStep="false">
