@@ -162,9 +162,10 @@ to setup-patches
   resource-patch-calculations
   set loop-num 0
 
-  while [(abs(R-exp - R) > 0.03) and (loop-num <= 20)]
+  while [(abs(R-exp - R) > 0.03) and (loop-num < 10)]
   [
     set loop-num loop-num + 1
+    show loop-num
     ask patches [ setup-patch-initial ]
     repeat patchiness
     [
@@ -190,15 +191,16 @@ to R-parameters ;; Set c1-mult, c2-mult, and patchiness based on desired R value
   if (resource_density = "dense" and R_value = "0.8") [ set R-exp 0.8 set c1-mult  41  set c2-mult  1  set patchiness 21 ]
   if (resource_density = "dense" and R_value = "1.0") [ set R-exp 1.0 set c1-mult   1  set c2-mult  1  set patchiness  1 ]
 
-  if (resource_density = "sparse" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 2101  set c2-mult 1801  set patchiness 13 ]
-  if (resource_density = "sparse" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 1501  set c2-mult  901  set patchiness 13 ]
-  if (resource_density = "sparse" and R_value = "0.8") [ set R-exp 0.8 set c1-mult 1201  set c2-mult    1  set patchiness  9 ]
-  if (resource_density = "sparse" and R_value = "1.0") [ set R-exp 1.0 set c1-mult    1  set c2-mult    1  set patchiness  1 ]
+  if ((resource_density = "sparse" or resource_density = "extra_sparse") and R_value = "0.4") [ set R-exp 0.4 set c1-mult 2101  set c2-mult 1801  set patchiness 13 ]
+  if ((resource_density = "sparse" or resource_density = "extra_sparse") and R_value = "0.6") [ set R-exp 0.6 set c1-mult 1501  set c2-mult  901  set patchiness 13 ]
+  if ((resource_density = "sparse" or resource_density = "extra_sparse") and R_value = "0.8") [ set R-exp 0.8 set c1-mult 1201  set c2-mult    1  set patchiness  9 ]
+  if ((resource_density = "sparse" or resource_density = "extra_sparse") and R_value = "1.0") [ set R-exp 1.0 set c1-mult    1  set c2-mult    1  set patchiness  1 ]
 end
 
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
   set num-patches-t       world-width * world-height - 1 ;for hive patch
   set area-t              num-patches-t * .000044444
+  if resource_density =   "extra_sparse" [ set density 0.5 ]
   if resource_density =   "sparse" [ set density 1 ]
   if resource_density =   "dense" [ set density 32 ]
   set num-patches-r       area-t * density
@@ -720,8 +722,8 @@ CHOOSER
 156
 resource_density
 resource_density
-"sparse" "dense"
-1
+"extra_sparse" "sparse" "dense"
+0
 
 MONITOR
 217
@@ -775,7 +777,7 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
-0
+2
 
 SLIDER
 31
@@ -799,7 +801,7 @@ SWITCH
 362
 save_map
 save_map
-0
+1
 1
 -1000
 
