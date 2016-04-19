@@ -6,24 +6,28 @@ library(dplyr)
 setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/BehaviorSpace Data/R Value/")
 
 ### General Testing
-g.data <- read.csv("Bees R values-table.csv", header = TRUE, skip = 6)[,c(2,3,4,5,8)]
+g.data <- read.csv("Bees R extra_sparse testing1-table.csv", header = TRUE, skip = 6)
 
 ## Filter data by dense and sparse
-g.data <- g.data %>% filter(c1_mult >= c2_mult)
-g.data.dense <- filter(g.data, g.data$resource_density == "\"dense\"")
-g.data.dense.r <- g.data.dense$R
-g.data.sparse <- filter(g.data, g.data$resource_density == "\"sparse\"")
-g.data.sparse.r <- g.data.sparse$R
+data.e.sparse <- filter(g.data, g.data$resource_density == "\"extra_sparse\"")
+data.e.sparse.r <- data.e.sparse$R
+data.e.sparse$grp <- (floor((data.e.sparse$X.run.number.-1) / 7)) + 1
+data.e.sparse <- data.e.sparse %>% filter(c1_mult >= c2_mult)
+
 
 ## Divide data into groups .03 away from: R = 0.4, 0.6, 0.8, 1.0
-# Dense
-g.data.dense.4 <- g.data.dense %>% filter(abs(R - 0.4) <= 0.03)
-g.data.dense.6 <- g.data.dense %>% filter(abs(R - 0.6) <= 0.03)
-g.data.dense.8 <- g.data.dense %>% filter(abs(R - 0.8) <= 0.03)
-# Sparse
-g.data.sparse.4 <- g.data.sparse %>% filter(abs(R - 0.4) <= 0.03)
-g.data.sparse.6 <- g.data.sparse %>% filter(abs(R - 0.6) <= 0.03)
-g.data.sparse.8 <- g.data.sparse %>% filter(abs(R - 0.8) <= 0.03)
+# Extra-sparse
+data.e.sparse.4 <- data.e.sparse %>% filter(abs(R - 0.4) <= 0.07)
+
+data.e.sparse.6 <- data.e.sparse %>% filter(abs(R - 0.6) <= 0.03)
+table(data.e.sparse.6$grp)
+temp.6 <- which.max(table(data.e.sparse.6$grp)) 
+es.idx.6 <- (7 * as.numeric(names(temp.6))) 
+
+data.e.sparse.8 <- data.e.sparse %>% filter(abs(R - 0.8) <= 0.03)
+table(data.e.sparse.8$grp)
+temp.8 <- which.max(table(data.e.sparse.8$grp)) 
+es.idx.8 <- (7 * as.numeric(names(temp.8))) 
 
 
 ### Dense Testing
