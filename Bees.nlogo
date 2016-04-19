@@ -166,7 +166,6 @@ to setup-patches
   while [(abs(R-exp - R) > 0.03) and (loop-num < 10)]
   [
     set loop-num loop-num + 1
-    show loop-num
     ask patches [ setup-patch-initial ]
     repeat patchiness
     [
@@ -179,6 +178,8 @@ to setup-patches
     set patch-with-hive patches with [hive?]
 
     R-calc
+    show loop-num
+    show R
   ]
   set patches-with-r-and-q patches-with-resource?
 
@@ -778,7 +779,11 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
+<<<<<<< Updated upstream
 3
+=======
+0
+>>>>>>> Stashed changes
 
 SLIDER
 31
