@@ -126,25 +126,12 @@ end
 to resource-patch-calculations ;; Calculations to determine probability each patch is a resource
   set num-patches-t       world-width * world-height - 1 ;for nest patch
   set area-t              num-patches-t * .000044444
+  if resource_density =   "extra_sparse" [ set density 0.4 ]
   if resource_density =   "sparse" [ set density 1 ]
   if resource_density =   "dense" [ set density 32 ]
   set num-patches-r       area-t * density
   set resource-prob       num-patches-r / num-patches-t
   set resource-prob-adj   resource-prob / patchiness
-end
-
-to R-parameters ;; Set c1-mult, c2-mult, and patchiness based on desired R value
-  set R 0
-
-  if (resource_density = "dense" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 201  set c2-mult 81  set patchiness 21 ]
-  if (resource_density = "dense" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 121  set c2-mult  1  set patchiness 13 ]
-  if (resource_density = "dense" and R_value = "0.8") [ set R-exp 0.8 set c1-mult  41  set c2-mult  1  set patchiness 21 ]
-  if (resource_density = "dense" and R_value = "1.0") [ set R-exp 1.0 set c1-mult   1  set c2-mult  1  set patchiness  1 ]
-
-  if (resource_density = "sparse" and R_value = "0.4") [ set R-exp 0.4 set c1-mult 1201  set c2-mult  901  set patchiness 11 ]
-  if (resource_density = "sparse" and R_value = "0.6") [ set R-exp 0.6 set c1-mult 1501  set c2-mult  601  set patchiness 21 ]
-  if (resource_density = "sparse" and R_value = "0.8") [ set R-exp 0.8 set c1-mult 1051  set c2-mult  451  set patchiness 16 ]
-  if (resource_density = "sparse" and R_value = "1.0") [ set R-exp 1.0 set c1-mult    1  set c2-mult    1  set patchiness  1 ]
 end
 
 to setup-patch-initial ;; create hive patch and initialize all other patches
@@ -401,10 +388,10 @@ end
 GRAPHICS-WINDOW
 336
 10
-1347
-1042
-500
-500
+1847
+1542
+750
+750
 1.0
 1
 10
@@ -415,10 +402,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--500
-500
--500
-500
+-750
+750
+-750
+750
 1
 1
 1
@@ -549,8 +536,8 @@ CHOOSER
 156
 resource_density
 resource_density
-"sparse" "dense"
-0
+"extra_sparse" "sparse" "dense"
+1
 
 MONITOR
 217
@@ -630,7 +617,7 @@ c2_mult
 c2_mult
 1
 1501
-1501
+1201
 1
 1
 NIL
@@ -645,7 +632,7 @@ patchiness
 patchiness
 1
 21
-21
+1
 1
 1
 NIL
@@ -1178,6 +1165,34 @@ setup</setup>
       <value value="&quot;0.6&quot;"/>
       <value value="&quot;0.8&quot;"/>
       <value value="&quot;1.0&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="R extra_sparse testing" repetitions="7" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <exitCondition>end-setup = 1</exitCondition>
+    <metric>R</metric>
+    <metric>timer</metric>
+    <steppedValueSet variable="c1_mult" first="1501" step="300" last="2401"/>
+    <steppedValueSet variable="c2_mult" first="1201" step="300" last="2101"/>
+    <steppedValueSet variable="patchiness" first="1" step="4" last="21"/>
+    <enumeratedValueSet variable="resource_density">
+      <value value="&quot;extra_sparse&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="calc_R">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="min-pxcor">
+      <value value="-750"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-pxcor">
+      <value value="750"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="min-pycor">
+      <value value="-750"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-pycor">
+      <value value="750"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
