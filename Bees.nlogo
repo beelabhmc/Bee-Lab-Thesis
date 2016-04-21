@@ -274,10 +274,10 @@ to setup-resource-choose  ;; assign new food patches, including quantity and qua
       ifelse (c1-2-select)
       [ set quality [quality] of c-parent ]
       [
-        set quality random-poisson 25
-        ;ifelse (random 2 = 0)
-        ;[ set quality random-poisson 10 ]
-        ;[ set quality random-poisson 40  ]
+        ;set quality random-poisson 25
+        ifelse (random 2 = 0)
+        [ set quality random-poisson 10 ]
+        [ set quality random-poisson 40  ]
         set quality quality * J-per-microL
       ]
     ]
@@ -807,7 +807,7 @@ SWITCH
 362
 save_map
 save_map
-1
+0
 1
 -1000
 
@@ -1420,14 +1420,13 @@ setup</setup>
     <metric>random-quality</metric>
     <metric>random-quantity</metric>
     <enumeratedValueSet variable="resource_density">
-      <value value="&quot;dense&quot;"/>
-      <value value="&quot;sparse&quot;"/>
+      <value value="&quot;extra_sparse&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="R_value">
-      <value value="&quot;0.4&quot;"/>
-      <value value="&quot;0.6&quot;"/>
-      <value value="&quot;0.8&quot;"/>
       <value value="&quot;1.0&quot;"/>
+      <value value="&quot;0.8&quot;"/>
+      <value value="&quot;0.6&quot;"/>
+      <value value="&quot;0.4&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="communication?">
       <value value="true"/>
