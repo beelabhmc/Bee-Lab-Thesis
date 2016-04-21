@@ -7,7 +7,7 @@ output: html_document
 ```{r}
 library(dplyr)
 library(lme4)
-# setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/NetLogo R Analyses/Sim Analyses5")
+# setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/NetLogo R Analyses/Sim Analyses5a")
 
 # Simulation data
 all.data <- read.csv("Bees sim_all5-table.csv", skip = 6, stringsAsFactors=FALSE)
@@ -27,13 +27,14 @@ all.data$avg.diff <- all.data$dance.avg - all.data$random.avg
 all.data$max.dist.km <- all.data$max.dist * 6.67 / 1000
 
 # Data cleanup
+all.data$resource_density <- as.factor(all.data$resource_density)
+all.data$R_value <- as.factor(all.data$R_value)
 all.data$communication <- as.factor(all.data$communication)
 all.data$population <- as.factor(all.data$population)
 all.data$environment <- as.factor(sapply(1:nrow(all.data), 
                                          function(i) {i <- paste(substr(all.data$resource_density[i],2,2), 
                                                                  ": ", substr(all.data$R_value[i], 2,4), 
                                                                  sep = "")}))
-
 
 # Comm
 comm.data <- all.data %>% filter(communication == TRUE)
@@ -127,6 +128,16 @@ anova(null.0, alt.0b)
 alt.0c <- lmer(log.energy.bee ~ environment+(1|repetitions), data = all.data)
 anova(null.0, alt.0c)
 ```
+### Environment-density
+```{r}
+alt.0d <- lmer(log.energy.bee ~ resource_density+(1|repetitions), data = all.data)
+anova(null.0, alt.0d)
+```
+### Environment-distribution
+```{r}
+alt.0e <- lmer(log.energy.bee ~ R_value+(1|repetitions), data = all.data)
+anova(null.0, alt.0e)
+```
 
 ### 1. Colony size and communication
 ```{r}
@@ -143,7 +154,7 @@ anova(null.1, alt.1b)
 
 ### 3. Communication and environment
 ```{r}
-alt.1c <- lmer(log.energy.bee ~ population+environment*communication+(1|repetitions), data = all.data)
+alt.1c <- lmer(log.energy.bee ~ population+communication*environment+(1|repetitions), data = all.data)
 anova(null.1, alt.1c)
 ```
 

@@ -127,7 +127,7 @@ $(document).ready(function () {
 <pre><code>## Warning: package 'lme4' was built under R version 3.2.5</code></pre>
 <pre><code>## Loading required package: Matrix</code></pre>
 <pre><code>## Warning: package 'Matrix' was built under R version 3.2.5</code></pre>
-<pre class="r"><code># setwd(&quot;~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/NetLogo R Analyses/Sim Analyses5&quot;)
+<pre class="r"><code># setwd(&quot;~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/NetLogo R Analyses/Sim Analyses5a&quot;)
 
 # Simulation data
 all.data &lt;- read.csv(&quot;Bees sim_all5-table.csv&quot;, skip = 6, stringsAsFactors=FALSE)
@@ -147,13 +147,14 @@ all.data$avg.diff &lt;- all.data$dance.avg - all.data$random.avg
 all.data$max.dist.km &lt;- all.data$max.dist * 6.67 / 1000
 
 # Data cleanup
+all.data$resource_density &lt;- as.factor(all.data$resource_density)
+all.data$R_value &lt;- as.factor(all.data$R_value)
 all.data$communication &lt;- as.factor(all.data$communication)
 all.data$population &lt;- as.factor(all.data$population)
 all.data$environment &lt;- as.factor(sapply(1:nrow(all.data), 
                                          function(i) {i &lt;- paste(substr(all.data$resource_density[i],2,2), 
                                                                  &quot;: &quot;, substr(all.data$R_value[i], 2,4), 
                                                                  sep = &quot;&quot;)}))
-
 
 # Comm
 comm.data &lt;- all.data %&gt;% filter(communication == TRUE)
@@ -270,6 +271,34 @@ anova(null.0, alt.0c)</code></pre>
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
+<div id="environment-density" class="section level3">
+<h3>Environment-density</h3>
+<pre class="r"><code>alt.0d &lt;- lmer(log.energy.bee ~ resource_density+(1|repetitions), data = all.data)
+anova(null.0, alt.0d)</code></pre>
+<pre><code>## refitting model(s) with ML (instead of REML)</code></pre>
+<pre><code>## Data: all.data
+## Models:
+## null.0: log.energy.bee ~ 1 + (1 | repetitions)
+## alt.0d: log.energy.bee ~ resource_density + (1 | repetitions)
+##        Df     AIC     BIC  logLik deviance  Chisq Chi Df Pr(&gt;Chisq)    
+## null.0  3 1056.40 1067.71 -525.20  1050.40                             
+## alt.0d  4  442.96  458.03 -217.48   434.96 615.44      1  &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div id="environment-distribution" class="section level3">
+<h3>Environment-distribution</h3>
+<pre class="r"><code>alt.0e &lt;- lmer(log.energy.bee ~ R_value+(1|repetitions), data = all.data)
+anova(null.0, alt.0e)</code></pre>
+<pre><code>## refitting model(s) with ML (instead of REML)</code></pre>
+<pre><code>## Data: all.data
+## Models:
+## null.0: log.energy.bee ~ 1 + (1 | repetitions)
+## alt.0e: log.energy.bee ~ R_value + (1 | repetitions)
+##        Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(&gt;Chisq)
+## null.0  3 1056.4 1067.7 -525.20   1050.4                         
+## alt.0e  6 1061.8 1084.5 -524.93   1049.8 0.5482      3     0.9082</code></pre>
+</div>
 <div id="colony-size-and-communication" class="section level3">
 <h3>1. Colony size and communication</h3>
 <pre class="r"><code>null.1 &lt;- lmer(log.energy.bee ~ population+communication+environment+(1|repetitions), data = all.data)
@@ -305,14 +334,14 @@ anova(null.1, alt.1b)</code></pre>
 </div>
 <div id="communication-and-environment" class="section level3">
 <h3>3. Communication and environment</h3>
-<pre class="r"><code>alt.1c &lt;- lmer(log.energy.bee ~ population+environment*communication+(1|repetitions), data = all.data)
+<pre class="r"><code>alt.1c &lt;- lmer(log.energy.bee ~ population+communication*environment+(1|repetitions), data = all.data)
 anova(null.1, alt.1c)</code></pre>
 <pre><code>## refitting model(s) with ML (instead of REML)</code></pre>
 <pre><code>## Data: all.data
 ## Models:
 ## null.1: log.energy.bee ~ population + communication + environment + (1 | 
 ## null.1:     repetitions)
-## alt.1c: log.energy.bee ~ population + environment * communication + (1 | 
+## alt.1c: log.energy.bee ~ population + communication * environment + (1 | 
 ## alt.1c:     repetitions)
 ##        Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(&gt;Chisq)
 ## null.1 12 107.06 152.28 -41.529   83.059                         
