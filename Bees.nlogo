@@ -647,7 +647,7 @@ population
 population
 0.0
 3000
-500
+3000
 1
 1
 NIL
@@ -771,7 +771,7 @@ SWITCH
 105
 communication?
 communication?
-0
+1
 1
 -1000
 
@@ -783,7 +783,7 @@ CHOOSER
 R_value
 R_value
 "0.4" "0.6" "0.8" "1.0"
-1
+3
 
 SLIDER
 31
@@ -794,7 +794,7 @@ repetitions
 repetitions
 0
 10
-1
+10
 1
 1
 NIL
@@ -1423,10 +1423,10 @@ setup</setup>
       <value value="&quot;extra_sparse&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="R_value">
-      <value value="&quot;1.0&quot;"/>
-      <value value="&quot;0.8&quot;"/>
-      <value value="&quot;0.6&quot;"/>
       <value value="&quot;0.4&quot;"/>
+      <value value="&quot;0.6&quot;"/>
+      <value value="&quot;0.8&quot;"/>
+      <value value="&quot;1.0&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="communication?">
       <value value="true"/>
