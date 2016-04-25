@@ -7,13 +7,17 @@ output: html_document
 ```{r}
 library(dplyr)
 library(lme4)
-# setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/NetLogo R Analyses/Sim Analyses5a")
+# setwd("~/Google Drive/Semester 8/Thesis/NetLogo+R GitHub/NetLogo R Analyses/Sim Analyses7a")
 
 # Simulation data
-all.data <- read.csv("Bees sim_all5-table.csv", skip = 6, stringsAsFactors=FALSE)
+all.data <- read.csv("Bees sim_all7-table.csv", skip = 6, stringsAsFactors=FALSE)
 
 # Data names
 names(all.data)[4] <- "communication"
+names(all.data)[15] <- "resources"
+names(all.data)[16] <- "resources.untouched"
+names(all.data)[17] <- "resources.found"
+names(all.data)[18] <- "resources.depleted"
 names(all.data)[19] <- "max.dist"
 
 # Data calculation
@@ -59,10 +63,6 @@ boxplot(energy.bee ~ communication+population+environment, data=all.data,
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0",
-                  "0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
 legend("topright", pch = 15, cex = 0.8, col = c("green", "red", "brown", "blue"), 
        c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
@@ -76,12 +76,8 @@ boxplot(energy.bee ~ communication+population+environment, data=all.data, log = 
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0",
-                  "0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
-legend("topright", pch = 15, cex = 0.8, col = c("green", "red", "brown", "blue"), 
+legend("bottomright", pch = 15, cex = 0.8, col = c("green", "red", "brown", "blue"), 
        c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
 axis(1, at = c(0.5, 16.5, 32.5), labels = c("", "", ""), line = 2.05)
 axis(1, at = c(8, 24), labels = c("Dense", "Sparse"), line = 0.9, tick = FALSE, cex.axis = 0.8)
@@ -91,10 +87,6 @@ boxplot(energy.trip ~ communication+population+environment, data=all.data, log =
         col = c("green", "red", "brown", "blue"), las = 2, main = "", cex.axis = 0.8, 
         xlab = "Resource distribution (R value) and density", ylab = "energy/trip)", 
         names = c("0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0",
-                  "0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
@@ -130,8 +122,8 @@ anova(null.0, alt.0c)
 ```
 ### Environment-density
 ```{r}
-alt.0d <- lmer(log.energy.bee ~ resource_density+(1|repetitions), data = all.data)
-anova(null.0, alt.0d)
+# alt.0d <- lmer(log.energy.bee ~ resource_density+(1|repetitions), data = all.data)
+# anova(null.0, alt.0d)
 ```
 ### Environment-distribution
 ```{r}
@@ -226,10 +218,6 @@ boxplot((resources.found/resources) ~ communication+population+environment, data
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0",
-                  "0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
 legend("topleft", pch = 15, cex = 0.8, col = c("green", "red", "brown", "blue"), 
        c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
@@ -279,10 +267,6 @@ boxplot((resources.depleted/resources.found) ~ communication+population+environm
         col = c("green", "red", "brown", "blue"), las = 2, main = "", cex.axis = 0.8, 
         xlab = "Resource distribution (R value) and density", ylab = "Proportion", 
         names = c("0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0",
-                  "0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
@@ -345,10 +329,6 @@ boxplot(energy.avg ~ id.method+population+environment, data=avg.data,
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0",
-                  "0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
 legend("topright", pch = 15, cex = 0.8, col = c("green", "red", "brown", "blue"), 
        c("Dance, Pop=500", "Rand, Pop=500", "Dance, Pop=3000", "Rand, Pop=3000"))
@@ -403,10 +383,6 @@ boxplot(random.avg ~ communication+population+environment, data=all.data,
         names = c("0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0",
-                  "0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
 legend("topright", pch = 15, cex = 0.8, col = c("green", "red", "brown", "blue"), 
        c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
@@ -453,10 +429,6 @@ boxplot(max.dist.km ~ communication+population+environment, data=all.data,
         col = c("green", "red", "brown", "blue"), las = 2, cex.axis = 0.8, main = "", 
         xlab = "Resource distribution (R value) and density", ylab = "Kilometers", 
         names = c("0.4", "0.4", "0.4", "0.4",
-                  "0.6", "0.6", "0.6", "0.6",
-                  "0.8", "0.8", "0.8", "0.8",
-                  "1.0", "1.0", "1.0", "1.0",
-                  "0.4", "0.4", "0.4", "0.4",
                   "0.6", "0.6", "0.6", "0.6",
                   "0.8", "0.8", "0.8", "0.8",
                   "1.0", "1.0", "1.0", "1.0"))
