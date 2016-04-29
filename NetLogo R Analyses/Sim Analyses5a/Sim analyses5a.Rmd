@@ -237,6 +237,15 @@ axis(1, at = c(0.5, 16.5, 32.5), labels = c("", "", ""), line = 2.05)
 axis(1, at = c(8, 24), labels = c("Dense", "Sparse"), line = 0.9, tick = FALSE, cex.axis = 0.8)
 ```
 
+#### Population
+```{r}
+null.2.0 <- glmer(cbind(resources.found, resources.untouched) ~ 1+(1|repetitions), 
+                family = binomial(), data = all.data)
+alt.2.0a <- glmer(cbind(resources.found, resources.untouched) ~ population+(1|repetitions), 
+                family = binomial(), data = all.data)
+anova(null.2.0, alt.2.0a, test="Chisq")
+```
+
 #### Population * Communication
 ```{r}
 null.2 <- glmer(cbind(resources.found, resources.untouched) ~ population+communication+environment+(1|repetitions), 
@@ -290,6 +299,17 @@ legend("topleft", pch = 15, cex = 0.7, col = c("green", "red", "brown", "blue"),
        c("Comm=F, Pop=500", "Comm=T, Pop=500", "Comm=F, Pop=3000", "Comm=T, Pop=3000"))
 axis(1, at = c(0.5, 16.5, 32.5), labels = c("", "", ""), line = 2.05)
 axis(1, at = c(8, 24), labels = c("Dense", "Sparse"), line = 0.9, tick = FALSE, cex.axis = 0.8)
+```
+
+#### Communication
+```{r}
+null.3.0 <- glmer(cbind(resources.depleted, (resources.found-resources.depleted)) ~ 
+                  1+(1|repetitions), 
+                family = binomial(), data = all.data)
+alt.3.0a <- glmer(cbind(resources.depleted, (resources.found-resources.depleted)) ~ 
+                  communication+(1|repetitions), 
+                family = binomial(), data = all.data)
+anova(null.3.0, alt.3.0a, test="Chisq")
 ```
 
 #### Population * Communication
@@ -358,6 +378,13 @@ axis(1, at = c(8, 24), labels = c("Dense", "Sparse"), line = 0.9, tick = FALSE, 
 t.test(all.data$dance.avg, all.data$random.avg)
 ```
 
+#### 1. Method
+```{r}
+null.4.0 <- lmer(energy.avg ~ 1+(1|repetitions), data = avg.data)
+alt.4.0a <- lmer(energy.avg ~ id.method+(1|repetitions), data = avg.data)
+anova(null.4.0, alt.4.0a)
+```
+
 #### 1. Population * Method
 ```{r}
 null.4 <- lmer(energy.avg ~ population+id.method+environment+(1|repetitions), data = avg.data)
@@ -384,12 +411,6 @@ null.all.4 <- lmer(energy.avg ~ population + id.method + environment +
                      (1|repetitions), data = avg.data)
 alt.all.4 <- lmer(energy.avg ~ population*id.method*environment+(1|repetitions), data = avg.data)
 anova(null.all.4, alt.all.4)
-```
-
-#### Difference between averages
-```{r}
-anova(lmer((dance.avg-random.avg) ~ environment+population+(1|repetitions), data = comm.data),
-      lmer((dance.avg-random.avg) ~ environment*population+(1|repetitions), data = comm.data))
 ```
 
 
@@ -466,6 +487,25 @@ axis(1, at = c(0.5, 16.5, 32.5), labels = c("", "", ""), line = 2.05)
 axis(1, at = c(8, 24), labels = c("Dense", "Sparse"), line = 0.9, tick = FALSE, cex.axis = 0.8)
 ```
 
+
+#### Colony size 
+```{r}
+null.6.0 <- lmer(max.dist.km ~ 1+(1|repetitions), data = all.data)
+alt.6.0a <- lmer(max.dist.km ~ population+(1|repetitions), data = all.data)
+anova(null.6.0, alt.6.0a)
+```
+
+#### Communication
+```{r}
+alt.6.0b <- lmer(max.dist.km ~ communication+(1|repetitions), data = all.data)
+anova(null.6.0, alt.6.0b)
+```
+
+#### Environment 
+```{r}
+alt.6.0c <- lmer(max.dist.km ~ environment+(1|repetitions), data = all.data)
+anova(null.6.0, alt.6.0c)
+```
 
 #### 1. Colony size and communication
 ```{r}
