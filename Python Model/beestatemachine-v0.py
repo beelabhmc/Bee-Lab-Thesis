@@ -135,7 +135,7 @@ param_ranges = {
     'p_random_forage': (0,0.5),
     'p_abandon_search': (0,1),
     'p_find_food': (0,1)
-}
+} 
 
 sample = ap.sample_saltelli(param_ranges, n=5, digits=2)
 exp = ap.Experiment(ForagingModel, sample)
